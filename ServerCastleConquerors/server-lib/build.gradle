@@ -69,6 +69,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    
+    //java 11 removed java EE components, so we need to get the jaxb reference implementation for marshalling
+	implementation "com.sun.xml.bind:jaxb-impl:2.3.5"
+    implementation "javax.xml.bind:jaxb-api:2.3.1"
+    implementation "com.sun.istack:istack-commons-runtime:4.0.1"
+    
+    // valiation commands on jaxb entities
+    implementation "javax.validation:validation-api:2.0.1.Final"
+    implementation "org.hibernate:hibernate-validator:7.0.1.Final"
+    implementation "org.hibernate:hibernate-validator-annotation-processor:7.0.1.Final"
+    implementation "javax.el:javax.el-api:3.0.0"
+    implementation "org.glassfish:javax.el:3.0.0"
 }
 
 springBoot {
