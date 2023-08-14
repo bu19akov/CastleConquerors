@@ -1,5 +1,0 @@
-INDEX VERSION 1.134+/Users/vladimir/Downloads/Accenture_Bootcamp/CastleConquerors/CastleConquerorsProject/.metadata/.plugins/org.eclipse.jdt.core
-1865797976.index
-3415866122.index
-2405139114.index
-3539231476.index
