@@ -3,7 +3,6 @@ package messagesbase.messagesfromserver;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
-import messagesbase.messagesfromclient.ETerrain;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
