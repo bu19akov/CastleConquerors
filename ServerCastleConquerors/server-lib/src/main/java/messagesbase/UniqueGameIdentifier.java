@@ -1,5 +1,7 @@
 package messagesbase;
 
+import java.util.Random;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,6 +37,16 @@ public final class UniqueGameIdentifier {
 	public String getUniqueGameID() {
 		return uniqueGameID;
 	}
+	
+	public static UniqueGameIdentifier random() {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder gameID = new StringBuilder();
+        for (int i = 0; i < 5; i++) {
+            int randomIndex = new Random().nextInt(characters.length());
+            gameID.append(characters.charAt(randomIndex));
+        }
+        return new UniqueGameIdentifier(gameID.toString());
+    }
 
 	@Override
 	public int hashCode() {
