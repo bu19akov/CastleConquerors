@@ -1,20 +1,4 @@
 INDEX VERSION 1.134+/Users/vladimir/Downloads/Accenture_Bootcamp/CastleConquerors/CastleConquerorsProject/.metadata/.plugins/org.eclipse.jdt.core
-2730204595.index
 2405139114.index
-75656703.index
-3798359398.index
-2716407522.index
-2025472649.index
-1036127142.index
-3591078521.index
-952915582.index
 1865797976.index
-736304170.index
-3468314333.index
-3318195481.index
-997009879.index
-2775942759.index
-1557303921.index
-3802798943.index
-1686735449.index
-3574827264.index
+3415866122.index
