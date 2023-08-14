@@ -13,4 +13,4 @@ plugins {
 }
 
 rootProject.name = 'ClientCastleConquerors'
-include('lib')
+include('client-lib')
