@@ -7,9 +7,11 @@ import exceptions.GameFullException;
 import exceptions.GameNotFoundException;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromserver.EFortState;
 import messagesbase.messagesfromserver.EPlayerGameState;
 import messagesbase.messagesfromserver.EPlayerPositionState;
 import messagesbase.messagesfromserver.ETerrain;
+import messagesbase.messagesfromserver.ETreasureState;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromclient.EMove;
@@ -182,29 +184,26 @@ public class GameService {
         
         if (newX < 0 || newX > fullMap.getMaxX() || newY < 0 || newY > fullMap.getMaxY()) {
             logger.error("Player {} attempted to move outside the map boundaries!", playerMove.getUniquePlayerID());
-            endGame(gameID, "Player moved outside of the map boundaries!");
+            endGame(gameID, "Player moved outside of the map boundaries!", false);
             return;
         }
         
         FullMapNode nextNode = getFullMapNodeByXY(fullMap, newX, newY);
         
         if (nextNode.getTerrain() == ETerrain.Water) {
-            endGame(gameID, "Player moved into the water");
+            endGame(gameID, "Player moved into the water", false);
             return; // Exit the method since the game is ended
         }
         
         int movesRequired = getTransitionCost(currentNode.getTerrain(), nextNode.getTerrain());
-        System.out.println("REQUIRED MOVES: " + movesRequired);
         Map<EMove, Integer> playerMoveCounter = game.getMoveCounter().computeIfAbsent(currentPlayer, k -> new HashMap<>());
         
         if (!playerMoveCounter.containsKey(playerMove.getMove())) {
             playerMoveCounter.put(playerMove.getMove(), movesRequired);
-            System.out.println(playerMove.getMove().toString() + " WAS ADDED");
         }
         
         int remainingMoves = playerMoveCounter.get(playerMove.getMove());
         remainingMoves--;
-        System.out.println("REMAINING MOVES: " + remainingMoves);
 
         // Update FullMap with the new player position
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
@@ -215,6 +214,18 @@ public class GameService {
             // Place player on the new node
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
             newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            
+            if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
+                newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+                    currentPlayer.setCollectedTreasureToTrue();
+            }
+            
+            if (newNode.getFortState() == EFortState.EnemyFortPresent && currentPlayer.getCollectedTreasure()) {
+                // Player wins!
+                endGame(gameID, "Player " + currentPlayer.getUniquePlayerID() + " has captured the enemy fort with the treasure!", true);
+                return;
+            }
+            
             newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
             
             playerMoveCounter.remove(playerMove.getMove());
@@ -240,8 +251,8 @@ public class GameService {
         throw new IllegalStateException("Player position not found!");
     }
 
-    // !!!!!!! TO BE REMOVED
-    private FullMapNode getFullMapNodeByXY(FullMap fullMap, int x, int y) { // THERE IS ANALOG IN FULLMAP CLASS
+    // TODO !!!!!!! TO BE REMOVED (THERE IS ANALOG IN FULLMAP CLASS)
+    private FullMapNode getFullMapNodeByXY(FullMap fullMap, int x, int y) {
         for (FullMapNode node : fullMap) {
             if (node.getX() == x && node.getY() == y) {
                 return node;
@@ -299,33 +310,46 @@ public class GameService {
         }
         // Check if maximum turns reached
         if (games.get(gameID).getTurnCount() >= MAX_TURNS) {
-            endGame(gameID, "Maximum turns reached");
+            endGame(gameID, "Maximum turns reached", false);
         } else {
             games.get(gameID).setTurnStartTime(System.currentTimeMillis());
         }
     }
     
-    private static void endGame(UniqueGameIdentifier gameID, String reason) {
+    private static void endGame(UniqueGameIdentifier gameID, String reason, boolean currentPlayerWins) {
         logger.info("Game {} was ended! Reason: {}", gameID.getUniqueGameID(), reason);
 
         GameInfo game = games.get(gameID);
         PlayerState currentPlayer = game.getCurrentPlayer();
         
-        // If the current player is found, they lose the game
         if (currentPlayer != null) {
-            currentPlayer.setPlayerGameState(EPlayerGameState.Lost);
-            logger.info("Player {} lost the game: {}", currentPlayer.getUniquePlayerID(), gameID);
-            
-            // Set second player as winner
-            game.getPlayers().stream()
-                .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
-                .forEach(player -> {
-                    player.setPlayerGameState(EPlayerGameState.Won);
-                    logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
-                });
+            if (currentPlayerWins) {
+                currentPlayer.setPlayerGameState(EPlayerGameState.Won);
+                logger.info("Player {} won the game: {}", currentPlayer.getUniquePlayerID(), gameID);
+                
+                // Set second player as loser
+                game.getPlayers().stream()
+                    .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
+                    .forEach(player -> {
+                        player.setPlayerGameState(EPlayerGameState.Lost);
+                        logger.info("Player {} lost the game: {}", player.getUniquePlayerID(), gameID);
+                    });
+            } else {
+                currentPlayer.setPlayerGameState(EPlayerGameState.Lost);
+                logger.info("Player {} lost the game: {}", currentPlayer.getUniquePlayerID(), gameID);
+                
+                // Set second player as winner
+                game.getPlayers().stream()
+                    .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
+                    .forEach(player -> {
+                        player.setPlayerGameState(EPlayerGameState.Won);
+                        logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
+                    });
+            }
         }
 
         // Remove game from active games list
         games.remove(gameID);
     }
+
 }

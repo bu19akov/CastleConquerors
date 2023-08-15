@@ -17,7 +17,7 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	private EPlayerGameState state;
 
 	@XmlElement(name = "collectedTreasure", required = true)
-	private final boolean collectedTreasure;
+	private boolean collectedTreasure;
 
 	public PlayerState() {
 		super();
@@ -44,6 +44,14 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	
 	public void setPlayerGameState(EPlayerGameState state) {
 		this.state = state;
+	}
+	
+	public boolean getCollectedTreasure() {
+		return this.collectedTreasure;
+	}
+	
+	public void setCollectedTreasureToTrue() {
+		this.collectedTreasure = true;
 	}
 
 	@Override
