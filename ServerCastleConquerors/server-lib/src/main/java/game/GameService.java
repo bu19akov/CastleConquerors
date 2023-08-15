@@ -8,6 +8,10 @@ import exceptions.GameNotFoundException;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromserver.EPlayerGameState;
+import messagesbase.messagesfromserver.EPlayerPositionState;
+import messagesbase.messagesfromserver.FullMap;
+import messagesbase.messagesfromserver.FullMapNode;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.PlayerState;
 
@@ -125,6 +129,77 @@ public class GameService {
         }
     }
     
+    public void processMove(UniqueGameIdentifier gameID, PlayerMove playerMove) {
+        GameInfo game = games.get(gameID);
+        
+        // Validate if it's the player's turn
+        if(!game.getCurrentPlayer().getUniquePlayerID().equals(playerMove.getUniquePlayerID())) {
+            logger.error("It's not the turn of player {}", playerMove.getUniquePlayerID());
+            throw new IllegalArgumentException("Not your turn!");
+        }
+        
+        FullMap fullMap = game.getFullMap();
+        PlayerState currentPlayer = game.getCurrentPlayer();
+        FullMapNode currentNode = getCurrentPosition(fullMap, currentPlayer, game);
+        int currentX = currentNode.getX();
+        int currentY = currentNode.getY();
+        
+        // Calculate new coordinates based on the move
+        int newX = currentX;
+        int newY = currentY;
+
+        switch(playerMove.getMove()) {
+            case Up:
+                newY = Math.max(0, currentY - 1);
+                break;
+            case Down:
+                newY = Math.min(fullMap.getMaxY(), currentY + 1);
+                break;
+            case Right:
+                newX = Math.min(fullMap.getMaxX(), currentX + 1);
+                break;
+            case Left:
+                newX = Math.max(0, currentX - 1);
+                break;
+        }
+
+        // Update FullMap with the new player position
+        if (newX != currentX || newY != currentY) {
+            // Remove player from the current node
+            currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
+
+            // Place player on the new node
+            FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
+            newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
+        }
+
+        // Update the game state
+        nextTurn(gameID);
+    }
+
+    private FullMapNode getCurrentPosition(FullMap fullMap, PlayerState player, GameInfo game) {
+        for (FullMapNode node : fullMap) {
+            if (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
+            	node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(player)) {
+                return node;
+            }
+        }
+        throw new IllegalStateException("Player position not found!");
+    }
+
+    // !!!!!!! TO BE REMOVED
+    private FullMapNode getFullMapNodeByXY(FullMap fullMap, int x, int y) { // THERE IS ANALOG IN FULLMAP CLASS
+        for (FullMapNode node : fullMap) {
+            if (node.getX() == x && node.getY() == y) {
+                return node;
+            }
+        }
+        throw new IllegalArgumentException("No map node found for the given X and Y coordinates");
+    }
+
+    
 //  public PriorityQueue<GameInfo> getGamesQueue() {
 //	return this.gamesQueue;
 //}
@@ -157,49 +232,49 @@ public class GameService {
 //      });
 //  }
 //    
-//    public static void nextTurn(String gameId) {
-//    	GameInfo game = games.get(gameId);
-//        game.getCurrentPlayer().setPlayerGameState(EMyPlayerGameState.MustWait);
-//        game.setStateId(UUID.randomUUID().toString());
-//        logger.info("Current turn ended for player {} in game {}", game.getCurrentPlayer().getPlayerId(), gameId);
-//
-//        for (Player player : game.getPlayers()) {
-//            if (player != game.getCurrentPlayer()) {
-//                game.setCurrentPlayer(player);
-//                game.getCurrentPlayer().setPlayerGameState(EMyPlayerGameState.MustAct);
-//                logger.info("New turn started for player {} in game {}", game.getCurrentPlayer().getPlayerId(), gameId);
-//                break;
-//            }
-//        }
-//        // Check if maximum turns reached
-//        if (games.get(gameId).getTurnCount() >= MAX_TURNS) {
-//            endGame(gameId, "Maximum turns reached");
-//        } else {
-//            games.get(gameId).setTurnStartTime(System.currentTimeMillis());
-//        }
-//    }
-//    
-//    private static void endGame(String gameId, String reason) {
-//        logger.info("Game {} was ended! Reason: {}", gameId, reason);
-//
-//        GameInfo game = games.get(gameId);
-//        Player currentPlayer = game.getCurrentPlayer();
-//        
-//        // If the current player is found, they lose the game
-//        if (currentPlayer != null) {
-//            currentPlayer.setPlayerGameState(EMyPlayerGameState.Lost);
-//            logger.info("Player {} lost the game: {}", currentPlayer.getPlayerId(), gameId);
-//            
-//            // Set second player as winner
-//            game.getPlayers().stream()
-//                .filter(player -> !player.getPlayerId().equals(currentPlayer.getPlayerId()))
-//                .forEach(player -> {
-//                    player.setPlayerGameState(EMyPlayerGameState.Won);
-//                    logger.info("Player {} won the game: {}", player.getPlayerId(), gameId);
-//                });
-//        }
-//
-//        // Remove game from active games list
-//        games.remove(gameId);
-//    }
+    public static void nextTurn(UniqueGameIdentifier gameID) {
+    	GameInfo game = games.get(gameID);
+        game.getCurrentPlayer().setPlayerGameState(EPlayerGameState.MustWait);
+        game.setStateID(UUID.randomUUID().toString());
+        logger.info("Current turn ended for player {} in game {}", game.getCurrentPlayer().getUniquePlayerID(), gameID.getUniqueGameID());
+
+        for (PlayerState player : game.getPlayers()) {
+            if (player != game.getCurrentPlayer()) {
+                game.setCurrentPlayer(player);
+                game.getCurrentPlayer().setPlayerGameState(EPlayerGameState.MustAct);
+                logger.info("New turn started for player {} in game {}", game.getCurrentPlayer().getUniquePlayerID(), gameID.getUniqueGameID());
+                break;
+            }
+        }
+        // Check if maximum turns reached
+        if (games.get(gameID).getTurnCount() >= MAX_TURNS) {
+            endGame(gameID, "Maximum turns reached");
+        } else {
+            games.get(gameID).setTurnStartTime(System.currentTimeMillis());
+        }
+    }
+    
+    private static void endGame(UniqueGameIdentifier gameID, String reason) {
+        logger.info("Game {} was ended! Reason: {}", gameID.getUniqueGameID(), reason);
+
+        GameInfo game = games.get(gameID);
+        PlayerState currentPlayer = game.getCurrentPlayer();
+        
+        // If the current player is found, they lose the game
+        if (currentPlayer != null) {
+            currentPlayer.setPlayerGameState(EPlayerGameState.Lost);
+            logger.info("Player {} lost the game: {}", currentPlayer.getUniquePlayerID(), gameID);
+            
+            // Set second player as winner
+            game.getPlayers().stream()
+                .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
+                .forEach(player -> {
+                    player.setPlayerGameState(EPlayerGameState.Won);
+                    logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
+                });
+        }
+
+        // Remove game from active games list
+        games.remove(gameID);
+    }
 }

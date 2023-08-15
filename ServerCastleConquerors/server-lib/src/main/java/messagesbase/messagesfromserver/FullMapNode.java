@@ -16,7 +16,7 @@ public final class FullMapNode {
 	private final int MAX_FULL_MAP_Y = 9;
 
 	@XmlElement(name = "playerPositionState", required = true)
-	private final EPlayerPositionState playerPositionState;
+	private EPlayerPositionState playerPositionState;
 
 	@XmlElement(name = "terrain", required = true)
 	private final ETerrain terrain;
@@ -39,7 +39,7 @@ public final class FullMapNode {
 	@Max(MAX_FULL_MAP_Y)
 	private final int Y;
 	
-	private final int ownedByPlayer; // 1 for Player 1, 2 for Player 2, 0 for neutral
+	private int ownedByPlayer; // 1 for Player 1, 2 for Player 2, 0 for neutral
 
 	public FullMapNode() {
 		super();
@@ -82,9 +82,17 @@ public final class FullMapNode {
 	public int getOwnedByPlayer() {
 		return ownedByPlayer;
 	}
+	
+	public void setOwnedByPlayer(int ownedByPlayer) {
+		this.ownedByPlayer = ownedByPlayer;
+	}
 
 	public EPlayerPositionState getPlayerPositionState() {
 		return playerPositionState;
+	}
+	
+	public void setPlayerPositionState(EPlayerPositionState state) {
+		this.playerPositionState = state;
 	}
 
 	public ETerrain getTerrain() {

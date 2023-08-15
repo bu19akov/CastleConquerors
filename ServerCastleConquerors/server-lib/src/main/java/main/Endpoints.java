@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import messagesbase.*;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import exceptions.GenericExampleException;
@@ -58,6 +59,18 @@ public class Endpoints {
     private boolean isGameFull(UniqueGameIdentifier gameID) {
         return GameService.getGames().get(gameID).getPlayers().size() == 2;
     }
+    
+    @PostMapping(value = "/{gameID}/moves", 
+            consumes = MediaType.APPLICATION_XML_VALUE, 
+            produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody ResponseEnvelope<?> sendMove(
+	   @Validated @PathVariable UniqueGameIdentifier gameID,
+	   @Validated @RequestBody PlayerMove playerMove) {
+	
+	    gameService.processMove(gameID, playerMove);
+	    return new ResponseEnvelope<>("Move processed successfully");
+	}
+
     
     @ExceptionHandler({ GenericExampleException.class })
 	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {

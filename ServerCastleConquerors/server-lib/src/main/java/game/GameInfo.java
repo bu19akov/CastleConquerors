@@ -113,4 +113,8 @@ public class GameInfo {
     public void incrementTurnCount() {
         turnCount++;
     }
+    
+    public FullMap getFullMap() {
+    	return this.fullMap;
+    }
 }
