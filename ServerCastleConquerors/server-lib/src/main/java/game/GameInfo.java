@@ -7,6 +7,7 @@ import java.util.Map;
 
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.*;
 
 public class GameInfo {
@@ -21,6 +22,7 @@ public class GameInfo {
     private FullMap fullMap;
     private int turnCount = 0;
     private long turnStartTime = 0;
+    private Map<PlayerState, Map<EMove, Integer>> moveCounter = new HashMap<>(new HashMap<>());
 
     public GameInfo(UniqueGameIdentifier gameID, String stateID, long creationTime) {
         this.gameID = gameID;
@@ -31,6 +33,10 @@ public class GameInfo {
 
     public UniqueGameIdentifier getGameID() {
         return gameID;
+    }
+    
+    public Map<PlayerState, Map<EMove, Integer>> getMoveCounter() {
+    	return this.moveCounter;
     }
 
     public String getStateID() {

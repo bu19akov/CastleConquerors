@@ -107,6 +107,7 @@ public class FullMapGenerator {
     private boolean placeTerrainIfPossible(FullMap halfMap, int x, int y, ETerrain terrain) {
         Optional<FullMapNode> optionalNode = halfMap.get(x, y);
         if (optionalNode.isPresent() && optionalNode.get().getTerrain() == ETerrain.Grass) {
+        	halfMap.remove(halfMap.get(x, y).get());
             halfMap.addDefaultForTerrain(terrain, x, y);
             return true;
         }

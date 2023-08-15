@@ -70,7 +70,6 @@ public class Endpoints {
 	    gameService.processMove(gameID, playerMove);
 	    return new ResponseEnvelope<>("Move processed successfully");
 	}
-
     
     @ExceptionHandler({ GenericExampleException.class })
 	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {

@@ -9,16 +9,21 @@ import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromserver.EPlayerGameState;
 import messagesbase.messagesfromserver.EPlayerPositionState;
+import messagesbase.messagesfromserver.ETerrain;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.PlayerState;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.UUID;
 
@@ -31,6 +36,17 @@ public class GameService {
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     protected static final ConcurrentMap<UniqueGameIdentifier, GameInfo> games = new ConcurrentHashMap<>();
+    private static final Map<FieldTransition, Integer> FIELD_TRANSITION_COST;
+    static {
+        Map<FieldTransition, Integer> costMap = new HashMap<>();
+        costMap.put(new FieldTransition(ETerrain.Grass, ETerrain.Grass), 2);
+        costMap.put(new FieldTransition(ETerrain.Grass, ETerrain.Mountain), 3);
+        costMap.put(new FieldTransition(ETerrain.Mountain, ETerrain.Grass), 3);
+        costMap.put(new FieldTransition(ETerrain.Mountain, ETerrain.Mountain), 4);
+
+        FIELD_TRANSITION_COST = Collections.unmodifiableMap(costMap);
+    }
+
 
     private final PriorityQueue<GameInfo> gamesQueue = new PriorityQueue<>(
         Comparator.comparing(GameInfo::getCreationTime)
@@ -140,6 +156,7 @@ public class GameService {
         
         FullMap fullMap = game.getFullMap();
         PlayerState currentPlayer = game.getCurrentPlayer();
+        
         FullMapNode currentNode = getCurrentPosition(fullMap, currentPlayer, game);
         int currentX = currentNode.getX();
         int currentY = currentNode.getY();
@@ -162,9 +179,23 @@ public class GameService {
                 newX = Math.max(0, currentX - 1);
                 break;
         }
+        
+        FullMapNode nextNode = getFullMapNodeByXY(fullMap, newX, newY); // TODO WATER CHECK
+        int movesRequired = getTransitionCost(currentNode.getTerrain(), nextNode.getTerrain());
+        System.out.println("REQUIRED MOVES: " + movesRequired);
+        Map<EMove, Integer> playerMoveCounter = game.getMoveCounter().computeIfAbsent(currentPlayer, k -> new HashMap<>());
+        
+        if (!playerMoveCounter.containsKey(playerMove.getMove())) {
+            playerMoveCounter.put(playerMove.getMove(), movesRequired);
+            System.out.println(playerMove.getMove().toString() + " WAS ADDED");
+        }
+        
+        int remainingMoves = playerMoveCounter.get(playerMove.getMove());
+        remainingMoves--;
+        System.out.println("REMAINING MOVES: " + remainingMoves);
 
         // Update FullMap with the new player position
-        if (newX != currentX || newY != currentY) {
+        if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
             // Remove player from the current node
             currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
             currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
@@ -173,10 +204,18 @@ public class GameService {
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
             newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
             newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
+            
+            playerMoveCounter.remove(playerMove.getMove());
+        } else {
+            playerMoveCounter.put(playerMove.getMove(), remainingMoves);
         }
 
         // Update the game state
         nextTurn(gameID);
+    }
+    
+    private int getTransitionCost(ETerrain from, ETerrain to) {
+        return FIELD_TRANSITION_COST.get(new FieldTransition(from, to));
     }
 
     private FullMapNode getCurrentPosition(FullMap fullMap, PlayerState player, GameInfo game) {
