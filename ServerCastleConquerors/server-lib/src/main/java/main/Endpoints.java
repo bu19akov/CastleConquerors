@@ -1,5 +1,7 @@
 package main;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import messagesbase.*;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
+import exceptions.GenericExampleException;
 import game.GameService;
 import game.GameInfo;
 
@@ -55,4 +58,11 @@ public class Endpoints {
     private boolean isGameFull(UniqueGameIdentifier gameID) {
         return GameService.getGames().get(gameID).getPlayers().size() == 2;
     }
+    
+    @ExceptionHandler({ GenericExampleException.class })
+	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {
+		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
+		response.setStatus(HttpServletResponse.SC_OK);
+		return result;
+	}
 }
