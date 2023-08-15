@@ -78,7 +78,7 @@ public class GameInfo {
         FullMap filteredMap = new FullMap();
 
         for (FullMapNode node : fullMap.getMapNodes()) {
-            if (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber) {
+            if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);
             } else {
                 FullMapNode maskedNode = new FullMapNode(
