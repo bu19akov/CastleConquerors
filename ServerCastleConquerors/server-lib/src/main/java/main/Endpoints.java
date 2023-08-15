@@ -30,4 +30,20 @@ public class Endpoints {
 	public @ResponseBody UniqueGameIdentifier newGame() {	
 		return gameService.createGame();
 	}
+
+	// example for a POST endpoint based on /games/{gameID}/players
+	@RequestMapping(value = "/{gameID}/players", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
+			@Validated @PathVariable UniqueGameIdentifier gameID,
+			@Validated @RequestBody PlayerRegistration playerRegistration) {
+		UniquePlayerIdentifier newPlayerID =  gameService.registerPlayerToGame(gameID.getUniqueGameID(), playerRegistration);
+
+		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
+		if (GameService.getGames().get(gameID).getPlayers().size() == 2) {
+			GameService.startGame(gameID);
+		}
+		return playerIDMessage;
+	}
 }
+
+

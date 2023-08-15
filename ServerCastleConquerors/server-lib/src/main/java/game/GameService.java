@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import exceptions.GameFullException;
+import exceptions.GameNotFoundException;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromserver.EPlayerGameState;
@@ -55,5 +57,48 @@ public class GameService {
         }
 
         return gameID;
+    }
+    
+    public UniquePlayerIdentifier registerPlayerToGame(String gameID, PlayerRegistration playerReg) {
+        checkIfGameExist(gameID, "register a player");
+
+        if (games.get(gameID).getPlayers().size() >= 2) {
+        	logger.error("Attempted to register a player to a full game: {}", gameID);
+            throw new GameFullException(gameID);
+        }
+        
+        UniquePlayerIdentifier playerID = UniquePlayerIdentifier.random();
+		PlayerState newPlayer = new PlayerState(playerReg.getPlayerUsername(), 
+									  EPlayerGameState.MustWait,
+									  playerID,
+									  false);
+		games.get(gameID).registerPlayer(newPlayer);
+		logger.info("Player {} registered to game {}", playerID, gameID);
+		return playerID;
+    }
+    
+    public static void checkIfGameExist(String gameID, String message) {
+    	if (!games.containsKey(gameID)) {
+        	logger.error("Attempted to {} to a non-existent game: {}", message, gameID);
+        	throw new GameNotFoundException(gameID);
+        }
+    }
+    
+    public static ConcurrentMap<UniqueGameIdentifier, GameInfo> getGames() {
+    	return games;
+    }
+    
+    public static void startGame(UniqueGameIdentifier gameID) {
+    	GameInfo game = games.get(gameID);
+        Iterator<PlayerState> playerIterator = game.getPlayers().iterator();
+        game.setCurrentPlayer(playerIterator.next());  // Set the first player as the current player
+        game.getCurrentPlayer().setPlayerGameState(EPlayerGameState.MustAct);
+        logger.info("Game {} started. Player {} set as the current player", gameID, game.getCurrentPlayer().getUniquePlayerID());
+
+        // Set the second player to wait
+        PlayerState otherPlayer = playerIterator.next();
+        otherPlayer.setPlayerGameState(EPlayerGameState.MustWait);
+        logger.info("Player {} set to wait in game {}", otherPlayer.getUniquePlayerID(), gameID);
+        games.get(gameID).setTurnStartTime(System.currentTimeMillis());
     }
 }
