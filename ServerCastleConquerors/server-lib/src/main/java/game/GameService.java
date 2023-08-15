@@ -165,22 +165,34 @@ public class GameService {
         int newX = currentX;
         int newY = currentY;
 
-        switch(playerMove.getMove()) {
-            case Up:
-                newY = Math.max(0, currentY - 1);
-                break;
-            case Down:
-                newY = Math.min(fullMap.getMaxY(), currentY + 1);
-                break;
-            case Right:
-                newX = Math.min(fullMap.getMaxX(), currentX + 1);
-                break;
-            case Left:
-                newX = Math.max(0, currentX - 1);
-                break;
+        switch (playerMove.getMove()) {
+	        case Up:
+	            newY = currentY - 1;
+	            break;
+	        case Down:
+	            newY = currentY + 1;
+	            break;
+	        case Right:
+	            newX = currentX + 1;
+	            break;
+	        case Left:
+	            newX = currentX - 1;
+	            break;
+	    }
+        
+        if (newX < 0 || newX > fullMap.getMaxX() || newY < 0 || newY > fullMap.getMaxY()) {
+            logger.error("Player {} attempted to move outside the map boundaries!", playerMove.getUniquePlayerID());
+            endGame(gameID, "Player moved outside of the map boundaries!");
+            return;
         }
         
-        FullMapNode nextNode = getFullMapNodeByXY(fullMap, newX, newY); // TODO WATER CHECK
+        FullMapNode nextNode = getFullMapNodeByXY(fullMap, newX, newY);
+        
+        if (nextNode.getTerrain() == ETerrain.Water) {
+            endGame(gameID, "Player moved into the water");
+            return; // Exit the method since the game is ended
+        }
+        
         int movesRequired = getTransitionCost(currentNode.getTerrain(), nextNode.getTerrain());
         System.out.println("REQUIRED MOVES: " + movesRequired);
         Map<EMove, Integer> playerMoveCounter = game.getMoveCounter().computeIfAbsent(currentPlayer, k -> new HashMap<>());
