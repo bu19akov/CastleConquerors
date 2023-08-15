@@ -1,19 +1,22 @@
 package game;
 
 import java.util.Set;
-
-import messagesbase.messagesfromserver.PlayerState;
-
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import messagesbase.UniqueGameIdentifier;
-import messagesbase.messagesfromserver.FullMap;
+import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromserver.*;
 
 public class GameInfo {
     private final UniqueGameIdentifier gameID;
-    private long creationTime;
+    private final long creationTime;
+    private final FullMapGenerator fullMapGenerator = new FullMapGenerator();
+    private final Set<PlayerState> players = new HashSet<>();
+    private final Map<Integer, PlayerState> playerNumber = new HashMap<>();
+
     private String stateID;
-    private Set<PlayerState> players = new HashSet<>();
     private PlayerState currentPlayer;
     private FullMap fullMap;
     private int turnCount = 0;
@@ -23,63 +26,91 @@ public class GameInfo {
         this.gameID = gameID;
         this.stateID = stateID;
         this.creationTime = creationTime;
-        this.fullMap = new FullMap(new HashSet<>());
+        this.fullMap = fullMapGenerator.generateFullMap();
     }
-    
+
     public UniqueGameIdentifier getGameID() {
-    	return this.gameID;
+        return gameID;
     }
 
-	public String getStateID() {
-		return this.stateID;
-	}
+    public String getStateID() {
+        return stateID;
+    }
 
-	public void setStateID(String newStateID) {
-		this.stateID = newStateID;
-	}
+    public void setStateID(String stateID) {
+        this.stateID = stateID;
+    }
 
-	public long getCreationTime() {
-		return creationTime;
-	}
-	
-	public void registerPlayer(PlayerState player) {
-        this.players.add(player);
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void registerPlayer(PlayerState player) {
+        players.add(player);
+        playerNumber.put(players.size(), player);
     }
 
     public Set<PlayerState> getPlayers() {
-        return this.players;
+        return players;
     }
-    
+
     public boolean containsPlayerWithID(String playerID) {
-    	for (PlayerState player : this.players) {
-    		if (player.getUniquePlayerID().equals(playerID)) {
-    			return true;
-    		}
-    	}
-    	return false;
+        return players.stream()
+                .anyMatch(player -> player.getUniquePlayerID().equals(playerID));
     }
-    
+
+    public int getPlayerNumberByPlayerID(UniquePlayerIdentifier playerID) {
+        return playerNumber.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(playerID))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Player ID not found"))
+                .getKey();
+    }
+
+    public FullMap getFilteredMapForPlayer(UniquePlayerIdentifier playerID) {
+        int currentPlayerNumber = getPlayerNumberByPlayerID(playerID);
+        FullMap filteredMap = new FullMap();
+
+        for (FullMapNode node : fullMap.getMapNodes()) {
+            if (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber) {
+                filteredMap.add(node);
+            } else {
+                FullMapNode maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        EPlayerPositionState.NoPlayerPresent,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                );
+                filteredMap.add(maskedNode);
+            }
+        }
+        return filteredMap;
+    }
+
     public PlayerState getCurrentPlayer() {
-    	return this.currentPlayer;
+        return currentPlayer;
     }
-    
-    public void setCurrentPlayer(PlayerState player) {
-    	this.currentPlayer = player;
+
+    public void setCurrentPlayer(PlayerState currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
-    
+
+    public long getTurnStartTime() {
+        return turnStartTime;
+    }
+
     public void setTurnStartTime(long turnStartTime) {
         this.turnStartTime = turnStartTime;
     }
 
-    public long getTurnStartTime() {
-        return this.turnStartTime;
-    }
-
     public int getTurnCount() {
-        return this.turnCount;
+        return turnCount;
     }
 
     public void incrementTurnCount() {
-        this.turnCount++;
+        turnCount++;
     }
 }

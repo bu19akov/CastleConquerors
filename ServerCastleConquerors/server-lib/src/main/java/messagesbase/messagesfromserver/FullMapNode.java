@@ -38,6 +38,8 @@ public final class FullMapNode {
 	@Min(0)
 	@Max(MAX_FULL_MAP_Y)
 	private final int Y;
+	
+	private final int ownedByPlayer; // 1 for Player 1, 2 for Player 2, 0 for neutral
 
 	public FullMapNode() {
 		super();
@@ -47,9 +49,10 @@ public final class FullMapNode {
 		this.playerPositionState = null;
 		this.treasureState = null;
 		this.fortState = null;
+		this.ownedByPlayer = 0;
 	}
 
-	public FullMapNode(ETerrain terrain, EPlayerPositionState playerPos, ETreasureState treasure, EFortState fort, int X, int Y) {
+	public FullMapNode(ETerrain terrain, EPlayerPositionState playerPos, ETreasureState treasure, EFortState fort, int X, int Y, int playerNumber) {
 		super();
 
 		if (terrain == null || playerPos == null || treasure == null || fort == null) {
@@ -65,6 +68,7 @@ public final class FullMapNode {
 		this.playerPositionState = playerPos;
 		this.treasureState = treasure;
 		this.fortState = fort;
+		this.ownedByPlayer = playerNumber;
 	}
 
 	public int getX() {
@@ -73,6 +77,10 @@ public final class FullMapNode {
 
 	public int getY() {
 		return Y;
+	}
+
+	public int getOwnedByPlayer() {
+		return ownedByPlayer;
 	}
 
 	public EPlayerPositionState getPlayerPositionState() {
@@ -102,7 +110,7 @@ public final class FullMapNode {
 
 	@Override
 	public String toString() {
-		return "FMN [P=" + playerPositionState + ", T=" + terrain + ", TS=" + treasureState + ", FS=" + fortState + ", X=" + X + ", Y=" + Y + "]";
+		return "FMN [P=" + playerPositionState + ", T=" + terrain + ", TS=" + treasureState + ", FS=" + fortState + ", X=" + X + ", Y=" + Y + "]\n";
 	}
 
 	@Override

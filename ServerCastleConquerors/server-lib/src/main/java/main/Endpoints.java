@@ -1,49 +1,58 @@
 package main;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import messagesbase.ResponseEnvelope;
-import messagesbase.UniqueGameIdentifier;
-import messagesbase.UniquePlayerIdentifier;
+import messagesbase.*;
 import messagesbase.messagesfromclient.PlayerRegistration;
-import messagesbase.messagesfromserver.ERequestState;
 import messagesbase.messagesfromserver.GameState;
 import game.GameService;
+import game.GameInfo;
 
 @RestController
-@RequestMapping(value = "/games")
+@RequestMapping("/games")
 public class Endpoints {
-    private GameService gameService = new GameService();
-	
-	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody UniqueGameIdentifier newGame() {	
-		return gameService.createGame();
-	}
 
-	// example for a POST endpoint based on /games/{gameID}/players
-	@RequestMapping(value = "/{gameID}/players", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
-			@Validated @PathVariable UniqueGameIdentifier gameID,
-			@Validated @RequestBody PlayerRegistration playerRegistration) {
-		UniquePlayerIdentifier newPlayerID =  gameService.registerPlayerToGame(gameID.getUniqueGameID(), playerRegistration);
+    private final GameService gameService = new GameService();
 
-		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
-		if (GameService.getGames().get(gameID).getPlayers().size() == 2) {
-			GameService.startGame(gameID);
-		}
-		return playerIDMessage;
-	}
+    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+    public @ResponseBody UniqueGameIdentifier createNewGame() {
+        return gameService.createGame();
+    }
+
+    @PostMapping(value = "/{gameID}/players", 
+                 consumes = MediaType.APPLICATION_XML_VALUE, 
+                 produces = MediaType.APPLICATION_XML_VALUE)
+    public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
+            @Validated @PathVariable UniqueGameIdentifier gameID,
+            @Validated @RequestBody PlayerRegistration playerRegistration) {
+
+        UniquePlayerIdentifier newPlayerID = gameService.registerPlayerToGame(gameID, playerRegistration);
+        if (isGameFull(gameID)) {
+            GameService.startGame(gameID);
+        }
+
+        return new ResponseEnvelope<>(newPlayerID);
+    }
+
+    @GetMapping(value = "/{gameID}/states/{playerID}", 
+                produces = MediaType.APPLICATION_XML_VALUE)
+    public @ResponseBody ResponseEnvelope<GameState> getGameState(
+            @Validated @PathVariable UniqueGameIdentifier gameID,
+            @Validated @PathVariable UniquePlayerIdentifier playerID) {
+
+        GameService.checkIfGameExist(gameID, "send a request");
+        GameService.checkIfPlayerExist(gameID, playerID.getUniquePlayerID());
+
+        GameInfo game = GameService.getGames().get(gameID);
+        GameState gameState = new GameState(game.getFilteredMapForPlayer(playerID), 
+                                            game.getPlayers(), 
+                                            "testID");
+        return new ResponseEnvelope<>(gameState);
+    }
+
+    private boolean isGameFull(UniqueGameIdentifier gameID) {
+        return GameService.getGames().get(gameID).getPlayers().size() == 2;
+    }
 }
-
-
