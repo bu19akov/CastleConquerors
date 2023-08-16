@@ -1,44 +1,84 @@
 package main;
 
+import java.util.Scanner;
+
 import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.*;
 
 public class Main {
-    public static void main(String[] args) {
-        ClientNetwork clientNetwork = new ClientNetwork("http://localhost:18235");
-        String gameID = "", playerID1 = "", playerID2 = "";
+	private static ClientNetwork clientNetwork;
+	
+	public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String gameID = "", playerID = "";
         FullMap map;
 
-        try {
-            gameID = clientNetwork.retrieveUniqueGameIdentifier();
-            playerID1 = clientNetwork.sendPlayerRegistration(
-                    new PlayerRegistration("test_username1")
-            );
-            playerID2 = clientNetwork.sendPlayerRegistration(
-                    new PlayerRegistration("test_username2")
-            );
+        // Step 1: Prompt the user to initialize the game or provide a gameID.
+        System.out.println("Press Enter to initialize the game or enter the gameID to join an existing game.");
+        gameID = scanner.nextLine();
+        System.out.println(gameID);
 
-
-            System.out.println("Player1 POV: ");
-            map = clientNetwork.retrieveMapState(playerID1);
-            printMapWithChars(map);
-
-            System.out.println("Moving left");
-            clientNetwork.sendPlayerMove(playerID1, EMove.Left);
-            clientNetwork.sendPlayerMove(playerID2, EMove.Left);
-            clientNetwork.sendPlayerMove(playerID1, EMove.Left);
-            clientNetwork.sendPlayerMove(playerID2, EMove.Left);
-            map = clientNetwork.retrieveMapState(playerID1);
-            printMapWithChars(map);
-
-
-
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+        if (gameID.isEmpty()) {
+            try {
+            	clientNetwork = new ClientNetwork("http://localhost:18235");
+                gameID = clientNetwork.retrieveUniqueGameIdentifier();
+                System.out.println("Game initialized. GameID: " + gameID);
+            } catch (Exception e) {
+                System.out.println("Error initializing game: " + e.getMessage());
+                return;
+            }
+        } else {
+        	try {
+        		clientNetwork = new ClientNetwork("http://localhost:18235", gameID);
+        	} catch (Exception e) {
+                System.out.println("Error initializing game: " + e.getMessage());
+                return;
+            }
         }
-        System.out.println(gameID + " " + playerID1);
-    }
+
+        // Step 2: Register the player.
+        System.out.println("Enter your username:");
+        String username = scanner.nextLine();
+
+        try {
+            playerID = clientNetwork.sendPlayerRegistration(new PlayerRegistration(username));
+            System.out.println("Player registered. PlayerID: " + playerID);
+
+            // Step 3: Display the full map.
+            map = clientNetwork.retrieveMapState(playerID);
+            printMapWithChars(map);
+            System.out.println("Waiting for the other player...");
+        } catch (Exception e) {
+            System.out.println("Error registering player: " + e.getMessage());
+            return;
+        }
+
+        while (true) {
+            try {
+                PlayerState playerState = clientNetwork.getPlayerState(playerID);
+
+                if (playerState.getState() == EPlayerGameState.MustAct) {
+                    System.out.println("It's your turn! Enter a move (Up, Down, Left, Right):");
+                    String moveString = scanner.nextLine();
+
+                    EMove move = EMove.valueOf(moveString);
+                    clientNetwork.sendPlayerMove(playerID, move);
+
+                    // Display the updated map.
+                    map = clientNetwork.retrieveMapState(playerID);
+                    printMapWithChars(map);
+
+                } else if (playerState.getState() == EPlayerGameState.MustWait) {
+                    Thread.sleep(1000); // Sleep for 1 second before checking again.
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error during gameplay: " + e.getMessage());
+                return;
+            }
+        }
+	}
 
     private static int getMapMaxX(FullMap map) {
         int maxX = 0;

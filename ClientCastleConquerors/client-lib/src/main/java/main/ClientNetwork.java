@@ -32,6 +32,13 @@ public class ClientNetwork {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
     }
+    
+    public ClientNetwork(String serverBaseUrl, String gameID) {
+        this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
+        this.gameID = gameID;
+    }
 
     private static void checkGameState(ResponseEnvelope<GameState> gameState) throws ClientNetworkException {
         if (gameState.getState() == ERequestState.Error) {
