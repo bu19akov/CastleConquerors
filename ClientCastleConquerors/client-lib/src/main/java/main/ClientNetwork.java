@@ -4,6 +4,8 @@ import exceptions.ClientNetworkException;
 import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.EMove;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.ERequestState;
 import messagesbase.messagesfromserver.FullMap;
@@ -98,5 +100,22 @@ public class ClientNetwork {
         }
 
         throw new ClientNetworkException("Client not found");
+    }
+
+    public void sendPlayerMove(String playerID, EMove move) throws ClientNetworkException {
+        // h-p(s)://<domain>:<port>/games/<GameID>/moves
+        PlayerMove playerMove = PlayerMove.of(playerID, move);
+        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST)
+                .uri("/" + this.gameID + "/moves/")
+                .body(BodyInserters.fromValue(playerMove))
+                .retrieve().bodyToMono(ResponseEnvelope.class);
+        ResponseEnvelope<?> requestState = webAccess.block();
+
+        if (requestState.getState() == ERequestState.Error) {
+            System.err.println("Client error, errormessage: " + requestState.getExceptionMessage());
+
+            logger.error("Your move was not registered");
+            throw new ClientNetworkException("Movement error!");
+        }
     }
 }

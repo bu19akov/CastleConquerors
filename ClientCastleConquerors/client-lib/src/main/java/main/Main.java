@@ -1,5 +1,6 @@
 package main;
 
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.*;
 
@@ -21,16 +22,17 @@ public class Main {
 
             System.out.println("Player1 POV: ");
             map = clientNetwork.retrieveMapState(playerID1);
-            System.out.println(map.getMaxX() + " " + map.getMaxY());
-            System.out.println("Max X: " + getMapMaxX(map));
-            System.out.println("Max Y: " + getMapMaxY(map));
+            printMapWithChars(map);
 
+            System.out.println("Moving left");
+            clientNetwork.sendPlayerMove(playerID1, EMove.Left);
+            clientNetwork.sendPlayerMove(playerID2, EMove.Left);
+            clientNetwork.sendPlayerMove(playerID1, EMove.Left);
+            clientNetwork.sendPlayerMove(playerID2, EMove.Left);
+            map = clientNetwork.retrieveMapState(playerID1);
             printMapWithChars(map);
 
 
-            System.out.println("Player2 POV: ");
-            FullMap map2 = clientNetwork.retrieveMapState(playerID2);
-            printMapWithChars(map2);
 
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
@@ -58,15 +60,12 @@ public class Main {
     //DEBUG
 
     public static void printMapWithChars(FullMap map) {
-        int xMax=100, yMax=100;
         for (int i = 0; i <= getMapMaxY(map); i++) {
             for (int j = 0; j <= getMapMaxX(map); j++) {
                 System.out.print(translateMapNode(map.get(j, i).get()) + " ");
             }
             System.out.println();
         }
-        System.out.println("Bye bye");
-
     }
 
 
