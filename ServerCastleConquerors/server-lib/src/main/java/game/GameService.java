@@ -209,7 +209,9 @@ public class GameService {
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
             // Remove player from the current node
             currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
-            currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
+            if (currentNode.getFortState() != EFortState.MyFortPresent) {
+            	currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
+            }
 
             // Place player on the new node
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
@@ -349,7 +351,7 @@ public class GameService {
         }
 
         // Remove game from active games list
-        games.remove(gameID);
+        //games.remove(gameID);
     }
 
 }

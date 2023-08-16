@@ -17,7 +17,6 @@ public class Main {
         // Step 1: Prompt the user to initialize the game or provide a gameID.
         System.out.println("Press Enter to initialize the game or enter the gameID to join an existing game.");
         gameID = scanner.nextLine();
-        System.out.println(gameID);
 
         if (gameID.isEmpty()) {
             try {
@@ -57,8 +56,14 @@ public class Main {
         while (true) {
             try {
                 PlayerState playerState = clientNetwork.getPlayerState(playerID);
-
-                if (playerState.getState() == EPlayerGameState.MustAct) {
+                
+                if (playerState.getState() == EPlayerGameState.Won) {
+                	System.out.println("Congratulations! You have won!");
+                	break;
+                } else if (playerState.getState() == EPlayerGameState.Lost) {
+                	System.out.println("It's always hard to say... But you have lost...");
+                	break;
+                } else if (playerState.getState() == EPlayerGameState.MustAct) {
                     System.out.println("It's your turn! Enter a move (Up, Down, Left, Right):");
                     String moveString = scanner.nextLine();
 
@@ -111,7 +116,7 @@ public class Main {
 
     public static String translateMapNode(FullMapNode node) {
         if (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition)
-            return "P";
+            return "*";
         if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition)
             return "E";
         if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent)

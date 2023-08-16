@@ -1,2 +1,8 @@
-<root level="info">
-</root>
+<configuration>
+    <!-- Turn off internal status logging from logback -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <root level="info">
+        <!-- Any other appenders and configurations can go here -->
+    </root>
+</configuration>
