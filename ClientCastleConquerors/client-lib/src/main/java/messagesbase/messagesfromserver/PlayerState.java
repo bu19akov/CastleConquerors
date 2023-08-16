@@ -46,10 +46,6 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.state = state;
 	}
 	
-	public boolean getCollectedTreasure() {
-		return this.collectedTreasure;
-	}
-	
 	public void setCollectedTreasureToTrue() {
 		this.collectedTreasure = true;
 	}
