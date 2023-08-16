@@ -62,6 +62,9 @@ public final class FullMap implements Iterable<FullMapNode> {
 	}
 	
 	public void addDefaultForTerrain(ETerrain terrain, int x, int y) {
+		if (get(x, y).isPresent()) {
+			remove(get(x,y).get());
+		}
 		mapNodes.add(new FullMapNode(terrain, EPlayerPositionState.NoPlayerPresent, ETreasureState.NoOrUnknownTreasureState, EFortState.NoOrUnknownFortState, x, y, 0));
 	}
 

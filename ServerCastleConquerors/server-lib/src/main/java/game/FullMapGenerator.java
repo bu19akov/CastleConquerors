@@ -34,12 +34,12 @@ public class FullMapGenerator {
         return this.fullMap;
     }
 
-    private void populateFullMapForFloodFill(FullMap halfMap) {
+    public void populateFullMapForFloodFill(FullMap halfMap) {
         resetFullMap();
         addNodes(halfMap);
     }
 
-    private void resetFullMap() {
+    public void resetFullMap() {
         fullMap.removeAll(); // Resetting the fullMap
     }
 
@@ -98,7 +98,7 @@ public class FullMapGenerator {
         addNodes(halfMap, 0, 0);
     }
 
-    private FullMap generateHalfMap() {
+    public FullMap generateHalfMap() {
         FullMap halfMap = new FullMap();
         initializeHalfMapWithGrass(halfMap);
         populateRandomTerrain(halfMap, ETerrain.Mountain, randomMountainsCount());
@@ -161,8 +161,7 @@ public class FullMapGenerator {
                 break;
             }
         }
-
-        System.out.println("THERE ARE ISLANDS: " + hasIsland);
+        
         return hasIsland; // true if there's an isolated island, false otherwise
     }
 
@@ -188,7 +187,7 @@ public class FullMapGenerator {
         placeItemOnGrass(halfMap, EFortState.MyFortPresent, ownedByPlayer);
     }
 
-    private void placeItemOnGrass(FullMap halfMap, Enum<?> item, int ownedByPlayer) {
+    public void placeItemOnGrass(FullMap halfMap, Enum<?> item, int ownedByPlayer) {
         while (true) {
             int x = random.nextInt(WIDTH);
             int y = random.nextInt(HEIGHT);
