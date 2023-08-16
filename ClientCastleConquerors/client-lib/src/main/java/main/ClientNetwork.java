@@ -8,6 +8,7 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.ERequestState;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.GameState;
+import messagesbase.messagesfromserver.PlayerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Set;
 
 public class ClientNetwork {
     private static final Logger logger = LoggerFactory.getLogger(ClientNetwork.class);
@@ -26,6 +29,13 @@ public class ClientNetwork {
         this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
+    }
+
+    private static void checkGameState(ResponseEnvelope<GameState> gameState) throws ClientNetworkException {
+        if (gameState.getState() == ERequestState.Error) {
+            System.err.println("Client error, errormessage: " + gameState.getExceptionMessage());
+            throw new ClientNetworkException("Error retrieving map state");
+        }
     }
 
     public String retrieveUniqueGameIdentifier() throws ClientNetworkException {
@@ -63,12 +73,30 @@ public class ClientNetwork {
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
                 .uri("/" + this.gameID + "/states/" + playerID)
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
-        ResponseEnvelope<GameState> resultMap = webAccess.block();
-        if (resultMap.getState() == ERequestState.Error) {
-            System.err.println("Client error, errormessage: " + resultMap.getExceptionMessage());
-            throw new ClientNetworkException("Error retrieving map state");
-        }
-        return resultMap.getData().get().getMap();
+        ResponseEnvelope<GameState> gameState = webAccess.block();
+
+        checkGameState(gameState);
+        return gameState.getData().get().getMap();
     }
 
+    public PlayerState getPlayerState(String playerID) throws ClientNetworkException {
+        // h-p(s)://<domain>:<port>/games/<GameID>/states/<PlayerID>
+        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
+                .uri("/" + this.gameID + "/states/" + playerID)
+                .retrieve().bodyToMono(ResponseEnvelope.class);
+        ResponseEnvelope<GameState> gameState = webAccess.block();
+        checkGameState(gameState);
+        Set<PlayerState> playerStates = gameState.getData().get().getPlayers();
+
+        for (PlayerState playerState : playerStates) {
+            if (playerState.getUniquePlayerID().equals(playerID)) {
+                return playerState;
+            }
+            else if (!playerState.getUniquePlayerID().equals(playerID) && playerState.hasCollectedTreasure()) {
+                // TODO: 2023-08-16 notify about enemy collecting treasure
+            }
+        }
+
+        throw new ClientNetworkException("Client not found");
+    }
 }
