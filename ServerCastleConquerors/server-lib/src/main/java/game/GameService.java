@@ -222,7 +222,7 @@ public class GameService {
                     currentPlayer.setCollectedTreasureToTrue();
             }
             
-            if (newNode.getFortState() == EFortState.EnemyFortPresent && currentPlayer.getCollectedTreasure()) {
+            if (newNode.getFortState() == EFortState.MyFortPresent && currentPlayer.getCollectedTreasure() && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
                 // Player wins!
                 endGame(gameID, "Player " + currentPlayer.getUniquePlayerID() + " has captured the enemy fort with the treasure!", true);
                 return;
@@ -245,8 +245,8 @@ public class GameService {
 
     private FullMapNode getCurrentPosition(FullMap fullMap, PlayerState player, GameInfo game) {
         for (FullMapNode node : fullMap) {
-            if (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
-            	node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(player)) {
+            if ((node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
+            	node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(player)) || node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) { // TRY TO FIX NO PLAYER POSITION FOUND
                 return node;
             }
         }

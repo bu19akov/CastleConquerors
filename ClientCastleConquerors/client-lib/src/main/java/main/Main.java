@@ -52,10 +52,14 @@ public class Main {
             System.out.println("Error registering player: " + e.getMessage());
             return;
         }
-
+        boolean treasureFound = false;
         while (true) {
             try {
                 PlayerState playerState = clientNetwork.getPlayerState(playerID);
+                if (!treasureFound && playerState.hasCollectedTreasure()) {
+                	System.out.println("Congratulations! You have found your treasure! Now find the opponents castle...");
+                	treasureFound = true;
+                }
                 
                 if (playerState.getState() == EPlayerGameState.Won) {
                 	System.out.println("Congratulations! You have won!");
@@ -64,10 +68,20 @@ public class Main {
                 	System.out.println("It's always hard to say... But you have lost...");
                 	break;
                 } else if (playerState.getState() == EPlayerGameState.MustAct) {
-                    System.out.println("It's your turn! Enter a move (Up, Down, Left, Right):");
-                    String moveString = scanner.nextLine();
+                	boolean validMove = false;
+                    EMove move = null;
 
-                    EMove move = EMove.valueOf(moveString);
+                    while (!validMove) {
+                        try {
+                            System.out.println("It's your turn! Enter a move (Up, Down, Left, Right):");
+                            String moveString = scanner.nextLine();
+                            
+                            move = EMove.valueOf(moveString);
+                            validMove = true;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid move. Please enter Up, Down, Left, or Right.");
+                        }
+                    }
                     clientNetwork.sendPlayerMove(playerID, move);
 
                     // Display the updated map.

@@ -195,6 +195,7 @@ public class FullMapGenerator {
             
             if (canPlaceItemOnNode(item, optionalNode)) {
                 replaceNodeWithNewItem(halfMap, item, x, y, ownedByPlayer);
+                System.out.println(item + " on coordinates " + x + " " + y);
                 break;
             }
         }

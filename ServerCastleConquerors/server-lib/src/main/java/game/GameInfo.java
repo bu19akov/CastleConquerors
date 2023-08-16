@@ -80,6 +80,8 @@ public class GameInfo {
         for (FullMapNode node : fullMap.getMapNodes()) {
             if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);
+            } else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && playerNumber.get(currentPlayerNumber).getCollectedTreasure()) {
+            	filteredMap.add(node);
             } else {
                 FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),
