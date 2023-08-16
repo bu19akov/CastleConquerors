@@ -80,6 +80,10 @@ dependencies {
     implementation group: 'org.slf4j', name:'slf4j-api', version: '1.7.36'
     implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.11'
     implementation group: 'ch.qos.logback', name:'logback-core', version: '1.2.11'
+
+
+    // Dependency to run project on M1 mac processors as well
+    implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', version: 'xxx', classifier: 'osx-aarch_64'
 }
 
 processResources {
