@@ -1,5 +1,7 @@
 package game;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import messagesbase.messagesfromserver.*;
@@ -14,8 +16,31 @@ public class FullMapGenerator {
     private FullMap fullMap = new FullMap();
 
     public FullMap generateFullMap() {
-        mergeMaps(generateHalfMap(), generateHalfMap());
+        FullMap firstHalf, secondHalf;
+        
+        do {
+            firstHalf = generateHalfMap();
+            populateFullMapForFloodFill(firstHalf);
+        } while (floodFill());
+        resetFullMap();
+
+        do {
+            secondHalf = generateHalfMap();
+            populateFullMapForFloodFill(secondHalf);
+        } while (floodFill());
+        resetFullMap();
+
+        mergeMaps(firstHalf, secondHalf);
         return this.fullMap;
+    }
+
+    private void populateFullMapForFloodFill(FullMap halfMap) {
+        resetFullMap();
+        addNodes(halfMap);
+    }
+
+    private void resetFullMap() {
+        fullMap.removeAll(); // Resetting the fullMap
     }
 
     private void mergeMaps(FullMap firstHalf, FullMap secondHalf) {
@@ -112,6 +137,50 @@ public class FullMapGenerator {
             return true;
         }
         return false;
+    }
+    
+    public boolean floodFill() {
+        Map<Coordinate, Boolean> visited = new HashMap<>();
+
+        for (FullMapNode node : fullMap.getMapNodes()) {
+            visited.put(new Coordinate(node.getX(), node.getY()), false);
+        }
+
+        for (FullMapNode node : fullMap.getMapNodes()) {
+            if (node.getTerrain() != ETerrain.Water) {
+                checkNode(new Coordinate(node.getX(), node.getY()), visited);
+                break;
+            }
+        }
+
+        boolean hasIsland = false;
+        for (FullMapNode node : fullMap.getMapNodes()) {
+            Coordinate coord = new Coordinate(node.getX(), node.getY());
+            if (node.getTerrain() != ETerrain.Water && !visited.get(coord)) {
+                hasIsland = true;
+                break;
+            }
+        }
+
+        System.out.println("THERE ARE ISLANDS: " + hasIsland);
+        return hasIsland; // true if there's an isolated island, false otherwise
+    }
+
+    private void checkNode(Coordinate coord, Map<Coordinate, Boolean> visited) {
+        if (coord.getX() < 0 || coord.getX() >= WIDTH || coord.getY() < 0 || coord.getY() >= HEIGHT) {
+            return;
+        }
+
+        FullMapNode node = fullMap.get(coord.getX(), coord.getY()).orElse(null);
+        if (node == null || node.getTerrain() == ETerrain.Water || visited.get(coord)) {
+            return;
+        }
+
+        visited.put(coord, true);
+        checkNode(new Coordinate(coord.getX() - 1, coord.getY()), visited);
+        checkNode(new Coordinate(coord.getX() + 1, coord.getY()), visited);
+        checkNode(new Coordinate(coord.getX(), coord.getY() - 1), visited);
+        checkNode(new Coordinate(coord.getX(), coord.getY() + 1), visited);
     }
 
     private void placeTreasureAndFort(FullMap halfMap, int ownedByPlayer) {

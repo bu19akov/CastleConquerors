@@ -58,10 +58,6 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	public String toString() {
 		return "Player [username=" + playerUsername + ", state=" + state + ", " + super.toString() + "]";
 	}
-	
-	public boolean hasCollectedTreasure() {
-		return collectedTreasure;
-	}
 
 	private static <T> T checkNotNull(T reference, String errorMessage) {
 		if (reference == null) {

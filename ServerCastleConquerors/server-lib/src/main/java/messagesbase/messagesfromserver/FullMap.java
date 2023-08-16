@@ -57,6 +57,10 @@ public final class FullMap implements Iterable<FullMapNode> {
 		mapNodes.remove(node);
 	}
 	
+	public void removeAll() {
+		this.mapNodes.clear();
+	}
+	
 	public void addDefaultForTerrain(ETerrain terrain, int x, int y) {
 		mapNodes.add(new FullMapNode(terrain, EPlayerPositionState.NoPlayerPresent, ETreasureState.NoOrUnknownTreasureState, EFortState.NoOrUnknownFortState, x, y, 0));
 	}
