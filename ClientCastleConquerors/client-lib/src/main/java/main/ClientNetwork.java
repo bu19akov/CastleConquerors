@@ -6,6 +6,8 @@ import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.ERequestState;
+import messagesbase.messagesfromserver.FullMap;
+import messagesbase.messagesfromserver.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +45,7 @@ public class ClientNetwork {
 //        return
     }
 
-    public String sendPlayerRegistration(PlayerRegistration playerReg) throws ClientNetworkException {
+    public String sendPlayerRegistration(PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + this.gameID + "/players")
                 .body(BodyInserters.fromValue(playerReg)) // specify the data which is sent to the server
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
@@ -57,5 +59,16 @@ public class ClientNetwork {
         throw new ClientNetworkException("Registration error!");
     }
 
+    public FullMap retrieveMapState(String playerID) throws ClientNetworkException {
+        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
+                .uri("/" + this.gameID + "/states/" + playerID)
+                .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
+        ResponseEnvelope<GameState> resultMap = webAccess.block();
+        if (resultMap.getState() == ERequestState.Error) {
+            System.err.println("Client error, errormessage: " + resultMap.getExceptionMessage());
+            throw new ClientNetworkException("Error retrieving map state");
+        }
+        return resultMap.getData().get().getMap();
+    }
 
 }
