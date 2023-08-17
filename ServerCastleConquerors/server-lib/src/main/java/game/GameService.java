@@ -251,7 +251,7 @@ public class GameService {
                                 	currentPlayer.setRevealedTreasureToTrue();
                                 }
                             }
-                            if (neighborNode.getFortState() == EFortState.MyFortPresent && neighborNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+                            if (currentPlayer.getCollectedTreasure() && neighborNode.getFortState() == EFortState.MyFortPresent && neighborNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
                             	System.out.println("OPPONENTS CASTLE IS REVEALED");
                             	currentPlayer.setRevealedEnemyFortToTrue();
                             }
