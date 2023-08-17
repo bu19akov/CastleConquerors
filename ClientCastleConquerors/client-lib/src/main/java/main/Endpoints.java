@@ -61,7 +61,7 @@ public class Endpoints {
 //		if (!isLoggedIn(session)) return "redirect:/login";
 //    	String loggedInUser = getLoggedInUser(session);
 //        model.addAttribute("loggedInUser", loggedInUser);
-		return "gamePage";
+		return "menuPage";
 	}
 	
 	private boolean isLoggedIn(HttpSession session) {
