@@ -71,6 +71,9 @@
 
         <!-- Toggle Between Forms -->
         <div class="toggle" onclick="toggleForms()">Create Account</div>
+        
+        <!-- Error messages -->
+        <p th:if="${error}" th:text="${error}"></p>
     </div>
     <script>
         function toggleForms() {
