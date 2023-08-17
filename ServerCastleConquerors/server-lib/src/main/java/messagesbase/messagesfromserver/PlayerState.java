@@ -18,6 +18,9 @@ public final class PlayerState extends UniquePlayerIdentifier {
 
 	@XmlElement(name = "collectedTreasure", required = true)
 	private boolean collectedTreasure;
+	
+	@XmlElement(name = "revealedTreasure", required = true)
+	private boolean revealedTreasure;
 
 	public PlayerState() {
 		super();
@@ -32,6 +35,15 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.playerUsername = checkNotNull(playerUsername, "Player username must not be null");
 		this.state = checkNotNull(state, "Player state should not be null");
 		this.collectedTreasure = collectedTreasure;
+		this.revealedTreasure = false;
+	}
+	
+	public boolean getRevealedTreasure() {
+		return this.revealedTreasure;
+	}
+	
+	public void setRevealedTreasureToTrue() {
+		this.revealedTreasure = true;
 	}
 
 	public String getPlayerUsername() {

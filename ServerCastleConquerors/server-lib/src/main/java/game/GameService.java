@@ -34,7 +34,7 @@ public class GameService {
     private static final int MAX_GAMES = 99;
     private static final long EXPIRATION_TIME = 600_000; // 10 minutes
     private static final int MAX_TURNS = 320;
-    private static final int MAX_TURN_TIME = 5_000; // 5 seconds
+    private static final int MAX_TURN_TIME = 10_000; // 10 seconds
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     protected static final ConcurrentMap<UniqueGameIdentifier, GameInfo> games = new ConcurrentHashMap<>();
@@ -209,7 +209,7 @@ public class GameService {
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
             // Remove player from the current node
             currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
-            if (currentNode.getFortState() != EFortState.MyFortPresent) {
+            if (currentNode.getFortState() != EFortState.MyFortPresent && currentNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
             	currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
             }
 
@@ -218,8 +218,41 @@ public class GameService {
             newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
             
             if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
-                newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
-                    currentPlayer.setCollectedTreasureToTrue();
+                    newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+                        currentPlayer.setCollectedTreasureToTrue();
+                }
+            
+            // Reveal neighbor nodes (radius 1), if your new node is mountain
+            if (newNode.getTerrain() == ETerrain.Mountain) {
+            	System.out.println("PLAYER HAS ENTERED A MOUNTAIN");
+                // Loop through each of the 8 neighboring nodes
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        // Skip the center node (the player's current position)
+                        if (dx == 0 && dy == 0) {
+                            continue;
+                        }
+                        
+                        int neighborX = newX + dx;
+                        int neighborY = newY + dy;
+
+                        // Ensure the neighboring node is within the map boundaries
+                        if (neighborX >= 0 && neighborX <= fullMap.getMaxX() &&
+                            neighborY >= 0 && neighborY <= fullMap.getMaxY()) {
+
+                            FullMapNode neighborNode = getFullMapNodeByXY(fullMap, neighborX, neighborY);
+                            
+                            if (neighborNode.getOwnedByPlayer() == 0 || 
+                                neighborNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+                                neighborNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
+                                if (neighborNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+                                	System.out.println("FOUND TREASURE ON: " + neighborX + " " + neighborY);
+                                	currentPlayer.setRevealedTreasureToTrue();
+                                }
+                            }
+                        }
+                    }
+                }
             }
             
             if (newNode.getFortState() == EFortState.MyFortPresent && currentPlayer.getCollectedTreasure() && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
