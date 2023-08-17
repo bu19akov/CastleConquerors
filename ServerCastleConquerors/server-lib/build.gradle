@@ -47,8 +47,6 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
     
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3"
-    
     // automatically restarts the server when the implementation or resources are changed such that you don't need to do it manually
     compileOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
     

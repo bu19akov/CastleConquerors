@@ -13,21 +13,26 @@ import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+@Component
 public class ClientNetwork {
     private static final Logger logger = LoggerFactory.getLogger(ClientNetwork.class);
     private WebClient baseWebClient;
     private String gameID;
 
-    public ClientNetwork(String serverBaseUrl) {
+    @Autowired
+    public ClientNetwork(@Value("${server.base.url}") String serverBaseUrl) {
         this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
@@ -60,8 +65,6 @@ public class ClientNetwork {
             logger.error("Error while fetching UniqueGameIdentifier", e);
             throw new ClientNetworkException("Error retrieving game identifier");
         }
-
-//        return
     }
 
     public String sendPlayerRegistration(PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID

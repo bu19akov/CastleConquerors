@@ -30,7 +30,7 @@ public class Endpoints {
     private EndpointsService endpointsService;
 	
 	@Autowired
-	private RestTemplate restTemplate;
+    private ClientNetwork clientNetwork;
 	
 	@GetMapping("/")
     public String getHomePage() {
@@ -85,63 +85,40 @@ public class Endpoints {
 	}
 	
 	@GetMapping("/game") 
-	public String getGameID(Model model, HttpSession session) {
-	    if (!isLoggedIn(session)) return "redirect:/login";
-	    
-	    String loggedInUser = getLoggedInUser(session);
-	    model.addAttribute("loggedInUser", loggedInUser);
+    public String getGameID(Model model, HttpSession session) throws Exception {
+        if (!isLoggedIn(session)) return "redirect:/login";
 
-	    String url = "http://localhost:18235/games/";
+        String loggedInUser = getLoggedInUser(session);
+        model.addAttribute("loggedInUser", loggedInUser);
 
-	    UniqueGameIdentifier gameID = null;
-
-	    try {
-	        gameID = restTemplate.getForObject(url, UniqueGameIdentifier.class);
-	    } catch (Exception e) {
-	        System.out.println("Can not get Game ID");
-	    }
-
-	    if (gameID != null && !gameID.getUniqueGameID().isBlank()) {
-	        System.out.println("GAME ID: " + gameID.getUniqueGameID());
-	        return "redirect:/game/" + gameID.getUniqueGameID();
-	    } else {
-	    	System.out.println("Game ID can not be empty!");
-	    	return "";
-	    }
-	}
+        try {
+            String gameId = clientNetwork.retrieveUniqueGameIdentifier();  // Use ClientNetwork
+            System.out.println("GAME ID: " + gameId);
+            return "redirect:/game/" + gameId;
+        } catch (Exception e) {
+            System.out.println("Can not get Game ID");
+            return "";  // Consider returning an error page or error message
+        }
+    }
 
 
 	@GetMapping("/game/{gameID}") 
-	public String getGamePage(@Validated @PathVariable String gameID, 
-	                          Model model, 
-	                          HttpSession session) {
-		System.out.println("REDIRECTING TO NEW PAGE...");
-	    if (!isLoggedIn(session)) return "redirect:/login";
-	    
-	    String loggedInUser = getLoggedInUser(session);
-	    model.addAttribute("loggedInUser", loggedInUser);
+    public String getGamePage(@Validated @PathVariable String gameID, Model model, HttpSession session) throws Exception {
+        if (!isLoggedIn(session)) return "redirect:/login";
 
-	    String url = "http://localhost:18235/games/" + gameID + "/players";
-	    PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
-	    ResponseEnvelope<UniquePlayerIdentifier> playerID = null;
-	    
-	    try {
-	        ResponseEntity<ResponseEnvelope<UniquePlayerIdentifier>> responseEntity = restTemplate.exchange(
-	            url, 
-	            HttpMethod.POST, 
-	            new HttpEntity<>(playerReg), 
-	            new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {}
-	        );
-	        playerID = responseEntity.getBody();
-	    } catch (Exception e) {
-	        System.out.println("Wrong player Registration!");
-	    }
+        String loggedInUser = getLoggedInUser(session);
+        model.addAttribute("loggedInUser", loggedInUser);
 
-	    System.out.println(playerID.getData().get().getUniquePlayerID());
-	    return "game";
-	}
-
-
+        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+        try {
+            String uniquePlayerID = clientNetwork.sendPlayerRegistration(playerReg);  // Use ClientNetwork
+            System.out.println(uniquePlayerID);
+        } catch (Exception e) {
+            System.out.println("Wrong player Registration!");
+            // Handle error accordingly
+        }
+        return "game";
+    }
 
 	private boolean isLoggedIn(HttpSession session) {
         return getLoggedInUser(session) != null;
