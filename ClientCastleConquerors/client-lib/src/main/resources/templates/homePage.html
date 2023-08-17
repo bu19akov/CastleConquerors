@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
     <link rel="stylesheet" href="styles/homePage.css">
+    <link rel="stylesheet" href="styles/clouds.css">
+
 </head>
+
 <body>
+
+    <!-- Main Container -->
     <div class="container">
 
+        <!-- Clouds Section -->
         <div class="clouds">
             <div class="cloud"></div>
             <div class="cloud"></div>
@@ -22,25 +29,27 @@
             <div class="cloud"></div>
             <div class="cloud"></div>
         </div>
-        
-        
 
+        <!-- Logo Section -->
         <div class="logo">
             <img src="images/castleconq_nobg.png" alt="Logo">
         </div>
 
+        <!-- Prompt Section -->
         <div class="prompt">
             <span class="blink-text">PRESS ANYWHERE TO CONTINUE</span>
         </div>
-    </div>
+
+    </div> <!-- End of Main Container -->
+
+    <!-- Scripts -->
     <script src="scripts.js"></script>
-   
-   <script>
+    <script>
         document.body.addEventListener('click', function() {
             window.location.href = "login";
         });
     </script>
-    
-</body>
-</html>
 
+</body>
+
+</html>
