@@ -191,6 +191,7 @@ body.fade-out {
 .login-body .input-group {
     position: relative;
     height: 45px;
+    margin-bottom: 15px;
 }
 
 /* input field styles */
@@ -243,9 +244,36 @@ body.fade-out {
 
 /* Styles for the button group */
 .login-body .button-group {
-    display: flex;
-    justify-content: space-between;
+    text-align: center; /* Center align the buttons */
 }
+
+/* Toggle styles */
+.toggle {
+    width: auto;  /* Allow the width to adjust to content */
+    padding: 12px 20px;  /* Consistent padding for touchable area */
+    background-color: #092855;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: Joystix Monospace;
+    text-align: center;
+    
+    border: 2px solid #092855;  /* Border to emphasize the toggle aspect */
+    border-radius: 6px;  /* Rounded border to match your button style */
+    display: inline-block;
+    font-weight: 600;  /* Slightly bolder for emphasis */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+}
+
+/* Hover effects for toggle */
+.toggle:hover {
+    background-color: yellow;
+    color: darkblue;
+    border-color: yellow;  /* Update the border-color on hover to match the button's hover effect */
+}
+
+
 
 /* Button styles */
 .login-body .login-btn, 

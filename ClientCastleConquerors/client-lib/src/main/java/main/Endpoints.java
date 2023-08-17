@@ -5,7 +5,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/")
@@ -21,8 +23,24 @@ public class Endpoints {
         return "login";
     }
 	
-	@GetMapping("/game") 
-	public String getGamePage(Model model, HttpSession session) {
+	@PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password, Model model, HttpSession session) {
+		try {
+            if (EndpointsService.verifyLogin(username, password)) {
+                session.setAttribute("loggedInUser", username);
+                return "redirect:/menu";
+            } else {
+                model.addAttribute("error", "Invalid username or password");
+                return "login";
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        }
+    }
+	
+	@GetMapping("/menu") 
+	public String getMenuPage(Model model, HttpSession session) {
 //		if (!isLoggedIn(session)) return "redirect:/login";
 //    	String loggedInUser = getLoggedInUser(session);
 //        model.addAttribute("loggedInUser", loggedInUser);
