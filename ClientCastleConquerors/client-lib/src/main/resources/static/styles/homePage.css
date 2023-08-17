@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Joystix Monospace';
+    src: url('../fonts/joystix_monospace.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'StgoticW00-Regular';
+    src: url('../fonts/Stgotic_W00_Regular.ttf') format('truetype');
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -75,17 +85,17 @@ body.fade-out {
     animation: moveClouds 25s infinite linear;
 }
 
-.cloud:nth-child(1) { left: 2%;   top: -5%;   background-image: url('cloud1.png'); }
-.cloud:nth-child(2) { left: 80%;  top: -4%;  background-image: url('cloud2.png'); }
-.cloud:nth-child(3) { left: 30%;  top: 5%;  background-image: url('cloud3.png'); }
-.cloud:nth-child(4) { left: 60%;  top: 7%;  background-image: url('cloud1.png'); }
-.cloud:nth-child(5) { left: 7%;  top: 25%;  background-image: url('cloud3.png'); }
-.cloud:nth-child(6) { left: 75%;  top: 30%;  background-image: url('cloud2.png'); }
-.cloud:nth-child(7) { left: 12%;  top: 45%;  background-image: url('cloud1.png'); }
-.cloud:nth-child(8) { left: 60%;  top: 47%;  background-image: url('cloud2.png'); }
-.cloud:nth-child(9) { left: 0%;  top: 61%;  background-image: url('cloud3.png'); }
-.cloud:nth-child(10){ left: 80%;  top: 63%;  background-image: url('cloud1.png'); }
-.cloud:nth-child(11) { left: 40%;   top: 65%;   background-image: url('cloud1.png'); }
+.cloud:nth-child(1) { left: 2%;   top: -5%;   background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(2) { left: 80%;  top: -4%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(3) { left: 30%;  top: 5%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(4) { left: 60%;  top: 7%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(5) { left: 7%;  top: 25%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(6) { left: 75%;  top: 30%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(7) { left: 12%;  top: 45%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(8) { left: 60%;  top: 47%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(9) { left: 0%;  top: 61%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(10){ left: 80%;  top: 63%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(11) { left: 40%;   top: 65%;   background-image: url('../images/cloud1.png'); }
 
 @keyframes levitate1 {
     0%, 100% {
