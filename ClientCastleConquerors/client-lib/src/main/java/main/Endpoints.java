@@ -13,7 +13,6 @@ public class Endpoints {
 	
 	@GetMapping("/")
     public String getHomePage() {
-		System.out.println("I AM HERE");
         return "homePage";
     }
 	

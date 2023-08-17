@@ -12,9 +12,11 @@ buildscript {
 }
 
 // Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
+plugins {
+    id 'org.springframework.boot' version '2.7.8'
+    id 'java'
+    id 'java-library'
+}
 
 //ensures that the res folder (with the logback config) is recognized correctly
 sourceSets {
