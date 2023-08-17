@@ -23,9 +23,9 @@ public class Endpoints {
 	
 	@GetMapping("/game") 
 	public String getGamePage(Model model, HttpSession session) {
-		if (!isLoggedIn(session)) return "redirect:/login";
-    	String loggedInUser = getLoggedInUser(session);
-        model.addAttribute("loggedInUser", loggedInUser);
+//		if (!isLoggedIn(session)) return "redirect:/login";
+//    	String loggedInUser = getLoggedInUser(session);
+//        model.addAttribute("loggedInUser", loggedInUser);
 		return "gamePage";
 	}
 	

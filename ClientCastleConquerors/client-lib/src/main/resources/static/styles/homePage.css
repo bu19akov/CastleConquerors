@@ -171,7 +171,7 @@ body.fade-out {
 /* game title styles */
 .login-body .game-title {
     position: absolute;
-    top: 20%;
+    top: 10%;
     text-shadow: 3px 3px 0 rgba(0,0,0,0.2), -3px -3px 0 rgba(0,0,0,0.2), 3px -3px 0 rgba(0,0,0,0.2), -3px 3px 0 rgba(0,0,0,0.2);
     font-family: StgoticW00-Regular;
     font-size: 3.2rem;
