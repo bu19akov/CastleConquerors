@@ -46,6 +46,7 @@ dependencies {
 	// note the latest Spring boot version is required as it added support for the Java version used in this course
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
     
     // automatically restarts the server when the implementation or resources are changed such that you don't need to do it manually
     compileOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
@@ -83,7 +84,7 @@ dependencies {
 
 
     // Dependency to run project on M1 mac processors as well
-    implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', version: 'xxx', classifier: 'osx-aarch_64'
+    //implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', version: 'xxx', classifier: 'osx-aarch_64'
 }
 
 processResources {
