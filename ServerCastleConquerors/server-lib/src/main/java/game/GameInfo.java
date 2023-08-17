@@ -80,7 +80,7 @@ public class GameInfo {
         for (FullMapNode node : fullMap.getMapNodes()) {
             if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);
-            } else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedTreasure()) {
+            } else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && (playerNumber.get(currentPlayerNumber).getRevealedTreasure() || playerNumber.get(currentPlayerNumber).getCollectedTreasure())) {
             	filteredMap.add(node);
             } else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
             	FullMapNode maskedNode = new FullMapNode(
