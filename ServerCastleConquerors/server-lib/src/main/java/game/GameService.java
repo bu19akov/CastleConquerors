@@ -199,6 +199,7 @@ public class GameService {
         Map<EMove, Integer> playerMoveCounter = game.getMoveCounter().computeIfAbsent(currentPlayer, k -> new HashMap<>());
         
         if (!playerMoveCounter.containsKey(playerMove.getMove())) {
+        	playerMoveCounter.clear();
             playerMoveCounter.put(playerMove.getMove(), movesRequired);
         }
         
@@ -248,6 +249,9 @@ public class GameService {
                                 if (neighborNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
                                 	System.out.println("FOUND TREASURE ON: " + neighborX + " " + neighborY);
                                 	currentPlayer.setRevealedTreasureToTrue();
+                                }
+                                if (neighborNode.getFortState() == EFortState.MyFortPresent && neighborNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+                                	currentPlayer.setRevealedEnemyFortToTrue();
                                 }
                             }
                         }

@@ -19,8 +19,8 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	@XmlElement(name = "collectedTreasure", required = true)
 	private boolean collectedTreasure;
 	
-	@XmlElement(name = "revealedTreasure", required = true)
 	private boolean revealedTreasure;
+	private boolean revealedEnemyFort;
 
 	public PlayerState() {
 		super();
@@ -44,6 +44,14 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	
 	public void setRevealedTreasureToTrue() {
 		this.revealedTreasure = true;
+	}
+	
+	public boolean getRevealedEnemyFort() {
+		return this.revealedEnemyFort;
+	}
+	
+	public void setRevealedEnemyFortToTrue() {
+		this.revealedEnemyFort = true;
 	}
 
 	public String getPlayerUsername() {
