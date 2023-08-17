@@ -31,7 +31,7 @@ public final class UniqueGameIdentifier {
 	}
 
 	public UniqueGameIdentifier() {
-		uniqueGameID = null;
+		uniqueGameID = "";
 	}
 
 	public String getUniqueGameID() {
