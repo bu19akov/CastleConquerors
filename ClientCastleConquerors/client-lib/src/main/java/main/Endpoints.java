@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import exceptions.PlayerIsAlreadyRegisteredException;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
@@ -116,8 +115,8 @@ public class Endpoints {
 
             System.out.println("PLAYER ID: " + uniquePlayerID);
             return "map_example";
-        } catch (PlayerIsAlreadyRegisteredException e) {
-            System.out.println("Player is already registered!");
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
             // Handle error accordingly
         }
         return "game";

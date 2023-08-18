@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import exceptions.GameFullException;
 import exceptions.GameNotFoundException;
-import exceptions.PlayerIsAlreadyRegisteredException;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromserver.EFortState;
