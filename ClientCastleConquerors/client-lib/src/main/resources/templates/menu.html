@@ -31,7 +31,7 @@
 
 <!--basically here is the text that would be here without the .js -->
 <!--but I doubt there's going to be people on this page without logging in-->
-<h2 id="welcomeMessage">Welcome to the game!</h2>
+<h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">default</span>?</h2>
 
 
 <div class="login-container">
@@ -94,13 +94,6 @@
     function signOut() {
 		window.location.href = "logout";
     }
-
-
-    // Not sure where the username will be pulled from, but i hardcoded John here
-
-    let userName = "John";
-    document.getElementById('welcomeMessage').textContent = `Are you ready, ${userName}?`;
-
 </script>
 
 </body>
