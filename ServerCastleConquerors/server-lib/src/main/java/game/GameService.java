@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import exceptions.GameFullException;
 import exceptions.GameNotFoundException;
+import exceptions.PlayerIsAlreadyRegisteredException;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromserver.EFortState;
@@ -89,7 +90,8 @@ public class GameService {
         checkIfGameExist(gameID, "register a player");
         checkIfGameIsFull(gameID);
 
-        UniquePlayerIdentifier playerID = UniquePlayerIdentifier.random();
+        UniquePlayerIdentifier playerID = UniquePlayerIdentifier.of(playerReg.getPlayerUsername());
+        checkIfPlayerIsAlreadyRegistered(gameID, playerID);
         PlayerState newPlayer = new PlayerState(
             playerReg.getPlayerUsername(), 
             EPlayerGameState.MustWait,
@@ -99,21 +101,30 @@ public class GameService {
 
         games.get(gameID).registerPlayer(newPlayer);
 
-        logger.info("Player {} registered to game {}", playerID, gameID);
+        logger.info("Player {} registered to game {}", playerID.getUniquePlayerID(), gameID.getUniqueGameID());
         return playerID;
     }
 
     private void checkIfGameIsFull(UniqueGameIdentifier gameID) {
         if (games.get(gameID).getPlayers().size() >= 2) {
-            logger.error("Attempted to register a player to a full game: {}", gameID);
+            logger.error("Attempted to register a player to a full game: {}", gameID.getUniqueGameID());
             throw new GameFullException(gameID.getUniqueGameID());
         }
     }
 
     public static void checkIfGameExist(UniqueGameIdentifier gameID, String message) {
         if (!games.containsKey(gameID)) {
-            logger.error("Attempted to {} to a non-existent game: {}", message, gameID);
+            logger.error("Attempted to {} to a non-existent game: {}", message, gameID.getUniqueGameID());
             throw new GameNotFoundException(gameID.getUniqueGameID());
+        }
+    }
+    
+    public static void checkIfPlayerIsAlreadyRegistered(UniqueGameIdentifier gameID, UniquePlayerIdentifier playerID) {
+    	for (PlayerState player : games.get(gameID).getPlayers()) {
+    		if (player.getPlayerUsername().equals(playerID.getUniquePlayerID())) {
+    			logger.error("Player {} is already in the game {}",playerID.getUniquePlayerID(), gameID.getUniqueGameID());    			
+    		}
+            throw new PlayerIsAlreadyRegisteredException(playerID.getUniquePlayerID(), gameID.getUniqueGameID());
         }
     }
 
