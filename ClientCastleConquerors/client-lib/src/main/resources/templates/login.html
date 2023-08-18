@@ -84,6 +84,11 @@
         <p class="error-message"></p>
     </div>
     <script>
+		document.querySelectorAll('.input-field').forEach(field => {
+		    field.addEventListener('input', clearErrors);
+		});
+
+		
 	    document.getElementById('createAccountFormElem').addEventListener('submit', function(event) {
 	        validateForm('signup', event);
 	    });
@@ -148,36 +153,40 @@
 	    }
 	
 	    function toggleForms() {
-	        const loginForm = document.getElementById('loginForm');
-	        const createAccountForm = document.getElementById('createAccountForm');
-	        const toggleText = document.querySelector('.toggle');
-	
-	        if (loginForm.style.display === 'none') {
-	            loginForm.style.display = 'block';
-	            createAccountForm.style.display = 'none';
-	            toggleText.textContent = 'Create Account';
-	        } else {
-	            loginForm.style.display = 'none';
-	            createAccountForm.style.display = 'block';
-	            toggleText.textContent = 'Back to Login';
-	        }
-	    }
+		    const loginForm = document.getElementById('loginForm');
+		    const createAccountForm = document.getElementById('createAccountForm');
+		    const toggleText = document.querySelector('.toggle');
+		
+		    clearErrors(); // Clear errors when toggling
+		
+		    if (loginForm.style.display === 'none') {
+		        loginForm.style.display = 'block';
+		        createAccountForm.style.display = 'none';
+		        toggleText.textContent = 'Create Account';
+		    } else {
+		        loginForm.style.display = 'none';
+		        createAccountForm.style.display = 'block';
+		        toggleText.textContent = 'Back to Login';
+		    }
+		}
 	
 	    function validateForm(formType, event) {
-	        const errors = [];
-	        
-	        let username = document.getElementById('newUsername').value.trim();
-	        let password = document.getElementById('newPassword').value.trim();
-	        let email = document.getElementById('email').value.trim();
-	        
-	        validateFields(username, password, email, errors);
-	        
-	        displayErrors(errors);
-	
-	        if (errors.length) {  // Prevent form submission if there are errors
-	            event.preventDefault();
-	        }
-	    }
+		    const errors = [];
+		    
+		    clearErrors(); // Clear errors before validation
+		
+		    let username = document.getElementById('newUsername').value.trim();
+		    let password = document.getElementById('newPassword').value.trim();
+		    let email = document.getElementById('email').value.trim();
+		    
+		    validateFields(username, password, email, errors);
+		    
+		    displayErrors(errors);
+		
+		    if (errors.length) {  // Prevent form submission if there are errors
+		        event.preventDefault();
+		    }
+		}
 	
 	    function validateFields(username, password, email, errors) {
 	        if (!username || /\s/.test(username)) errors.push("Username can't be empty or contain spaces.");
@@ -195,6 +204,12 @@
 	            errorElem.textContent = '';
 	        }
 	    }
+	    
+	    function clearErrors() {
+		    const errorElem = document.querySelector('.error-message');
+		    errorElem.textContent = '';
+		}
+
 	</script>
 
 
