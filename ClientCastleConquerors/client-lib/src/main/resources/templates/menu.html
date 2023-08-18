@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="styles/login.css">
+    <link rel="stylesheet" href="styles/clouds.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+
+<div class="clouds">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+</div>
+
+<h1 class="game-title">Castle Conquerors</h1>
+
+<div class="login-container">
+    <!-- Create Game Button -->
+    <div class="button-group">
+        <button class="login-btn" onclick="window.location.href='game'">Create Game</button>
+    </div>
+
+    <!-- Connect to Existing Game Section -->
+    <div class="input-group">
+        <input type="text" name="gameID" id="gameID" class="input-field" required>
+        <label for="gameID" class="placeholder">Enter Game ID</label>
+    </div>
+    <div class="button-group">
+        <button class="login-btn" onclick="connectToGame()">Connect to Existing Game</button>
+    </div>
+</div>
+
+<script>
+    function connectToGame() {
+        const gameID = document.getElementById('gameID').value;
+        if(gameID) {
+            // Logic to connect to the game using the gameID
+            // Redirect to the game page or whatever necessary actions
+        } else {
+            alert("Please enter a valid Game ID.");
+        }
+    }
+</script>
+
+</body>
+</html>
