@@ -32,7 +32,7 @@ public class ClientNetwork {
     private String gameID;
 
     @Autowired
-    public ClientNetwork(@Value("${server.base.url}") String serverBaseUrl) {
+    public ClientNetwork(@Value("${server.backend.url}") String serverBaseUrl) {
         this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
