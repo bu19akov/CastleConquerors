@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import database.DatabaseRepository;
 import database.Player;
+import messagesbase.messagesfromserver.FullMap;
+import messagesbase.messagesfromserver.FullMapNode;
 
 @Service
 public class EndpointsService {
@@ -23,5 +25,14 @@ public class EndpointsService {
         Player player = new Player(username);
         logger.info("A new player account was created with username {}", username);
         DatabaseRepository.createPlayerAccount(player, password);
+    }
+    
+    public FullMapNode[][] getOrderedArray(FullMap map) {
+        FullMapNode[][] mapNodes = new FullMapNode[map.getMaxY() + 1][map.getMaxX() + 1];
+                for (FullMapNode node : map.getMapNodes()) {
+                    mapNodes[node.getY()][node.getX()] = node;
+                }
+
+        return mapNodes;
     }
 }

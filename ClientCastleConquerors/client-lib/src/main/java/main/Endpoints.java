@@ -2,12 +2,7 @@ package main;
 
 import javax.servlet.http.HttpSession;
 
-import messagesbase.messagesfromserver.FullMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -16,12 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
-import messagesbase.ResponseEnvelope;
-import messagesbase.UniqueGameIdentifier;
-import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
+import messagesbase.messagesfromserver.FullMap;
+import messagesbase.messagesfromserver.FullMapNode;
 
 @Controller
 @RequestMapping("/")
@@ -101,6 +94,8 @@ public class Endpoints {
             return "";  // Consider returning an error page or error message
         }
     }
+	
+	// TODO Get for /game/gameID
 
 
 	@GetMapping("/game/{gameID}") 
@@ -113,7 +108,13 @@ public class Endpoints {
         PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
         try {
             String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);  // Use ClientNetwork
+            FullMap fullMap = clientNetwork.retrieveMapState(gameID, uniquePlayerID);
+            
+            FullMapNode[][] orderedMap = endpointsService.getOrderedArray(fullMap);
+            model.addAttribute("map", orderedMap);
+
             System.out.println(uniquePlayerID);
+            return "map_example";
         } catch (Exception e) {
             System.out.println("Wrong player Registration!");
             // Handle error accordingly
