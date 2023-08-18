@@ -77,6 +77,9 @@ public class GameInfo {
         int currentPlayerNumber = getPlayerNumberByPlayerID(playerID);
         FullMap filteredMap = new FullMap();
 
+        filteredMap.setMaxX(fullMap.getMaxX());
+        filteredMap.setMaxY(fullMap.getMaxY());
+
         for (FullMapNode node : fullMap.getMapNodes()) {
             if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);

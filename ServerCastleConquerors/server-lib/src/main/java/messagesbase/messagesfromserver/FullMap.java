@@ -21,8 +21,10 @@ public final class FullMap implements Iterable<FullMapNode> {
 	@XmlElementWrapper(name = "mapNodes")
 	@XmlElement(name = "mapNode")
 	private final Set<FullMapNode> mapNodes = new HashSet<>();
-	
+
+	@XmlElement(name = "maxX")
 	private int maxX;
+	@XmlElement(name = "maxY")
 	private int maxY;
 
 	public FullMap() {
