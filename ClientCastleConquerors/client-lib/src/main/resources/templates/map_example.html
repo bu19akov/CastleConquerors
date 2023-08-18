@@ -18,17 +18,14 @@
         }
 
         #Grass {
-            color: green;
             background-color: green;
         }
 
         #Mountain {
-            color: gray;
             background-color: gray;
         }
 
         #Water {
-            color: cornflowerblue;
             background-color: cornflowerblue;
         }
     </style>
@@ -37,8 +34,14 @@
 <table>
     <tr th:each="mapRow : ${map}">
         <td th:each="tile : ${mapRow}"
-            th:id="${tile.getTerrain().toString()}"
-            th:text="X+${tile.getX()}+' Y' + ${tile.getY()}"></td>
+            th:id="${tile.getTerrain().toString()}">
+            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).MyPlayerPosition}">🥷</div>
+            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).EnemyPlayerPosition}">👤</div>
+            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).BothPlayerPosition}">👥</div>
+            <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).MyFortPresent}">🏰</div>
+            <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).EnemyFortPresent}">⛫</div>
+            <div th:if="${tile.getTreasureState() == T(messagesbase.messagesfromserver.ETreasureState).MyTreasureIsPresent}">💰</div>
+        </td>
     </tr>
 </table>
 </body>
