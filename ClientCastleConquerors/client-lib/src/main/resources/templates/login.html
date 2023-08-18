@@ -176,7 +176,7 @@
 			// Utility function to check if an input field has text and hide its associated placeholder
 			function checkFieldAndHidePlaceholder(field) {
 			    let associatedLabel = document.querySelector('label[for="' + field.id + '"]');
-			    if (field.value) {
+			    if (field.value || field === document.activeElement) { // added check for focused element
 			        associatedLabel.style.display = 'none';
 			    } else {
 			        associatedLabel.style.display = 'block';
@@ -191,6 +191,27 @@
 	                passwordField.disabled = true;
 	            }
 	        });
+	        
+	        emailField.addEventListener('focus', function () {
+		        checkFieldAndHidePlaceholder(emailField);
+		    });
+		    emailField.addEventListener('blur', function () {
+		        checkFieldAndHidePlaceholder(emailField);
+		    });
+		
+		    usernameField.addEventListener('focus', function () {
+		        checkFieldAndHidePlaceholder(usernameField);
+		    });
+		    usernameField.addEventListener('blur', function () {
+		        checkFieldAndHidePlaceholder(usernameField);
+		    });
+		
+		    passwordField.addEventListener('focus', function () {
+		        checkFieldAndHidePlaceholder(passwordField);
+		    });
+		    passwordField.addEventListener('blur', function () {
+		        checkFieldAndHidePlaceholder(passwordField);
+		    });
 	    }
 	
 	    function toggleForms() {
