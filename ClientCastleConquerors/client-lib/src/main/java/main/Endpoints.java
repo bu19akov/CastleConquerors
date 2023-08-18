@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
+import messagesbase.messagesfromserver.PlayerState;
 
 @Controller
 @RequestMapping("/")
@@ -112,6 +114,9 @@ public class Endpoints {
             
             FullMapNode[][] orderedMap = endpointsService.getOrderedArray(fullMap);
             model.addAttribute("map", orderedMap);
+            
+            PlayerState playerState = clientNetwork.getPlayerState(gameID, uniquePlayerID);
+            model.addAttribute("playerState", playerState);
 
             return "map_example";
         } catch (Exception e) {
@@ -120,6 +125,54 @@ public class Endpoints {
         }
         return "game";
     }
+	
+	@GetMapping("/game/{gameID}/mapdata")
+	@ResponseBody
+	public FullMapNode[][] getMapData(@Validated @PathVariable String gameID, HttpSession session) {
+	    try {
+	        // Check if the user is logged in
+	        if (!isLoggedIn(session)) {
+	            throw new Exception("User not logged in");
+	        }
+
+	        String loggedInUser = getLoggedInUser(session);
+	        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+	        
+	        // Retrieve unique player ID
+	        String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);
+	        
+	        // Fetch and return map data
+	        FullMap fullMap = clientNetwork.retrieveMapState(gameID, uniquePlayerID);
+	        return endpointsService.getOrderedArray(fullMap);
+	    } catch (Exception e) {
+	        System.out.println(e.getMessage());
+	        return null;  // TODO Consider a better error-handling mechanism here
+	    }
+	}
+
+	@GetMapping("/game/{gameID}/playerdata")
+	@ResponseBody
+	public PlayerState getPlayerData(@Validated @PathVariable String gameID, HttpSession session) {
+	    try {
+	        // Check if the user is logged in
+	        if (!isLoggedIn(session)) {
+	            throw new Exception("User not logged in");
+	        }
+
+	        String loggedInUser = getLoggedInUser(session);
+	        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+	        
+	        // Retrieve unique player ID
+	        String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);
+	        
+	        // Fetch and return player state data
+	        return clientNetwork.getPlayerState(gameID, uniquePlayerID);
+	    } catch (Exception e) {
+	        System.out.println(e.getMessage());
+	        return null;  // Consider a better error-handling mechanism here
+	    }
+	}
+
 
 	private boolean isLoggedIn(HttpSession session) {
         return getLoggedInUser(session) != null;

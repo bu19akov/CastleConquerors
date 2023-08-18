@@ -31,6 +31,15 @@
     </style>
 </head>
 <body>
+	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
+	<p th:if="${playerState.hasCollectedTreasure()}">You have collected the treasure! 💎</p>
+	<p th:if="${!playerState.hasCollectedTreasure()}">You haven't collected the treasure yet.</p>
+	<div th:switch="${playerState.getState().toString()}">
+	    <p th:case="'MustAct'">It's your turn to act.</p>
+	    <p th:case="'MustWait'">Please wait for your opponent.</p>
+	    <p th:case="'Won'">Congratulations, you won!</p>
+	    <p th:case="'Lost'">Sorry, you lost. Better luck next time!</p>
+</div>
 <table>
     <tr th:each="mapRow : ${map}">
         <td th:each="tile : ${mapRow}"
@@ -44,5 +53,31 @@
         </td>
     </tr>
 </table>
+<script>
+    function updateGameData() {
+    // Fetch map data
+    fetch(`/game/${gameID}/mapdata`).then(response => {
+        return response.json();
+    }).then(data => {
+        // Logic to update the map based on the data
+    });
+
+    // Fetch player data
+    fetch(`/game/${gameID}/playerdata`).then(response => {
+        return response.json();
+    }).then(data => {
+        // Logic to update playerState based on the data
+        document.querySelector("h2").textContent = data.getPlayerUsername;
+        // ... rest of the playerState logic here
+    });
+
+    // Call the function again after 0.5 seconds
+    setTimeout(updateGameData, 500);
+}
+
+// Start the function
+updateGameData();
+
+</script>
 </body>
 </html>

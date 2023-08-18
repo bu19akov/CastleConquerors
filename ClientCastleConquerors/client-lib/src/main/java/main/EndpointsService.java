@@ -26,7 +26,7 @@ public class EndpointsService {
         DatabaseRepository.createPlayerAccount(player, password);
     }
 
-    public static FullMapNode[][] getOrderedArray(FullMap map) {
+    public FullMapNode[][] getOrderedArray(FullMap map) {
         FullMapNode[][] mapNodes = new FullMapNode[map.getMaxY() + 1][map.getMaxX() + 1];
 
         for (FullMapNode node : map.getMapNodes()) {

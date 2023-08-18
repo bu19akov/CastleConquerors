@@ -87,13 +87,11 @@ public class GameService {
 
     public UniquePlayerIdentifier registerPlayerToGame(UniqueGameIdentifier gameID, PlayerRegistration playerReg) {
         checkIfGameExist(gameID, "register a player");
-        checkIfGameIsFull(gameID);
-
         UniquePlayerIdentifier playerID = UniquePlayerIdentifier.of(playerReg.getPlayerUsername());
-
         if (games.get(gameID).containsPlayerWithID(playerID.getUniquePlayerID())) {
         	return playerID;
         }
+        checkIfGameIsFull(gameID);
         
         PlayerState newPlayer = new PlayerState(
             playerReg.getPlayerUsername(), 
