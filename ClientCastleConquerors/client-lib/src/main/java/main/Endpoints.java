@@ -2,6 +2,7 @@ package main;
 
 import javax.servlet.http.HttpSession;
 
+import messagesbase.messagesfromserver.FullMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -111,7 +112,7 @@ public class Endpoints {
 
         PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
         try {
-            String uniquePlayerID = clientNetwork.sendPlayerRegistration(playerReg);  // Use ClientNetwork
+            String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);  // Use ClientNetwork
             System.out.println(uniquePlayerID);
         } catch (Exception e) {
             System.out.println("Wrong player Registration!");

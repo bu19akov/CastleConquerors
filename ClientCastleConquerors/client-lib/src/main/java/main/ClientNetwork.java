@@ -29,20 +29,12 @@ import java.util.Set;
 public class ClientNetwork {
     private static final Logger logger = LoggerFactory.getLogger(ClientNetwork.class);
     private WebClient baseWebClient;
-    private String gameID;
 
     @Autowired
     public ClientNetwork(@Value("${server.backend.url}") String serverBaseUrl) {
         this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
-    }
-    
-    public ClientNetwork(String serverBaseUrl, String gameID) {
-        this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
-        this.gameID = gameID;
     }
 
     private static void checkGameState(ResponseEnvelope<GameState> gameState) throws ClientNetworkException {
@@ -59,16 +51,15 @@ public class ClientNetwork {
                     .retrieve()
                     .bodyToMono(UniqueGameIdentifier.class)
                     .block();
-            this.gameID = uniqueGameIdentifier.getUniqueGameID();
-            return this.gameID;
+            return uniqueGameIdentifier.getUniqueGameID();
         } catch (Exception e) {
             logger.error("Error while fetching UniqueGameIdentifier", e);
             throw new ClientNetworkException("Error retrieving game identifier");
         }
     }
 
-    public String sendPlayerRegistration(PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID
-        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + this.gameID + "/players")
+    public String sendPlayerRegistration(String gameID, PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID
+        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameID + "/players")
                 .body(BodyInserters.fromValue(playerReg)) // specify the data which is sent to the server
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
         ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
@@ -81,9 +72,9 @@ public class ClientNetwork {
         throw new ClientNetworkException("Registration error!");
     }
 
-    public FullMap retrieveMapState(String playerID) throws ClientNetworkException {
+    public FullMap retrieveMapState(String gameID, String playerID) throws ClientNetworkException {
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
-                .uri("/" + this.gameID + "/states/" + playerID)
+                .uri("/" + gameID + "/states/" + playerID)
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
         ResponseEnvelope<GameState> gameState = webAccess.block();
 
@@ -91,10 +82,10 @@ public class ClientNetwork {
         return gameState.getData().get().getMap();
     }
 
-    public PlayerState getPlayerState(String playerID) throws ClientNetworkException {
+    public PlayerState getPlayerState(String gameID, String playerID) throws ClientNetworkException {
         // h-p(s)://<domain>:<port>/games/<GameID>/states/<PlayerID>
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
-                .uri("/" + this.gameID + "/states/" + playerID)
+                .uri("/" + gameID + "/states/" + playerID)
                 .retrieve().bodyToMono(ResponseEnvelope.class);
         ResponseEnvelope<GameState> gameState = webAccess.block();
         checkGameState(gameState);
@@ -112,11 +103,11 @@ public class ClientNetwork {
         throw new ClientNetworkException("Client not found");
     }
 
-    public void sendPlayerMove(String playerID, EMove move) throws ClientNetworkException {
+    public void sendPlayerMove(String gameID, String playerID, EMove move) throws ClientNetworkException {
         // h-p(s)://<domain>:<port>/games/<GameID>/moves
         PlayerMove playerMove = PlayerMove.of(playerID, move);
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST)
-                .uri("/" + this.gameID + "/moves/")
+                .uri("/" + gameID + "/moves/")
                 .body(BodyInserters.fromValue(playerMove))
                 .retrieve().bodyToMono(ResponseEnvelope.class);
         ResponseEnvelope<?> requestState = webAccess.block();
