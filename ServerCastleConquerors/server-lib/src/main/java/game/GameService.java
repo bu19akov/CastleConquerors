@@ -91,7 +91,11 @@ public class GameService {
         checkIfGameIsFull(gameID);
 
         UniquePlayerIdentifier playerID = UniquePlayerIdentifier.of(playerReg.getPlayerUsername());
-        checkIfPlayerIsAlreadyRegistered(gameID, playerID);
+
+        if (games.get(gameID).containsPlayerWithID(playerID.getUniquePlayerID())) {
+        	return playerID;
+        }
+        
         PlayerState newPlayer = new PlayerState(
             playerReg.getPlayerUsername(), 
             EPlayerGameState.MustWait,
@@ -116,15 +120,6 @@ public class GameService {
         if (!games.containsKey(gameID)) {
             logger.error("Attempted to {} to a non-existent game: {}", message, gameID.getUniqueGameID());
             throw new GameNotFoundException(gameID.getUniqueGameID());
-        }
-    }
-    
-    public static void checkIfPlayerIsAlreadyRegistered(UniqueGameIdentifier gameID, UniquePlayerIdentifier playerID) {
-    	for (PlayerState player : games.get(gameID).getPlayers()) {
-    		if (player.getPlayerUsername().equals(playerID.getUniquePlayerID())) {
-    			logger.error("Player {} is already in the game {}",playerID.getUniquePlayerID(), gameID.getUniqueGameID());    			
-    		}
-            throw new PlayerIsAlreadyRegisteredException(playerID.getUniquePlayerID(), gameID.getUniqueGameID());
         }
     }
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import exceptions.PlayerIsAlreadyRegisteredException;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
@@ -113,10 +114,10 @@ public class Endpoints {
             FullMapNode[][] orderedMap = endpointsService.getOrderedArray(fullMap);
             model.addAttribute("map", orderedMap);
 
-            System.out.println(uniquePlayerID);
+            System.out.println("PLAYER ID: " + uniquePlayerID);
             return "map_example";
-        } catch (Exception e) {
-            System.out.println("Wrong player Registration!");
+        } catch (PlayerIsAlreadyRegisteredException e) {
+            System.out.println("Player is already registered!");
             // Handle error accordingly
         }
         return "game";

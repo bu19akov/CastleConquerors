@@ -47,8 +47,7 @@
     function connectToGame() {
         const gameID = document.getElementById('gameID').value;
         if(gameID) {
-            // Logic to connect to the game using the gameID
-            // Redirect to the game page or whatever necessary actions
+            window.location.href = `/game/${gameID}`;
         } else {
             alert("Please enter a valid Game ID.");
         }
