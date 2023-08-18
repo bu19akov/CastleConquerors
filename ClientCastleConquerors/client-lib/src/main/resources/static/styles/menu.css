@@ -212,7 +212,28 @@ body {
     color: darkblue;
 }
 
+#welcomeMessage {
+    position: absolute;
+    top: 26%;  /* Adjust as needed to position it under the game title */
+    font-family: Joystix Monospace, serif;
+    font-size: 2vw;
+    color: #f6ff00;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.1), -2px -2px 0 rgba(0,0,0,0.1), 2px -2px 0 rgba(0,0,0,0.1), -2px 2px 0 rgba(0,0,0,0.1);
+    z-index: 3;
+    text-align: center;  /* center align the text */
 
+}
+
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+
+    #welcomeMessage {
+        font-size: 1.5rem;
+        top: 22%;  /* Adjust accordingly */
+    }
+}
 
 
 
