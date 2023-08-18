@@ -32,33 +32,32 @@
     <div class="login-container">
         <!-- Login Form -->
         <div id="loginForm">
-			<form action="/login" method="post">
-	            <div class="input-group">
-	                <input type="text" name="username" id="username" class="input-field" required>
-	                <label for="username" class="placeholder">Username</label>
-	            </div>
-	
-	            <div class="input-group">
-	                <input type="password" name="password" id="password" class="input-field" required>
-	                <label for="password" class="placeholder">Password</label>
-	            </div>
+        	<form action="/login" method="post" id="loginFormElem">
+                <div class="input-group">
+                    <input type="text" name="username" id="username" class="input-field" required>
+                    <label for="username" class="placeholder">Username</label>
+                </div>
 
-	            <div class="button-group">
-                    <!-- Toggle Between Forms -->
-                    <button class="toggle" onclick="toggleForms()">Create Account</button>
-                    <button class="login-btn" onclick="window.location.href='game.html'">Login</button>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" class="input-field" required>
+                    <label for="password" class="placeholder">Password</label>
+                </div>
+
+                <div class="button-group">
+	                <button type="button" class="toggle" onclick="toggleForms()">Create Account</button>
+	                <button type="submit" class="login-btn">Login</button>
+
 	            </div>
-	        </form>
+            </form>
         </div>
 
         <!-- Create Account Form -->
-        <div id="createAccountForm" style="display: none;">
-			<form action="/create-account" method="post">
-                <div class="input-group">
-                    <input type="text" name="email" id="email" class="input-field" placeholder=" " required>
-                    <label for="email" class="placeholder">Email</label>
-
-        </div>
+        <div id="createAccountForm" style="display: none;"> <!-- Added ID here and set default display to none -->
+	        <form action="/create-account" method="post" id="createAccountFormElem">
+	            <div class="input-group">
+	                <input type="text" name="email" id="email" class="input-field" placeholder=" " required>
+	                <label for="email" class="placeholder">Email</label>
+	            </div>
 	            <div class="input-group">
 	                <input type="text" name="username" id="newUsername" class="input-field" required>
 	                <label for="newUsername" class="placeholder">Create a username</label>
@@ -71,8 +70,8 @@
 
 <!--                -->
 	            <div class="button-group">
-                    <button class="toggle" onclick="toggleForms()">Back to Login</button>
-                    <button class="signup-btn">Register</button>
+	                <button type="button" class="toggle" onclick="toggleForms()">Back to Login</button>
+	                <button type="submit" class="signup-btn">Register</button>
 	            </div>
 	        </form>
         </div>
@@ -82,24 +81,122 @@
 
         <!-- Error messages -->
         <p th:if="${error}" th:text="${error}"></p>
+        <p class="error-message"></p>
     </div>
     <script>
-        function toggleForms() {
-            const loginForm = document.getElementById('loginForm');
-            const createAccountForm = document.getElementById('createAccountForm');
-            const toggleText = document.querySelector('.toggle');
+	    document.getElementById('createAccountFormElem').addEventListener('submit', function(event) {
+	        validateForm('signup', event);
+	    });
+	
+	    document.addEventListener("DOMContentLoaded", function () {
+	        initFieldValidation();
+	        
+	        // Keydown event listeners
+	        bindEnterToFocus('email', 'newUsername');
+	        bindEnterToFocus('newUsername', 'newPassword');
+	        bindEnterToValidate('newPassword', 'signup');
+	        
+	        function bindEnterToFocus(sourceId, targetId) {
+	            document.getElementById(sourceId).addEventListener('keydown', function (event) {
+	                if (event.key === 'Enter') {
+	                    event.preventDefault();
+	                    document.getElementById(targetId).focus();
+	                }
+	            });
+	        }
+	        
+	        function bindEnterToValidate(sourceId, formType) {
+	            document.getElementById(sourceId).addEventListener('keydown', function (event) {
+	                if (event.key === 'Enter') {
+	                    event.preventDefault();
+	                    validateForm(formType);
+	                }
+	            });
+	        }
+	    });
+	
+	    function initFieldValidation() {
+	        const emailField = document.getElementById('email');
+	        const usernameField = document.getElementById('newUsername');
+	        const passwordField = document.getElementById('newPassword');
+	        const errorElem = document.querySelector('.error-message');
+	
+	        // Disable the fields initially
+	        usernameField.disabled = true;
+	        passwordField.disabled = true;
+	
+	        emailField.addEventListener('input', function () {
+	            let errors = [];
+	            if (/\S+@\S+\.\S+/.test(emailField.value.trim())) {
+	                usernameField.disabled = false;
+	                errorElem.textContent = '';
+	            } else {
+	                usernameField.disabled = true;
+	                passwordField.disabled = true;
+	                errors.push("Email must be in the format xxx@xxx.xx.");
+	                displayErrors(errors);
+	            }
+	        });
+	
+	        usernameField.addEventListener('input', function () {
+	            if (usernameField.value.trim() && !/\s/.test(usernameField.value.trim())) {
+	                passwordField.disabled = false;
+	            } else {
+	                passwordField.disabled = true;
+	            }
+	        });
+	    }
+	
+	    function toggleForms() {
+	        const loginForm = document.getElementById('loginForm');
+	        const createAccountForm = document.getElementById('createAccountForm');
+	        const toggleText = document.querySelector('.toggle');
+	
+	        if (loginForm.style.display === 'none') {
+	            loginForm.style.display = 'block';
+	            createAccountForm.style.display = 'none';
+	            toggleText.textContent = 'Create Account';
+	        } else {
+	            loginForm.style.display = 'none';
+	            createAccountForm.style.display = 'block';
+	            toggleText.textContent = 'Back to Login';
+	        }
+	    }
+	
+	    function validateForm(formType, event) {
+	        const errors = [];
+	        
+	        let username = document.getElementById('newUsername').value.trim();
+	        let password = document.getElementById('newPassword').value.trim();
+	        let email = document.getElementById('email').value.trim();
+	        
+	        validateFields(username, password, email, errors);
+	        
+	        displayErrors(errors);
+	
+	        if (errors.length) {  // Prevent form submission if there are errors
+	            event.preventDefault();
+	        }
+	    }
+	
+	    function validateFields(username, password, email, errors) {
+	        if (!username || /\s/.test(username)) errors.push("Username can't be empty or contain spaces.");
+	        if (!password || /\s/.test(password)) errors.push("Password can't be empty or contain spaces.");
+	        if (password && (!/[A-Z]/.test(password) || password.length < 8)) errors.push("Password must contain at least one capitalized letter and be at least 8 characters long.");
+	        if (!email || !/\S+@\S+\.\S+/.test(email)) errors.push("Email must be in the format xxx@xxx.xx.");
+	    }
+	
+	    function displayErrors(errors) {
+	        const errorElem = document.querySelector('.error-message');
+	        
+	        if (errors.length) {
+	            errorElem.textContent = errors.join(' ');
+	        } else {
+	            errorElem.textContent = '';
+	        }
+	    }
+	</script>
 
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'block';
-                createAccountForm.style.display = 'none';
-                toggleText.textContent = 'Create Account';
-            } else {
-                loginForm.style.display = 'none';
-                createAccountForm.style.display = 'block';
-                toggleText.textContent = 'Login';
-            }
-        }
-    </script>
 
 </body>
 </html>    

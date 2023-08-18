@@ -113,7 +113,6 @@ public class Endpoints {
             FullMapNode[][] orderedMap = endpointsService.getOrderedArray(fullMap);
             model.addAttribute("map", orderedMap);
 
-            System.out.println("PLAYER ID: " + uniquePlayerID);
             return "map_example";
         } catch (Exception e) {
         	System.out.println(e.getMessage());
