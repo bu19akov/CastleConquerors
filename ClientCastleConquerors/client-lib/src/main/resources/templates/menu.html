@@ -30,6 +30,7 @@
 <h1 class="game-title">Castle Conquerors</h1>
 
 <div class="login-container">
+
     <!-- Create Game Button -->
     <div class="button-group">
         <button class="login-btn" onclick="window.location.href='game'">Create Game</button>
@@ -39,15 +40,43 @@
     <div class="input-button-group">
         <div class="input-group">
             <input type="text" name="gameID" id="gameID" class="input-field" required maxlength="5">
-
             <label for="gameID" class="placeholder">GameID</label>
         </div>
         <button class="login-btn" onclick="connectToGame()">Connect to Existing Game</button>
     </div>
 
+    <!-- Game Rules Button -->
+    <div class="button-group">
+        <button class="login-btn" onclick="openModal()">Game rules</button>
+    </div>
+
+    <!-- Sign Out Button -->
+    <div class="button-group">
+        <button class="login-btn sign-out-btn" onclick="signOut()">Sign Out</button>
+    </div>
+
+
+    <!-- Modal for Game Rules -->
+    <div id="gameRulesModal" class="modal" onclick="closeModal()">
+        <div class="modal-content">
+            <h2>Game Rules</h2>
+            <p>sup</p>
+        </div>
+
+    </div>
+
 </div>
 
 <script>
+    function openModal() {
+        document.getElementById('gameRulesModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('gameRulesModal').style.display = 'none';
+    }
+
+
     function connectToGame() {
         const gameID = document.getElementById('gameID').value;
         if(gameID) {
@@ -56,6 +85,11 @@
             alert("Please enter a valid Game ID.");
         }
     }
+
+    function signOut() {
+
+    }
+
 </script>
 
 </body>

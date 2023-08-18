@@ -181,6 +181,40 @@ body {
     width: 100%;        /* Button will take up the entire available space, so it's responsive */
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    text-align: center;
+    background: #3983e4;
+    padding: 20px;
+    width: 42%;
+    height: 80%;
+    border-radius: 15px;
+    overflow: auto;
+}
+
+.sign-out-btn {
+    background-color: darkred;
+}
+
+.sign-out-btn:hover {
+    background-color: white;
+    color: darkblue;
+}
+
+
+
+
 
 
 
