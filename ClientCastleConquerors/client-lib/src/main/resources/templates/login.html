@@ -59,12 +59,12 @@
 	                <label for="email" class="placeholder">Email</label>
 	            </div>
 	            <div class="input-group">
-	                <input type="text" name="username" id="newUsername" class="input-field" required>
+	                <input type="text" name="username" id="newUsername" class="input-field" placeholder=" " required>
 	                <label for="newUsername" class="placeholder">Create a username</label>
 	            </div>
 	
 	            <div class="input-group">
-	                <input type="password" name="password" id="newPassword" class="input-field" required>
+	                <input type="password" name="password" id="newPassword" class="input-field" placeholder=" " required>
 	                <label for="newPassword" class="placeholder">Create password</label>
 	            </div>
 
@@ -79,8 +79,12 @@
 
 
 
-        <!-- Error messages -->
-        <p class="error-message" th:if="${error}" th:text="${error}"></p>
+        <!-- Server-side error display (Thymeleaf) -->
+		<p class="server-error-message" th:if="${error}" th:text="${error}"></p>
+		
+		<!-- Client-side error display -->
+		<p class="client-error-message"></p>
+
     </div>
     <script>
 		document.querySelectorAll('.input-field').forEach(field => {
@@ -130,17 +134,55 @@
 	        passwordField.disabled = true;
 	
 	        emailField.addEventListener('input', function () {
-	            let errors = [];
-	            if (/\S+@\S+\.\S+/.test(emailField.value.trim())) {
-	                usernameField.disabled = false;
-	                errorElem.textContent = '';
-	            } else {
-	                usernameField.disabled = true;
-	                passwordField.disabled = true;
-	                errors.push("Email must be in the format xxx@xxx.xx.");
-	                displayErrors(errors);
-	            }
-	        });
+			    let errors = [];
+			    if (/\S+@\S+\.\S+/.test(emailField.value.trim())) {
+			        usernameField.disabled = false;
+			        clearErrors();
+			        
+			        // Recheck the input fields for validity and hide placeholders accordingly
+			        checkFieldAndHidePlaceholder(usernameField);
+			        checkFieldAndHidePlaceholder(passwordField);
+			    } else {
+			        usernameField.disabled = true;
+			        passwordField.disabled = true;
+			
+			        // Only show the placeholders if the input fields are empty
+			        if(!usernameField.value) {
+			            document.querySelector('label[for="newUsername"]').style.display = 'block';
+			        }
+			        if(!passwordField.value) {
+			            document.querySelector('label[for="newPassword"]').style.display = 'block';
+			        }
+			        
+			        errors.push("Email must be in the format xxx@xxx.xx.");
+			        displayErrors(errors);
+			    }
+			});
+			
+			usernameField.addEventListener('input', function () {
+			    if (usernameField.value.trim() && !/\s/.test(usernameField.value.trim())) {
+			        passwordField.disabled = false;
+			        checkFieldAndHidePlaceholder(usernameField); // Add this line
+			    } else {
+			        passwordField.disabled = true;
+			        checkFieldAndHidePlaceholder(usernameField); // Add this line
+			    }
+			});
+			
+			passwordField.addEventListener('input', function () {
+			    checkFieldAndHidePlaceholder(passwordField);
+			});
+
+			// Utility function to check if an input field has text and hide its associated placeholder
+			function checkFieldAndHidePlaceholder(field) {
+			    let associatedLabel = document.querySelector('label[for="' + field.id + '"]');
+			    if (field.value) {
+			        associatedLabel.style.display = 'none';
+			    } else {
+			        associatedLabel.style.display = 'block';
+			    }
+			}
+
 	
 	        usernameField.addEventListener('input', function () {
 	            if (usernameField.value.trim() && !/\s/.test(usernameField.value.trim())) {
@@ -170,15 +212,11 @@
 		}
 	
 	    function validateForm(formType, event) {
-		    const errors = [];
-		    
-		    clearErrors(); // Clear errors before validation
-		
 		    let username = document.getElementById('newUsername').value.trim();
 		    let password = document.getElementById('newPassword').value.trim();
 		    let email = document.getElementById('email').value.trim();
-		    
-		    validateFields(username, password, email, errors);
+		
+		    let errors = validateFields(username, password, email);
 		    
 		    displayErrors(errors);
 		
@@ -186,27 +224,43 @@
 		        event.preventDefault();
 		    }
 		}
+		
+		function validateFields(username, password, email) {
+		    let errors = [];
+		    if (!username || /\s/.test(username)) errors.push("Username can't be empty or contain spaces.");
+		    if (!password || /\s/.test(password)) errors.push("Password can't be empty or contain spaces.");
+		    if (password && (!/[A-Z]/.test(password) || password.length < 8)) errors.push("Password must contain at least one capitalized letter and be at least 8 characters long.");
+		    if (!email || !/\S+@\S+\.\S+/.test(email)) errors.push("Email must be in the format xxx@xxx.xx.");
+		    return errors;
+		}
 	
-	    function validateFields(username, password, email, errors) {
-	        if (!username || /\s/.test(username)) errors.push("Username can't be empty or contain spaces.");
-	        if (!password || /\s/.test(password)) errors.push("Password can't be empty or contain spaces.");
-	        if (password && (!/[A-Z]/.test(password) || password.length < 8)) errors.push("Password must contain at least one capitalized letter and be at least 8 characters long.");
-	        if (!email || !/\S+@\S+\.\S+/.test(email)) errors.push("Email must be in the format xxx@xxx.xx.");
-	    }
-	
-	    function displayErrors(errors) {
-	        const errorElem = document.querySelector('.error-message');
-	        
-	        if (errors.length) {
-	            errorElem.textContent = errors.join(' ');
-	        } else {
-	            errorElem.textContent = '';
-	        }
-	    }
-	    
 	    function clearErrors() {
-		    const errorElem = document.querySelector('.error-message');
-		    errorElem.textContent = '';
+		    const clientErrorElem = document.querySelector('.client-error-message');
+		    const serverErrorElem = document.querySelector('.server-error-message');
+		    
+		    if (clientErrorElem) {
+		        clientErrorElem.textContent = '';
+		    }
+		    
+		    if (serverErrorElem) {
+		        // This will clear the content
+		        serverErrorElem.textContent = '';
+		        
+		        // This will hide the element
+		        serverErrorElem.style.display = 'none';
+		    }
+		}
+		
+		function displayErrors(errors) {
+		    const errorElem = document.querySelector('.client-error-message');
+		    
+		    if (errorElem) {
+		        if (errors.length) {
+		            errorElem.textContent = errors.join(' ');
+		        } else {
+		            errorElem.textContent = '';
+		        }
+		    }
 		}
 
 	</script>
