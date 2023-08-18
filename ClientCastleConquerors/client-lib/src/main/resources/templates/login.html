@@ -80,8 +80,7 @@
 
 
         <!-- Error messages -->
-        <p th:if="${error}" th:text="${error}"></p>
-        <p class="error-message"></p>
+        <p class="error-message" th:if="${error}" th:text="${error}"></p>
     </div>
     <script>
 		document.querySelectorAll('.input-field').forEach(field => {
