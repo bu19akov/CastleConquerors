@@ -5,9 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
-    <link rel="stylesheet" href="styles/login.css">
+
+<!--    <link rel="stylesheet" href="../static/styles/menu.css">-->
+<!--    <link rel="stylesheet" href="../static/styles/clouds.css">-->
+    <link rel="stylesheet" href="styles/menu.css">
     <link rel="stylesheet" href="styles/clouds.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 
@@ -34,13 +36,15 @@
     </div>
 
     <!-- Connect to Existing Game Section -->
-    <div class="input-group">
-        <input type="text" name="gameID" id="gameID" class="input-field" required>
-        <label for="gameID" class="placeholder">Enter Game ID</label>
-    </div>
-    <div class="button-group">
+    <div class="input-button-group">
+        <div class="input-group">
+            <input type="text" name="gameID" id="gameID" class="input-field" required maxlength="5">
+
+            <label for="gameID" class="placeholder">GameID</label>
+        </div>
         <button class="login-btn" onclick="connectToGame()">Connect to Existing Game</button>
     </div>
+
 </div>
 
 <script>

@@ -8,6 +8,12 @@
     src: url('../fonts/Stgotic_W00_Regular.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'LomoCopyLTStd-Mezzo';
+    src: url("../fonts/LomoCopyLTStd-Mezzo.ttf") format('truetype');
+
+}
+
 body.game-body {
     background-color:#3983e4;
     height: 100vh;
@@ -33,5 +39,5 @@ body.game-body {
     text-align: center;
     margin-top: 20px;
     color: #140024;
-    font-family: Joystix Monospace;
+    font-family: Joystix Monospace, serif;
 }

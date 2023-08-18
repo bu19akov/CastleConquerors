@@ -5,9 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+<!--    <link rel="stylesheet" href="../static/styles/login.css">-->
+<!--    <link rel="stylesheet" href="../static/styles/clouds.css">-->
     <link rel="stylesheet" href="styles/login.css">
     <link rel="stylesheet" href="styles/clouds.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body>
@@ -40,13 +41,12 @@
 	            <div class="input-group">
 	                <input type="password" name="password" id="password" class="input-field" required>
 	                <label for="password" class="placeholder">Password</label>
-	                <span class="toggle-password" onclick="togglePassword()">
-	                    <i class="fas fa-eye"></i>
-	                </span>
 	            </div>
-	
+
 	            <div class="button-group">
-	                <button class="login-btn" onclick="window.location.href='game.html'">Login</button>
+                    <!-- Toggle Between Forms -->
+                    <button class="toggle" onclick="toggleForms()">Create Account</button>
+                    <button class="login-btn" onclick="window.location.href='game.html'">Login</button>
 	            </div>
 	        </form>
         </div>
@@ -54,25 +54,32 @@
         <!-- Create Account Form -->
         <div id="createAccountForm" style="display: none;">
 			<form action="/create-account" method="post">
+                <div class="input-group">
+                    <input type="text" name="email" id="email" class="input-field" placeholder=" " required>
+                    <label for="email" class="placeholder">Email</label>
+
+        </div>
 	            <div class="input-group">
 	                <input type="text" name="username" id="newUsername" class="input-field" required>
-	                <label for="newUsername" class="placeholder">New Username</label>
+	                <label for="newUsername" class="placeholder">Create a username</label>
 	            </div>
 	
 	            <div class="input-group">
 	                <input type="password" name="password" id="newPassword" class="input-field" required>
-	                <label for="newPassword" class="placeholder">New Password</label>
+	                <label for="newPassword" class="placeholder">Create password</label>
 	            </div>
-	
+
+<!--                -->
 	            <div class="button-group">
-	                <button class="signup-btn">Create Account</button>
+                    <button class="toggle" onclick="toggleForms()">Back to Login</button>
+                    <button class="signup-btn">Register</button>
 	            </div>
 	        </form>
         </div>
 
-        <!-- Toggle Between Forms -->
-        <div class="toggle" onclick="toggleForms()">Create Account</div>
-        
+
+
+
         <!-- Error messages -->
         <p th:if="${error}" th:text="${error}"></p>
     </div>

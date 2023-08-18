@@ -14,7 +14,6 @@
 }
 
 
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -47,14 +46,15 @@ body {
     width: 40vw;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     z-index: 3;
 }
 
 .input-group {
     position: relative;
     height: 45px;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
+    margin-top: 8px;
 }
 
 /* input field styles */
@@ -73,15 +73,15 @@ body {
 
 /* Focus styles for input fields */
 .input-field:focus {
-    border: 3px solid #140024;  
+    border: 3px solid #140024;
 }
 
 
 /* should be a better way to do this will check it out later */
 /* basically the placeholder looks fine, but the dots of the password dont look centered at all without this */
 .input-field[type="password"] {
-    padding-top: 4px; 
-    padding-bottom: 8px; 
+    padding-top: 4px;
+    padding-bottom: 8px;
 }
 
 
@@ -89,14 +89,15 @@ body {
 .placeholder {
     position: absolute;
     top: 50%;
-    left: 30px;
-    transform: translateY(-50%);
+    left: 50%; /* Center it horizontally */
+    transform: translate(-50%, -50%); /* Adjust both horizontally and vertically */
     transition: all 0.3s ease;
     color: #F6FF00;
     pointer-events: none;
     font-family: Joystix Monospace, serif;
-    font-size: 2vw;
-    line-height: 1;
+    font-size: 1.5vw;
+    text-align: center;
+    line-height: 1
 }
 
 /* Hide the placeholder when input is focused or has content */
@@ -121,9 +122,9 @@ body {
 }
 
 /* Button styles */
-.login-btn, .toggle, .signup-btn {
+.login-btn, .signup-btn {
     display: inline-block;
-    width: calc(50% - 5px);
+    width: 45vw;
     height: 45px;
     background-color: #092855;
     color: white;
@@ -131,6 +132,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: Joystix Monospace, serif;
+
 }
 
 /* Hover effects for buttons */
@@ -150,6 +152,34 @@ body {
     }
 }
 
+.input-button-group {
+    display: flex;
+    width: fit-content; /* This will make the width fit its content */
+    gap: 1rem;  /* Reduced gap between the input and the button */
+    align-items: center;
+    padding: 0.5rem;  /* Reduced padding around the contents */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* A semi-transparent border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* A gentler box shadow */
+    border-radius: 5px;  /* Slightly rounded corners */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+}
+
+
+.input-field {
+    font-size: 1.5vw;
+    text-align: center;
+}
+
+
+.input-group {
+    flex: 3;            /* Takes 60% of the available width */
+    width: 100%;
+}
+
+.login-btn {
+    flex: 7;            /* Takes 40% of the available width */
+    width: 100%;        /* Button will take up the entire available space, so it's responsive */
+}
 
 
 

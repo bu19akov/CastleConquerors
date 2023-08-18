@@ -9,8 +9,8 @@
 
 .cloud {
     position: absolute;
-    width: 333px;
-    height: 333px;
+    width: 18vw;
+    height: 18vw;
     background-repeat: no-repeat;
     background-size: cover;
     animation: moveClouds 25s infinite linear;
@@ -24,7 +24,7 @@
 .cloud:nth-child(6) { left: 75%;  top: 30%;  background-image: url('../images/cloud2.png'); }
 .cloud:nth-child(7) { left: 12%;  top: 45%;  background-image: url('../images/cloud1.png'); }
 .cloud:nth-child(8) { left: 60%;  top: 47%;  background-image: url('../images/cloud2.png'); }
-.cloud:nth-child(9) { left: 0%;  top: 61%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(9) { top: 61%;  background-image: url('../images/cloud3.png'); }
 .cloud:nth-child(10){ left: 80%;  top: 63%;  background-image: url('../images/cloud1.png'); }
 .cloud:nth-child(11) { left: 40%;   top: 65%;   background-image: url('../images/cloud1.png'); }
 
