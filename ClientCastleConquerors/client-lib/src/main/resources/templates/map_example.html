@@ -6,72 +6,40 @@
     <style>
         table {
             margin: auto;
-            height: auto;
-            width: auto;
+            border-collapse: collapse;
         }
+
         td {
-            width: auto;
-            position: relative;
-            padding-top: 0;
-            padding-bottom: 0;
+            width: 50px;  /* You can adjust this to your preferred square size */
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
             outline: 1px solid #ccc;
         }
 
-        td:after {
-            content: '';
-            display: block;
-            margin-top: 100%;
-        }
-
-        td .content {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-    </style>
-    <style>
         #Grass {
-            text-align: center;
             color: green;
             background-color: green;
         }
-    </style>
-    <style>
+
         #Mountain {
-            text-align: center;
             color: gray;
             background-color: gray;
         }
-    </style>
-    <style>
+
         #Water {
-            text-align: center;
             color: cornflowerblue;
             background-color: cornflowerblue;
         }
     </style>
 </head>
 <body>
-
 <table>
-
-
-<!--    Table rows-->
-<!--    <tr th:each="i : ${#numbers.sequence( 1, maxHeight, 1)}">-->
-<!--        <td th:each="j : ${#numbers.sequence( 1, maxWidth, 1)}" th:text="X+${j}+' Y' + ${i}"></td>-->
-<!--    </tr>-->
-
     <tr th:each="mapRow : ${map}">
         <td th:each="tile : ${mapRow}"
             th:id="${tile.getTerrain().toString()}"
             th:text="X+${tile.getX()}+' Y' + ${tile.getY()}"></td>
-
-        </td>
     </tr>
-
 </table>
 </body>
 </html>
