@@ -31,7 +31,9 @@ public class Endpoints {
     public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
             @Validated @PathVariable UniqueGameIdentifier gameID,
             @Validated @RequestBody PlayerRegistration playerRegistration) {
-
+    	if (GameService.getGames().containsKey(gameID) && GameService.getGames().get(gameID).containsPlayerWithID(playerRegistration.getPlayerUsername())) {
+        	return new ResponseEnvelope<>("IllegalArgumentException", "Player is already registered");
+        }
         UniquePlayerIdentifier newPlayerID = gameService.registerPlayerToGame(gameID, playerRegistration);
         if (isGameFull(gameID)) {
             GameService.startGame(gameID);
@@ -67,7 +69,11 @@ public class Endpoints {
 	   @Validated @PathVariable UniqueGameIdentifier gameID,
 	   @Validated @RequestBody PlayerMove playerMove) {
 	
-	    gameService.processMove(gameID, playerMove);
+    	try {
+    		gameService.processMove(gameID, playerMove);
+    	} catch (IllegalArgumentException e) {
+    		return new ResponseEnvelope<>("IllegalArgumentException", e.getMessage());
+    	}
 	    return new ResponseEnvelope<>("Move processed successfully");
 	}
     

@@ -64,12 +64,11 @@ public class ClientNetwork {
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
         ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
         if (resultReg.getState() == ERequestState.Error) {
-            System.err.println("Client error, errormessage: " + resultReg.getExceptionMessage());
+        	logger.error("Registration error!");
+            throw new ClientNetworkException("Registration error!");
         } else {
             return resultReg.getData().get().getUniquePlayerID();
         }
-        logger.error("Registration error!");
-        throw new ClientNetworkException("Registration error!");
     }
 
     public FullMap retrieveMapState(String gameID, String playerID) throws ClientNetworkException {
@@ -104,7 +103,6 @@ public class ClientNetwork {
     }
 
     public void sendPlayerMove(String gameID, String playerID, EMove move) throws ClientNetworkException {
-        // h-p(s)://<domain>:<port>/games/<GameID>/moves
         PlayerMove playerMove = PlayerMove.of(playerID, move);
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST)
                 .uri("/" + gameID + "/moves/")

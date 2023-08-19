@@ -150,8 +150,12 @@ public class GameService {
         }
     }
     
-    public void processMove(UniqueGameIdentifier gameID, PlayerMove playerMove) {
+    public void processMove(UniqueGameIdentifier gameID, PlayerMove playerMove) throws IllegalArgumentException {
         GameInfo game = games.get(gameID);
+        
+        if (game.getCurrentPlayer() == null) {
+            throw new IllegalArgumentException("Wait for the second player to connect!");
+        }
         
         // Validate if it's the player's turn
         if(!game.getCurrentPlayer().getUniquePlayerID().equals(playerMove.getUniquePlayerID())) {

@@ -31,15 +31,17 @@
     </style>
 </head>
 <body>
+	<input type="hidden" id="gameID" th:value="${gameID}" />
 	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
-	<p th:if="${playerState.hasCollectedTreasure()}">You have collected the treasure! 💎</p>
-	<p th:if="${!playerState.hasCollectedTreasure()}">You haven't collected the treasure yet.</p>
-	<div th:switch="${playerState.getState().toString()}">
-	    <p th:case="'MustAct'">It's your turn to act.</p>
-	    <p th:case="'MustWait'">Please wait for your opponent.</p>
-	    <p th:case="'Won'">Congratulations, you won!</p>
-	    <p th:case="'Lost'">Sorry, you lost. Better luck next time!</p>
-</div>
+	<p id="treasureCollected">You have collected the treasure! 💎</p>
+	<p id="treasureNotCollected">You haven't collected the treasure yet.</p>
+	<div id="playerStateDiv">
+	    <p id="stateMustAct">It's your turn to act.</p>
+	    <p id="stateMustWait">Please wait for your opponent.</p>
+	    <p id="stateWon">Congratulations, you won!</p>
+	    <p id="stateLost">Sorry, you lost. Better luck next time!</p>
+	</div>
+
 <table>
     <tr th:each="mapRow : ${map}">
         <td th:each="tile : ${mapRow}"
@@ -53,31 +55,133 @@
         </td>
     </tr>
 </table>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
+    <button id="upButton" data-move="Up">Up</button>
+    
+    <div style="display: flex; justify-content: space-between; width: 150px;">
+        <button id="leftButton" data-move="Left">Left</button>
+        <button id="rightButton" data-move="Right">Right</button>
+    </div>
+
+    <button id="downButton" data-move="Down">Down</button>
+</div>
+
 <script>
     function updateGameData() {
-    // Fetch map data
-    fetch(`/game/${gameID}/mapdata`).then(response => {
-        return response.json();
-    }).then(data => {
-        // Logic to update the map based on the data
-    });
+	    const gameIDInput = document.getElementById("gameID");
+	    const gameID = gameIDInput ? gameIDInput.value : null;
+	    
+	    if (!gameID) {
+	        console.error("Game ID not found");
+	        return;
+	    }
+	
+	    // Fetch map data
+	    fetch(`/game/${gameID}/mapdata`).then(response => {
+	        return response.json();
+	    }).then(data => {
+	        const mapTable = document.querySelector('table');
+	        // Clear existing map
+	        while (mapTable.firstChild) {
+	            mapTable.removeChild(mapTable.firstChild);
+	        }
+	        data.forEach(row => {
+		    const tr = document.createElement('tr');
+		    row.forEach(tile => {
+		        const td = document.createElement('td');
+		        td.id = tile.terrain;
+		
+		        if (tile.playerPositionState === "MyPlayerPosition") {
+		            td.innerHTML = '🥷';
+		        } else if (tile.playerPositionState === "EnemyPlayerPosition") {
+		            td.innerHTML = '👤';
+		        } else if (tile.playerPositionState === "BothPlayerPosition") {
+		            td.innerHTML = '👥';
+		        }
+		
+		        if (tile.fortState === "MyFortPresent") {
+		            td.innerHTML += '🏰';
+		        } else if (tile.fortState === "EnemyFortPresent") {
+		            td.innerHTML += '⛫';
+		        }
+		
+		        if (tile.treasureState === "MyTreasureIsPresent") {
+		            td.innerHTML += '💰';
+		        }
+		
+		        tr.appendChild(td);
+		    });
+		    mapTable.appendChild(tr);
+		});
 
-    // Fetch player data
-    fetch(`/game/${gameID}/playerdata`).then(response => {
-        return response.json();
-    }).then(data => {
-        // Logic to update playerState based on the data
-        document.querySelector("h2").textContent = data.getPlayerUsername;
-        // ... rest of the playerState logic here
-    });
-
-    // Call the function again after 0.5 seconds
-    setTimeout(updateGameData, 500);
-}
-
-// Start the function
-updateGameData();
-
+	
+	    }).catch(error => {
+	        console.error('Map fetch Error:', error);
+	    });
+	    
+	    // Fetch player data
+	    fetch(`/game/${gameID}/playerdata`).then(response => {
+	        return response.json();
+	    }).then(data => {
+	        if(data.hasCollectedTreasure) {
+		        document.getElementById('treasureCollected').style.display = 'block';
+		        document.getElementById('treasureNotCollected').style.display = 'none';
+		    } else {
+		        document.getElementById('treasureCollected').style.display = 'none';
+		        document.getElementById('treasureNotCollected').style.display = 'block';
+		    }
+		    
+			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
+		    states.forEach(stateID => {
+		        if (stateID === `state${data.state}`) {
+		            document.getElementById(stateID).style.display = 'block';
+		        } else {
+		            document.getElementById(stateID).style.display = 'none';
+		        }
+		    });
+	
+	    }).catch(error => {
+	        console.error('Player fetch Error:', error);
+	    });
+	
+	    // Call the function again after 0.5 seconds
+	    setTimeout(updateGameData, 500);
+	}
+	
+	// Start the function
+	updateGameData();
+	
+	document.querySelectorAll("[data-move]").forEach(button => {
+	    button.addEventListener("click", function() {
+	        const moveDirection = button.getAttribute("data-move");
+	        sendMoveRequest(moveDirection);
+	    });
+	});
+	
+	function sendMoveRequest(moveDirection) {
+	    const gameIDInput = document.getElementById("gameID");
+	    const gameID = gameIDInput ? gameIDInput.value : null;
+	
+	    if (!gameID) {
+	        console.error("Game ID not found");
+	        return;
+	    }
+	
+	    fetch(`/game/${gameID}/move`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/x-www-form-urlencoded',
+	        },
+	        body: `move=${moveDirection}`
+	    })
+	    .then(response => response.text())
+	    .then(result => {
+	        console.log(result);  // Handle the result as required
+	    })
+	    .catch(error => {
+	        console.error('Error:', error);
+	    });
+	}
 </script>
 </body>
 </html>

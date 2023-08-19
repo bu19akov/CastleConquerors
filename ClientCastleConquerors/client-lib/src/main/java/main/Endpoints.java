@@ -3,6 +3,8 @@ package main;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import exceptions.ClientNetworkException;
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
@@ -109,14 +113,20 @@ public class Endpoints {
 
         PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
         try {
-            String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);  // Use ClientNetwork
-            FullMap fullMap = clientNetwork.retrieveMapState(gameID, uniquePlayerID);
+        	clientNetwork.sendPlayerRegistration(gameID, playerReg);  // TODO Check if client is already registered
+        } catch (ClientNetworkException e) {
+        	
+        }
+        try {
+            FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);
             
             FullMapNode[][] orderedMap = endpointsService.getOrderedArray(fullMap);
             model.addAttribute("map", orderedMap);
             
-            PlayerState playerState = clientNetwork.getPlayerState(gameID, uniquePlayerID);
+            PlayerState playerState = clientNetwork.getPlayerState(gameID, loggedInUser);
             model.addAttribute("playerState", playerState);
+            
+            model.addAttribute("gameID", gameID);
 
             return "map_example";
         } catch (Exception e) {
@@ -136,13 +146,9 @@ public class Endpoints {
 	        }
 
 	        String loggedInUser = getLoggedInUser(session);
-	        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
-	        
-	        // Retrieve unique player ID
-	        String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);
 	        
 	        // Fetch and return map data
-	        FullMap fullMap = clientNetwork.retrieveMapState(gameID, uniquePlayerID);
+	        FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);
 	        return endpointsService.getOrderedArray(fullMap);
 	    } catch (Exception e) {
 	        System.out.println(e.getMessage());
@@ -160,19 +166,38 @@ public class Endpoints {
 	        }
 
 	        String loggedInUser = getLoggedInUser(session);
-	        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
-	        
-	        // Retrieve unique player ID
-	        String uniquePlayerID = clientNetwork.sendPlayerRegistration(gameID, playerReg);
 	        
 	        // Fetch and return player state data
-	        return clientNetwork.getPlayerState(gameID, uniquePlayerID);
+	        return clientNetwork.getPlayerState(gameID, loggedInUser);
 	    } catch (Exception e) {
 	        System.out.println(e.getMessage());
 	        return null;  // Consider a better error-handling mechanism here
 	    }
 	}
+	
+	@PostMapping("/game/{gameID}/move")
+	public ResponseEntity<String> sendMove(@PathVariable String gameID,
+	                                       @RequestParam String move,
+	                                       HttpSession session) {
+		System.out.println("MOVE WAS SENT: " + move.toString());
+	    try {
+	        // Ensure user is logged in
+	        if (!isLoggedIn(session)) {
+	            return new ResponseEntity<>("User not logged in", HttpStatus.FORBIDDEN);
+	        }
 
+	        // Retrieve logged-in user and their player ID
+	        String loggedInUser = getLoggedInUser(session);
+
+	        // Send the move command
+	        clientNetwork.sendPlayerMove(gameID, loggedInUser, EMove.valueOf(move));
+
+	        return new ResponseEntity<>("Move accepted", HttpStatus.OK);
+	    } catch (ClientNetworkException e) {
+	    	// TODO logger
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
 
 	private boolean isLoggedIn(HttpSession session) {
         return getLoggedInUser(session) != null;
