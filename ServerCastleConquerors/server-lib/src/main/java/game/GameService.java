@@ -217,13 +217,18 @@ public class GameService {
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
             // Remove player from the current node
             currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            // remove player field occupation if it is not fort or treasure
             if (currentNode.getFortState() != EFortState.MyFortPresent && currentNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
             	currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
             }
 
             // Place player on the new node
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
-            newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+            } else {
+            	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            }
             
             if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
                     newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {

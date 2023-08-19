@@ -81,11 +81,27 @@ public class GameInfo {
         filteredMap.setMaxY(fullMap.getMaxY());
 
         for (FullMapNode node : fullMap.getMapNodes()) {
+        	if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
+        		FullMapNode maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        EPlayerPositionState.MyPlayerPosition,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.EnemyFortPresent,
+                        node.getX(),
+                        node.getY(),
+                        0
+                );
+        		filteredMap.add(maskedNode);
+        	}
+        		
+        	// show my player position
             if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);
-            } else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && (playerNumber.get(currentPlayerNumber).getRevealedTreasure() || playerNumber.get(currentPlayerNumber).getCollectedTreasure())) {
+            } // show my treasure
+            else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && (playerNumber.get(currentPlayerNumber).getRevealedTreasure() || playerNumber.get(currentPlayerNumber).getCollectedTreasure())) {
             	filteredMap.add(node);
-            } else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
+            } // show enemy fort location
+            else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
             	FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),
                         EPlayerPositionState.NoPlayerPresent,
@@ -96,7 +112,8 @@ public class GameInfo {
                         0
                 );
                 filteredMap.add(maskedNode);
-            } else {
+            } // get normal nodes
+            else {
                 FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),
                         EPlayerPositionState.NoPlayerPresent,
