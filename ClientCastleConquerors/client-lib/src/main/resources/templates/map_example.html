@@ -123,13 +123,17 @@
 	    fetch(`/game/${gameID}/playerdata`).then(response => {
 	        return response.json();
 	    }).then(data => {
-	        if(data.hasCollectedTreasure) {
-		        document.getElementById('treasureCollected').style.display = 'block';
-		        document.getElementById('treasureNotCollected').style.display = 'none';
-		    } else {
-		        document.getElementById('treasureCollected').style.display = 'none';
-		        document.getElementById('treasureNotCollected').style.display = 'block';
-		    }
+			if (data && data.hasOwnProperty('collectedTreasure')) {
+			    if(data.collectedTreasure) {
+			        document.getElementById('treasureCollected').style.display = 'block';
+		        	document.getElementById('treasureNotCollected').style.display = 'none';
+			    } else {
+			        document.getElementById('treasureCollected').style.display = 'none';
+		        	document.getElementById('treasureNotCollected').style.display = 'block';
+			    }
+			} else {
+			    console.error('The expected property "collectedTreasure" was not found in the data.');
+			}
 		    
 			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
 		    states.forEach(stateID => {

@@ -94,7 +94,7 @@ public class ClientNetwork {
             if (playerState.getUniquePlayerID().equals(playerID)) {
                 return playerState;
             }
-            else if (!playerState.getUniquePlayerID().equals(playerID) && playerState.hasCollectedTreasure()) {
+            else if (!playerState.getUniquePlayerID().equals(playerID) && playerState.getCollectedTreasure()) {
                 // TODO: 2023-08-16 notify about enemy collecting treasure
             }
         }

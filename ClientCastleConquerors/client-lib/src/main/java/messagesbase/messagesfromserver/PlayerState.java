@@ -18,6 +18,9 @@ public final class PlayerState extends UniquePlayerIdentifier {
 
 	@XmlElement(name = "collectedTreasure", required = true)
 	private boolean collectedTreasure;
+	
+	private boolean revealedTreasure;
+	private boolean revealedEnemyFort;
 
 	public PlayerState() {
 		super();
@@ -32,6 +35,23 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.playerUsername = checkNotNull(playerUsername, "Player username must not be null");
 		this.state = checkNotNull(state, "Player state should not be null");
 		this.collectedTreasure = collectedTreasure;
+		this.revealedTreasure = false;
+	}
+	
+	public boolean getRevealedTreasure() {
+		return this.revealedTreasure;
+	}
+	
+	public void setRevealedTreasureToTrue() {
+		this.revealedTreasure = true;
+	}
+	
+	public boolean getRevealedEnemyFort() {
+		return this.revealedEnemyFort;
+	}
+	
+	public void setRevealedEnemyFortToTrue() {
+		this.revealedEnemyFort = true;
 	}
 
 	public String getPlayerUsername() {
@@ -46,6 +66,10 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.state = state;
 	}
 	
+	public boolean getCollectedTreasure() {
+		return this.collectedTreasure;
+	}
+	
 	public void setCollectedTreasureToTrue() {
 		this.collectedTreasure = true;
 	}
@@ -53,10 +77,6 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	@Override
 	public String toString() {
 		return "Player [username=" + playerUsername + ", state=" + state + ", " + super.toString() + "]";
-	}
-	
-	public boolean hasCollectedTreasure() {
-		return collectedTreasure;
 	}
 
 	private static <T> T checkNotNull(T reference, String errorMessage) {
