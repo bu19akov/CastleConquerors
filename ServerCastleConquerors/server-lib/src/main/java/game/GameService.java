@@ -215,20 +215,27 @@ public class GameService {
 
         // Update FullMap with the new player position
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
-            // Remove player from the current node
-            currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            
             // remove player field occupation if it is not fort or treasure
-            if (currentNode.getFortState() != EFortState.MyFortPresent && currentNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
-            	currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
+            if (currentNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+            	// Remove player from the current node
+                currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+                if (currentNode.getFortState() != EFortState.MyFortPresent && currentNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
+            		currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
+            	}
+            }
+            
+            if (currentNode.getOwnedByPlayer() == 0 && currentNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
+            	currentNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            	if (game.getPlayerNumberByPlayerID(currentPlayer) == 1) {
+            		currentNode.setOwnedByPlayer(2);
+            	} else {
+            		currentNode.setOwnedByPlayer(1);
+            	}
             }
 
             // Place player on the new node
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
-            if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
-            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
-            } else {
-            	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
-            }
             
             if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
                     newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
@@ -277,8 +284,17 @@ public class GameService {
                 endGame(gameID, "Player " + currentPlayer.getUniquePlayerID() + " has captured the enemy fort with the treasure!", true);
                 return;
             }
-            
-            newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
+
+            // NEW
+            if (newNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && newNode.getFortState() != EFortState.MyFortPresent && newNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
+            	newNode.setOwnedByPlayer(0);
+            	newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+            } else if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)){
+            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+            } else {
+            	newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
+            	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            }
             
             playerMoveCounter.remove(playerMove.getMove());
         } else {
