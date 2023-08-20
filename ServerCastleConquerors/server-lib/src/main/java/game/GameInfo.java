@@ -13,13 +13,14 @@ import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.*;
 
 public class GameInfo {
+	private static final int FAKE_OPPONENT_POSITION_TURNS = 16;
     private final UniqueGameIdentifier gameID;
     private final long creationTime;
     private final FullMapGenerator fullMapGenerator = new FullMapGenerator();
     private final Set<PlayerState> players = new HashSet<>();
     private final Map<Integer, PlayerState> playerNumber = new HashMap<>();
 
-    int randomX = -1, randomY = -1;
+    int fakeOpponentX = -1, fakeOpponentY = -1;
     private String stateIDBackUp;
     private String stateID;
     private PlayerState currentPlayer;
@@ -86,6 +87,18 @@ public class GameInfo {
         filteredMap.setMaxY(fullMap.getMaxY());
 
         for (FullMapNode node : fullMap.getMapNodes()) {
+        	if (getTurnCount() > FAKE_OPPONENT_POSITION_TURNS && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
+        		FullMapNode maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        EPlayerPositionState.EnemyPlayerPosition,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                );
+                filteredMap.add(maskedNode);
+        	}
         	if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
         		FullMapNode maskedNode;
         		if (currentPlayer.getCollectedTreasure()) {
@@ -188,8 +201,8 @@ public class GameInfo {
             }
         }
         
-        if (randomX != -1 && randomY != -1) {
-        	Optional<FullMapNode> randomNodeOpt = filteredMap.get(randomX, randomY);
+        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS && fakeOpponentX != -1 && fakeOpponentY != -1) {
+        	Optional<FullMapNode> randomNodeOpt = filteredMap.get(fakeOpponentX, fakeOpponentY);
             if (randomNodeOpt.isPresent()) {
                 FullMapNode randomNode = randomNodeOpt.get();
                 if (randomNode.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition) {
@@ -204,36 +217,13 @@ public class GameInfo {
         if (this.stateID != this.stateIDBackUp) {
         	System.out.println(stateID);
         	this.stateIDBackUp = this.stateID;
-	        if (getTurnCount() <= 16) {
+	        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS) {
 	            int randomX = rand.nextInt(filteredMap.getMaxX() + 1);
 	            int randomY = rand.nextInt(filteredMap.getMaxY() + 1);
 	
-	            this.randomX = randomX;
-	            this.randomY = randomY;
+	            this.fakeOpponentX = randomX;
+	            this.fakeOpponentY = randomY;
 	        } 
-//	        else {
-//	            // show real opponent's location
-//	        	int x = -1, y = -1;
-//	        	for (FullMapNode node : fullMap) {
-//	                if ((node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
-//	                	node.getOwnedByPlayer() != getPlayerNumberByPlayerID(currentPlayer))) { 
-//	                    x = node.getX();
-//	                    y = node.getY();
-//	                    break;
-//	                }
-//	            }
-//	        	if (x != -1 && y != -1) {
-//	        		Optional<FullMapNode> nodeOpt = filteredMap.get(x, y);
-//	        		if (nodeOpt.isPresent()) {
-//	                    FullMapNode node = nodeOpt.get();
-//	                    if (node.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition && node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
-//	                    	node.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
-//	                    } else {
-//	                    	node.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
-//	                    }
-//	                }
-//	        	}
-//	        }
         }
         return filteredMap;
     }
