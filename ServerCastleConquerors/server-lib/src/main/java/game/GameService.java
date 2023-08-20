@@ -237,10 +237,6 @@ public class GameService {
             // Place player on the new node
             FullMapNode newNode = getFullMapNodeByXY(fullMap, newX, newY);
             
-            if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
-                    newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
-                        currentPlayer.setCollectedTreasureToTrue();
-                }
             
             // Reveal neighbor nodes (radius 1), if your new node is mountain
             if (newNode.getTerrain() == ETerrain.Mountain) {
@@ -278,12 +274,6 @@ public class GameService {
                     }
                 }
             }
-            
-            if (newNode.getFortState() == EFortState.MyFortPresent && currentPlayer.getCollectedTreasure() && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
-                // Player wins!
-                endGame(gameID, "Player " + currentPlayer.getUniquePlayerID() + " has captured the enemy fort with the treasure!", true);
-                return;
-            }
 
             // NEW
             if (newNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && newNode.getFortState() != EFortState.MyFortPresent && newNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
@@ -294,6 +284,17 @@ public class GameService {
             } else {
             	newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
             	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            }
+            
+            if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && 
+                    newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+                        currentPlayer.setCollectedTreasureToTrue();
+                }
+            
+            if (newNode.getFortState() == EFortState.MyFortPresent && currentPlayer.getCollectedTreasure() && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+                // Player wins!
+                endGame(gameID, "Player " + currentPlayer.getUniquePlayerID() + " has captured the enemy fort with the treasure!", true);
+                return;
             }
             
             playerMoveCounter.remove(playerMove.getMove());
