@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
@@ -17,6 +19,8 @@ public class GameInfo {
     private final Set<PlayerState> players = new HashSet<>();
     private final Map<Integer, PlayerState> playerNumber = new HashMap<>();
 
+    int randomX = -1, randomY = -1;
+    private String stateIDBackUp;
     private String stateID;
     private PlayerState currentPlayer;
     private FullMap fullMap;
@@ -76,6 +80,7 @@ public class GameInfo {
     public FullMap getFilteredMapForPlayer(UniquePlayerIdentifier playerID) {
         int currentPlayerNumber = getPlayerNumberByPlayerID(playerID);
         FullMap filteredMap = new FullMap();
+        Random rand = new Random(); // Create a Random instance to decide enemy's position
 
         filteredMap.setMaxX(fullMap.getMaxX());
         filteredMap.setMaxY(fullMap.getMaxY());
@@ -109,7 +114,16 @@ public class GameInfo {
         		
         	// show my player position
         	else if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
-                filteredMap.add(node);
+        		FullMapNode maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        node.getPlayerPositionState(),
+                        node.getTreasureState(),
+                        node.getFortState(),
+                        node.getX(),
+                        node.getY(),
+                        node.getOwnedByPlayer()
+                );
+                filteredMap.add(maskedNode);
             } // show my treasure
             else if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
             	FullMapNode maskedNode;
@@ -137,7 +151,16 @@ public class GameInfo {
                 filteredMap.add(maskedNode);
             }
             else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && (playerNumber.get(currentPlayerNumber).getRevealedTreasure() || playerNumber.get(currentPlayerNumber).getCollectedTreasure())) {
-            	filteredMap.add(node);
+            	FullMapNode maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        node.getPlayerPositionState(),
+                        node.getTreasureState(),
+                        node.getFortState(),
+                        node.getX(),
+                        node.getY(),
+                        node.getOwnedByPlayer()
+                );
+                filteredMap.add(maskedNode);
             } // show enemy fort location
             else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
             	FullMapNode maskedNode = new FullMapNode(
@@ -163,6 +186,54 @@ public class GameInfo {
                 );
                 filteredMap.add(maskedNode);
             }
+        }
+        
+        if (randomX != -1 && randomY != -1) {
+        	Optional<FullMapNode> randomNodeOpt = filteredMap.get(randomX, randomY);
+            if (randomNodeOpt.isPresent()) {
+                FullMapNode randomNode = randomNodeOpt.get();
+                if (randomNode.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition) {
+                	randomNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+                } else {
+                    randomNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+                }
+            }
+        }
+        
+        // For the first 16 turns, determine random x and y
+        if (this.stateID != this.stateIDBackUp) {
+        	System.out.println(stateID);
+        	this.stateIDBackUp = this.stateID;
+	        if (getTurnCount() <= 16) {
+	            int randomX = rand.nextInt(filteredMap.getMaxX() + 1);
+	            int randomY = rand.nextInt(filteredMap.getMaxY() + 1);
+	
+	            this.randomX = randomX;
+	            this.randomY = randomY;
+	        } 
+//	        else {
+//	            // show real opponent's location
+//	        	int x = -1, y = -1;
+//	        	for (FullMapNode node : fullMap) {
+//	                if ((node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
+//	                	node.getOwnedByPlayer() != getPlayerNumberByPlayerID(currentPlayer))) { 
+//	                    x = node.getX();
+//	                    y = node.getY();
+//	                    break;
+//	                }
+//	            }
+//	        	if (x != -1 && y != -1) {
+//	        		Optional<FullMapNode> nodeOpt = filteredMap.get(x, y);
+//	        		if (nodeOpt.isPresent()) {
+//	                    FullMapNode node = nodeOpt.get();
+//	                    if (node.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition && node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
+//	                    	node.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+//	                    } else {
+//	                    	node.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+//	                    }
+//	                }
+//	        	}
+//	        }
         }
         return filteredMap;
     }

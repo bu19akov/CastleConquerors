@@ -390,6 +390,7 @@ public class GameService {
         } else {
             games.get(gameID).setTurnStartTime(System.currentTimeMillis());
         }
+        game.incrementTurnCount();
     }
     
     private static void endGame(UniqueGameIdentifier gameID, String reason, boolean currentPlayerWins) {
