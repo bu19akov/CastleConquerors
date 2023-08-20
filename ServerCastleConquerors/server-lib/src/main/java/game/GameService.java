@@ -215,7 +215,7 @@ public class GameService {
 
         // Update FullMap with the new player position
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
-        	if (currentNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer) && currentNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+        	if (currentNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer) && (currentNode.getTreasureState() == ETreasureState.MyTreasureIsPresent || currentNode.getFortState() == EFortState.MyFortPresent)) {
         		currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
         	}
             // remove player field occupation if it is not fort or treasure
@@ -320,7 +320,7 @@ public class GameService {
             	node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(player)) || node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) { // TRY TO FIX NO PLAYER POSITION FOUND
                 return node;
             }
-            if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(player)) {
+            if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && (node.getTreasureState() == ETreasureState.MyTreasureIsPresent || node.getFortState() == EFortState.MyFortPresent) && node.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(player)) {
             	return node; // TRY TO FIX enemy treasure is shown for my player, and for origin player it disappears
             }
         }
