@@ -98,6 +98,43 @@ public class GameInfo {
             if (node.getTreasureState() != ETreasureState.MyTreasureIsPresent && (node.getOwnedByPlayer() == 0 || node.getOwnedByPlayer() == currentPlayerNumber)) {
                 filteredMap.add(node);
             } // show my treasure
+            else if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+            	FullMapNode maskedNode;
+            	if (node.getOwnedByPlayer() != currentPlayerNumber) {
+            		maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        EPlayerPositionState.MyPlayerPosition,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                    );
+            	} else {
+            		if (playerNumber.get(currentPlayerNumber).getRevealedTreasure()) {
+            			maskedNode = new FullMapNode(
+                            node.getTerrain(),
+                            EPlayerPositionState.NoPlayerPresent, // hide enemy when he enters your treasure
+                            ETreasureState.MyTreasureIsPresent,
+                            EFortState.NoOrUnknownFortState,
+                            node.getX(),
+                            node.getY(),
+                            0
+                        );
+            		} else {
+            			maskedNode = new FullMapNode(
+                            node.getTerrain(),
+                            EPlayerPositionState.NoPlayerPresent, // hide enemy when he enters your treasure
+                            ETreasureState.NoOrUnknownTreasureState,
+                            EFortState.NoOrUnknownFortState,
+                            node.getX(),
+                            node.getY(),
+                            0
+                        );
+            		}
+            	}
+                filteredMap.add(maskedNode);
+            }
             else if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() == currentPlayerNumber && (playerNumber.get(currentPlayerNumber).getRevealedTreasure() || playerNumber.get(currentPlayerNumber).getCollectedTreasure())) {
             	filteredMap.add(node);
             } // show enemy fort location

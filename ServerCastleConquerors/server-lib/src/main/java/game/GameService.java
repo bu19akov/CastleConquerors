@@ -215,7 +215,9 @@ public class GameService {
 
         // Update FullMap with the new player position
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
-            
+        	if (currentNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer) && currentNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+        		currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+        	}
             // remove player field occupation if it is not fort or treasure
             if (currentNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
             	// Remove player from the current node
@@ -281,8 +283,10 @@ public class GameService {
             	newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
             } else if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)){
             	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+            } else if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition); // TRY TO FIX enemy treasure is shown for my player, and for origin player it disappears
             } else {
-            	newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));  // TODO check BothPlayer
+            	newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
             	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
             }
             
@@ -315,6 +319,9 @@ public class GameService {
             if ((node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && 
             	node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(player)) || node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) { // TRY TO FIX NO PLAYER POSITION FOUND
                 return node;
+            }
+            if (node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(player)) {
+            	return node; // TRY TO FIX enemy treasure is shown for my player, and for origin player it disappears
             }
         }
         throw new IllegalStateException("Player position not found!");
