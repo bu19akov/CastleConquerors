@@ -101,7 +101,26 @@ public class Endpoints {
         }
     }
 	
-	@GetMapping("/game/{gameID}")
+	@GetMapping("/game/ai/easy")
+    public String startGameWithAIEasy(Model model, HttpSession session) throws Exception {
+        if (!isLoggedIn(session)) return "redirect:/login";
+
+        String loggedInUser = getLoggedInUser(session);
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+        try {
+            String gameId = clientNetwork.connectPlayerToAIGameEasy(playerReg);  // Use ClientNetwork
+            System.out.println("GAME ID: " + gameId);
+            return "redirect:/game/" + gameId;
+        } catch (Exception e) {
+            System.out.println("Can not get Game ID");
+            return "";  // Consider returning an error page or error message
+        }
+    }
+
+
+	@GetMapping("/game/{gameID}") 
     public String getGamePage(@Validated @PathVariable String gameID, Model model, HttpSession session) throws Exception {
         if (!isLoggedIn(session)) return "redirect:/login";
 
@@ -110,9 +129,9 @@ public class Endpoints {
 
         PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
         try {
-        	clientNetwork.sendPlayerRegistration(gameID, playerReg);
+        	clientNetwork.sendPlayerRegistration(gameID, playerReg);  // TODO Check if client is already registered
         } catch (ClientNetworkException e) {
-            System.out.println(e.getMessage());
+        	
         }
         try {
             FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);
@@ -122,7 +141,7 @@ public class Endpoints {
             
             PlayerState playerState = clientNetwork.getPlayerState(gameID, loggedInUser);
             model.addAttribute("playerState", playerState);
-
+            
             model.addAttribute("gameID", gameID);
 
             return "map_example";
@@ -161,8 +180,9 @@ public class Endpoints {
 	        if (!isLoggedIn(session)) {
 	            throw new Exception("User not logged in");
 	        }
-	        String loggedInUser = getLoggedInUser(session);
 
+	        String loggedInUser = getLoggedInUser(session);
+	        
 	        // Fetch and return player state data
 	        return clientNetwork.getPlayerState(gameID, loggedInUser);
 	    } catch (Exception e) {
@@ -170,23 +190,6 @@ public class Endpoints {
 	        return null;  // Consider a better error-handling mechanism here
 	    }
 	}
-    @GetMapping("/game/{gameID}/opponentdata")
-    @ResponseBody
-    public PlayerState getOpponentData(@Validated @PathVariable String gameID, HttpSession session) {
-        try {
-            // Check if the user is logged in
-            if (!isLoggedIn(session)) {
-                throw new Exception("User not logged in");
-            }
-            String loggedInUser = getLoggedInUser(session);
-
-            // Fetch and return player state data
-            return clientNetwork.getOpponentState(gameID, loggedInUser);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;  // Consider a better error-handling mechanism here
-        }
-    }
 	
 	@PostMapping("/game/{gameID}/move")
 	public ResponseEntity<String> sendMove(@PathVariable String gameID,

@@ -50,6 +50,11 @@
         <button class="login-btn" onclick="connectToGame()">Connect to Existing Game</button>
     </div>
 
+    <!-- Play vs AI Button -->
+    <div class="button-group">
+        <button class="login-btn" onclick="window.location.href='game/ai/easy'">Play vs. easy AI</button>
+    </div>
+
     <!-- Game Rules Button -->
     <div class="button-group">
         <button class="login-btn" onclick="openModal()">Game rules</button>
@@ -80,7 +85,6 @@
     function closeModal() {
         document.getElementById('gameRulesModal').style.display = 'none';
     }
-
 
     function connectToGame() {
         const gameID = document.getElementById('gameID').value;

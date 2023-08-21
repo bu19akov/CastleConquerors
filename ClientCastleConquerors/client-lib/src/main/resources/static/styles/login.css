@@ -119,7 +119,7 @@ body {
 }
 
 /* Button styles */
-.login-btn, .toggle, .signup-btn {
+.login-btn, .toggle, .signup-btn  {
     display: inline-block;
     width: calc(50% - 5px);
     height: 45px;
@@ -163,7 +163,60 @@ body {
     }
 }
 
+.client-error-message {
+    width: 100%;
+    height: 100%;
+    /*!*padding: 0.625rem;*! with padding the box doesnt disappear*/
+    box-sizing: border-box;
+    background-color: red;
+    color: white;
+    font-size: 1vw;
+    font-family: Joystix Monospace, serif;
+    display: none; /* Hide by default */
+    overflow: hidden;
+    animation: slideIn 0.3s forwards, shake 2s; /* slide-in  */
+}
 
+.server-error-message {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: red;
+    color: white;
+    font-size: 1vw;
+    font-family: Joystix Monospace, serif;
+    overflow: hidden;
+    animation: slideIn 0.3s forwards, shake 2s; /* slide-in  */
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Shake animation */
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
 
 
 

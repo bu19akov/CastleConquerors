@@ -69,6 +69,13 @@ public class GameInfo {
         return players.stream()
                 .anyMatch(player -> player.getUniquePlayerID().equals(playerID));
     }
+    
+    public PlayerState getPlayerWithID(String playerID) {
+        return players.stream()
+                    .filter(player -> player.getUniquePlayerID().equals(playerID))
+                    .findFirst()
+                    .orElse(null);
+    }
 
     public int getPlayerNumberByPlayerID(UniquePlayerIdentifier playerID) {
         return playerNumber.entrySet().stream()

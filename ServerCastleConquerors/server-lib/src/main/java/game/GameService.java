@@ -131,6 +131,47 @@ public class GameService {
         setInitialPlayersForGame(game, playerIterator);
         games.get(gameID).setTurnStartTime(System.currentTimeMillis());
     }
+    
+    public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
+    	startGame(gameID);
+    }
+    
+    public boolean doesGameContainsAIEasy(UniqueGameIdentifier gameID) {
+    	GameInfo game = games.get(gameID);
+    	PlayerState aiPlayer = new PlayerState();
+    	for (PlayerState player : game.getPlayers()) {
+    		if (player.getPlayerUsername() == "AI_Easy") {
+    			aiPlayer = player;
+    		}
+    	}
+    	if (aiPlayer.getPlayerUsername() == "AI_Easy") {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public void makeAIEasyMove(UniqueGameIdentifier gameID) {
+    	GameInfo game = games.get(gameID);
+    	PlayerState aiPlayer = new PlayerState();
+    	for (PlayerState player : game.getPlayers()) {
+    		if (player.getPlayerUsername() == "AI_Easy") {
+    			aiPlayer = player;
+    		}
+    	}
+    	if (aiPlayer.getPlayerUsername() == "AI_Easy") {
+	    	if (aiPlayer.getState() != EPlayerGameState.Won && aiPlayer.getState() != EPlayerGameState.Lost) {
+	    		if (aiPlayer.getState() == EPlayerGameState.MustAct) {
+	    			processMove(gameID, new PlayerMove(aiPlayer.getPlayerUsername(), EMove.Right));
+	    			System.out.println("AI Easy has make a move");
+	    		} else {
+	    			System.out.println("AI Easy need to wait");
+	    		}
+	    	} else {
+	    		System.out.println("AI Easy has won / lost");
+	    	}
+    	}
+    	
+    }
 
     private static void setInitialPlayersForGame(GameInfo game, Iterator<PlayerState> playerIterator) {
         game.setCurrentPlayer(playerIterator.next());

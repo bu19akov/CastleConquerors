@@ -24,6 +24,20 @@ public class Endpoints {
     public @ResponseBody UniqueGameIdentifier createNewGame() {
         return gameService.createGame();
     }
+    
+    @PostMapping(value = "/ai/easy", 
+            consumes = MediaType.APPLICATION_XML_VALUE, 
+            produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody UniqueGameIdentifier registerPlayerVSEasyAI(
+	       @Validated @RequestBody PlayerRegistration playerRegistration) {
+    	UniqueGameIdentifier gameID = gameService.createGame();
+
+		gameService.registerPlayerToGame(gameID, playerRegistration);
+		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Easy"));
+		gameService.startGameWithAIEasy(gameID);
+	
+	   return gameID;
+	}
 
     @PostMapping(value = "/{gameID}/players", 
                  consumes = MediaType.APPLICATION_XML_VALUE, 
@@ -73,6 +87,13 @@ public class Endpoints {
     		gameService.processMove(gameID, playerMove);
     	} catch (IllegalArgumentException e) {
     		return new ResponseEnvelope<>("IllegalArgumentException", e.getMessage());
+    	}
+    	try {
+	    	if (gameService.doesGameContainsAIEasy(gameID)) {
+	    		gameService.makeAIEasyMove(gameID);
+	    	}
+    	} catch (Exception e) {
+    		return new ResponseEnvelope<>("Exception", e.getMessage());
     	}
 	    return new ResponseEnvelope<>("Move processed successfully");
 	}
