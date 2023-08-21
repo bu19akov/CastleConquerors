@@ -33,6 +33,7 @@
 <body>
 	<input type="hidden" id="gameID" th:value="${gameID}" />
 	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
+    <h4 th:text="'Game ID: ' + ${gameID}">default game ID</h4>
 	<p id="treasureCollected">You have collected the treasure! 💎</p>
 	<p id="treasureNotCollected">You haven't collected the treasure yet.</p>
 	<div id="playerStateDiv">
