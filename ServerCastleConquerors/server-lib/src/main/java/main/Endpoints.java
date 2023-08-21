@@ -25,20 +25,18 @@ public class Endpoints {
         return gameService.createGame();
     }
     
-    @PostMapping(value = "ai/easy/", 
+    @PostMapping(value = "/ai/easy", 
             consumes = MediaType.APPLICATION_XML_VALUE, 
             produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody ResponseEnvelope<UniqueGameIdentifier> registerPlayerVSEasyAI(
+	public @ResponseBody UniqueGameIdentifier registerPlayerVSEasyAI(
 	       @Validated @RequestBody PlayerRegistration playerRegistration) {
     	UniqueGameIdentifier gameID = gameService.createGame();
-		if (GameService.getGames().containsKey(gameID) && GameService.getGames().get(gameID).containsPlayerWithID(playerRegistration.getPlayerUsername())) {
-			return new ResponseEnvelope<>("IllegalArgumentException", "Player is already registered");
-		}
-		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Easy"));
+
 		gameService.registerPlayerToGame(gameID, playerRegistration);
+		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Easy"));
 		gameService.startGameWithAIEasy(gameID);
 	
-	   return new ResponseEnvelope<>(gameID);
+	   return gameID;
 	}
 
     @PostMapping(value = "/{gameID}/players", 
@@ -89,6 +87,13 @@ public class Endpoints {
     		gameService.processMove(gameID, playerMove);
     	} catch (IllegalArgumentException e) {
     		return new ResponseEnvelope<>("IllegalArgumentException", e.getMessage());
+    	}
+    	try {
+	    	if (gameService.doesGameContainsAIEasy(gameID)) {
+	    		gameService.makeAIEasyMove(gameID);
+	    	}
+    	} catch (Exception e) {
+    		return new ResponseEnvelope<>("Exception", e.getMessage());
     	}
 	    return new ResponseEnvelope<>("Move processed successfully");
 	}
