@@ -1,0 +1,167 @@
+@font-face {
+    font-family: 'Joystix Monospace';
+    src: url('../fonts/joystix_monospace.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StgoticW00-Regular';
+    src: url('../fonts/Stgotic_W00_Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'LomoCopyLTStd-Mezzo';
+    src: url("../fonts/LomoCopyLTStd-Mezzo.ttf") format('truetype');
+}
+
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -5;
+}
+
+.cloud {
+    position: absolute;
+    width: 18vw;
+    height: 18vw;
+    background-repeat: no-repeat;
+    background-size: cover;
+    animation: moveClouds 25s infinite linear;
+}
+
+.cloud:nth-child(1) { left: 2%;   top: -5%;   background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(2) { left: 80%;  top: -4%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(3) { left: 30%;  top: 5%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(4) { left: 60%;  top: 7%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(5) { left: 7%;  top: 25%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(6) { left: 75%;  top: 30%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(7) { left: 12%;  top: 45%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(8) { left: 60%;  top: 47%;  background-image: url('../images/cloud2.png'); }
+.cloud:nth-child(9) { top: 61%;  background-image: url('../images/cloud3.png'); }
+.cloud:nth-child(10){ left: 80%;  top: 63%;  background-image: url('../images/cloud1.png'); }
+.cloud:nth-child(11) { left: 40%;   top: 65%;   background-image: url('../images/cloud1.png'); }
+
+@keyframes levitate1 {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes levitate2 {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes levitate3 {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+
+.cloud:nth-child(1) {
+    animation: moveClouds 25s infinite linear, levitate1 5s infinite ease-in-out;
+}
+.cloud:nth-child(2) {
+    animation: moveClouds 25s infinite linear, levitate2 4s infinite ease-in-out;
+}
+.cloud:nth-child(3) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(4) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(5) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(6) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(7) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(8) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(9) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(10) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+.cloud:nth-child(11) {
+    animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+}
+
+body {
+    font-family: 'Joystix Monospace', sans-serif;
+    font-size: 1rem;
+    margin: 15px;
+    background-color: #3983e4;
+}
+
+
+h4 {
+    position: fixed;
+    top: -5px;
+    right: 10px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    font-family: LomoCopyLTStd-Mezzo, Serif;
+}
+
+#notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+
+h4 span {
+    margin-right: 10px;  /* Adjust as needed for spacing */
+}
+
+button#copyButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('../images/copy.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    outline: none;
+}
+
+
+h4 span {
+    margin-right: 20px;  /* Space between the text "GAME ID:" and the ID */
+}
+

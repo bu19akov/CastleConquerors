@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Map Demo</title>
+    <title>🏰 Castle Conquerors</title>
+
+    <link rel="stylesheet" href="../static/styles/mapExample.css">
+    <link rel="stylesheet" th:href="@{~/styles/mapExample.css}">
 
     <style>
         table {
@@ -32,7 +35,22 @@
     </style>
 </head>
 <body>
-	<h2 id="gameID"th:text="${gameID}"></h2>
+
+<div class="clouds">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+</div>
+
+    <h4><span th:text="'Game ID: ' + ${gameID}">default game ID</span><button id="copyButton"></button></h4>
 	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
 	<div id="playerStateDiv">
 	    <p id="stateMustAct">It's your turn to act.</p>
@@ -42,6 +60,7 @@
 	    <p id="stateWon">Congratulations, you won!</p>
 	    <p id="stateLost">Sorry, you lost. Better luck next time!</p>
 	</div>
+    <div id="notification" style="display: none;">Game ID copied to clipboard!</div>
 
 <table>
     <tr th:each="mapRow : ${map}">
@@ -213,6 +232,41 @@
 	        console.error('Error:', error);
 	    });
 	}
+
+    document.getElementById('copyButton').addEventListener('click', function() {
+        const gameIdElement = document.querySelector('h4');
+        const gameIdValue = gameIdElement.textContent.replace('Game ID: ', '');  // Extract only the Game ID value
+        const textarea = document.createElement('textarea');
+
+        // Set the value of the textarea to the extracted Game ID value
+        textarea.value = gameIdValue;
+
+        // Append the textarea to the document (offscreen)
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+
+        // Focus and select the content of the textarea
+        textarea.focus();
+        textarea.select();
+
+        // Attempt to copy
+        try {
+            document.execCommand('copy');
+            // Show the notification
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 2000);  // The notification will be hidden after 2 seconds
+        } catch (err) {
+            alert('Failed to copy GAME ID');
+        }
+
+        // Cleanup - remove the textarea from the document
+        document.body.removeChild(textarea);
+    });
+
 </script>
 </body>
 </html>
