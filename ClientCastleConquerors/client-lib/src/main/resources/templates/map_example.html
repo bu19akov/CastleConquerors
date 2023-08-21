@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Map Demo</title>
+
     <style>
         table {
             margin: auto;
@@ -31,14 +32,13 @@
     </style>
 </head>
 <body>
-	<input type="hidden" id="gameID" th:value="${gameID}" />
+	<h2 id="gameID"th:text="${gameID}"></h2>
 	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
-    <h4 th:text="'Game ID: ' + ${gameID}">default game ID</h4>
-	<p id="treasureCollected">You have collected the treasure! 💎</p>
-	<p id="treasureNotCollected">You haven't collected the treasure yet.</p>
 	<div id="playerStateDiv">
 	    <p id="stateMustAct">It's your turn to act.</p>
 	    <p id="stateMustWait">Please wait for your opponent.</p>
+		<p id="playerTreasureCollected" style="display: none;">You have collected the treasure! 💎</p>
+		<p id="playerTreasureNotCollected">You haven't collected the treasure yet.</p>
 	    <p id="stateWon">Congratulations, you won!</p>
 	    <p id="stateLost">Sorry, you lost. Better luck next time!</p>
 	</div>
@@ -56,6 +56,13 @@
         </td>
     </tr>
 </table>
+
+	<h2 id="opponentUsername" style="display: none;"></h2>
+	<div id="opponentStateDiv">
+		<p id="opponentTreasureCollected" style="display: none;">Enemy has collected the trasure 💀</p>
+		<p id="opponentTreasureNotCollected">Enemy hasn't found the treasure.</p>
+	</div>
+
 <div style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
     <button id="upButton" data-move="Up">Up</button>
     
@@ -68,10 +75,12 @@
 </div>
 
 <script>
-    function updateGameData() {
-	    const gameIDInput = document.getElementById("gameID");
-	    const gameID = gameIDInput ? gameIDInput.value : null;
-	    
+	const gameID = "[[${gameID}]]";
+
+    let playerTreasureFound = false;
+	let opponentTreasureFound = false;
+
+    function updateGameData() {	    
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
@@ -122,18 +131,16 @@
 	    
 	    // Fetch player data
 	    fetch(`/game/${gameID}/playerdata`).then(response => {
-	        return response.json();
+			return response.json();
 	    }).then(data => {
-			if (data && data.hasOwnProperty('collectedTreasure')) {
-			    if(data.collectedTreasure) {
-			        document.getElementById('treasureCollected').style.display = 'block';
-		        	document.getElementById('treasureNotCollected').style.display = 'none';
-			    } else {
-			        document.getElementById('treasureCollected').style.display = 'none';
-		        	document.getElementById('treasureNotCollected').style.display = 'block';
-			    }
-			} else {
-			    console.error('The expected property "collectedTreasure" was not found in the data.');
+
+			if(!playerTreasureFound){
+				if (data && data.collectedTreasure) {
+					document.getElementById('playerTreasureCollected').style.display = 'block';
+					document.getElementById('playerTreasureCollected').style.display = 'none';
+
+					playerTreasureFound = true;
+				}
 			}
 		    
 			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
@@ -148,6 +155,28 @@
 	    }).catch(error => {
 	        console.error('Player fetch Error:', error);
 	    });
+
+		// Fetch opponent data
+		if(!opponentTreasureFound){
+			fetch(`/game/${gameID}/opponentdata`).then(response => {
+				return response.json();
+			}).then(data => {
+				document.getElementById('opponentUsername').textContent = data.playerUsername;
+				document.getElementById('opponentUsername').style.display = 'block';
+				if (data && data.collectedTreasure) {
+						document.getElementById('opponentTreasureCollected').style.display = 'block';
+						document.getElementById('opponentTreasureNotCollected').style.display = 'none';
+
+						opponentTreasureFound = true;
+				}
+			}).catch(error => {
+				if (error instanceof SyntaxError) {
+					console.log('No opponent joined');
+				} else {
+					console.error('Opponent fetch Error:', error);
+				}
+			});
+		}
 	
 	    // Call the function again after 0.5 seconds
 	    setTimeout(updateGameData, 500);
@@ -164,9 +193,6 @@
 	});
 	
 	function sendMoveRequest(moveDirection) {
-	    const gameIDInput = document.getElementById("gameID");
-	    const gameID = gameIDInput ? gameIDInput.value : null;
-	
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
