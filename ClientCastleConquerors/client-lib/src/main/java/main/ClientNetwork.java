@@ -57,6 +57,24 @@ public class ClientNetwork {
             throw new ClientNetworkException("Error retrieving game identifier");
         }
     }
+    
+    public String connectPlayerToAIGameEasy(PlayerRegistration playerReg) throws ClientNetworkException {
+        try {
+            Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/ai/easy")
+                    .body(BodyInserters.fromValue(playerReg)) // specify the data which is sent to the server
+                    .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
+            ResponseEnvelope<UniqueGameIdentifier> resultReg = webAccess.block();
+            if (resultReg.getState() == ERequestState.Error) {
+            	logger.error("Connecting client to AI Easy error!");
+                throw new ClientNetworkException("Connecting client to AI Easy error!");
+            } else {
+            	return resultReg.getData().get().getUniqueGameID();
+            }
+        } catch (Exception e) {
+            logger.error("Error while creating Game with AI Easy", e);
+            throw new ClientNetworkException("Error while creating Game with AI Easy");
+        }
+    }
 
     public String sendPlayerRegistration(String gameID, PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameID + "/players")

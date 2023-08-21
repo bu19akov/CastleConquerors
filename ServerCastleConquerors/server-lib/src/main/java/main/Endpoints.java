@@ -24,6 +24,22 @@ public class Endpoints {
     public @ResponseBody UniqueGameIdentifier createNewGame() {
         return gameService.createGame();
     }
+    
+    @PostMapping(value = "ai/easy/", 
+            consumes = MediaType.APPLICATION_XML_VALUE, 
+            produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody ResponseEnvelope<UniqueGameIdentifier> registerPlayerVSEasyAI(
+	       @Validated @RequestBody PlayerRegistration playerRegistration) {
+    	UniqueGameIdentifier gameID = gameService.createGame();
+		if (GameService.getGames().containsKey(gameID) && GameService.getGames().get(gameID).containsPlayerWithID(playerRegistration.getPlayerUsername())) {
+			return new ResponseEnvelope<>("IllegalArgumentException", "Player is already registered");
+		}
+		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Easy"));
+		gameService.registerPlayerToGame(gameID, playerRegistration);
+		gameService.startGameWithAIEasy(gameID);
+	
+	   return new ResponseEnvelope<>(gameID);
+	}
 
     @PostMapping(value = "/{gameID}/players", 
                  consumes = MediaType.APPLICATION_XML_VALUE, 

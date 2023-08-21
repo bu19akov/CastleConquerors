@@ -101,7 +101,23 @@ public class Endpoints {
         }
     }
 	
-	// TODO Get for /game/gameID
+	@GetMapping("/game/ai/easy")
+    public String startGameWithAIEasy(Model model, HttpSession session) throws Exception {
+        if (!isLoggedIn(session)) return "redirect:/login";
+
+        String loggedInUser = getLoggedInUser(session);
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+        try {
+            String gameId = clientNetwork.connectPlayerToAIGameEasy(playerReg);  // Use ClientNetwork
+            System.out.println("GAME ID: " + gameId);
+            return "redirect:/game/" + gameId;
+        } catch (Exception e) {
+            System.out.println("Can not get Game ID");
+            return "";  // Consider returning an error page or error message
+        }
+    }
 
 
 	@GetMapping("/game/{gameID}") 

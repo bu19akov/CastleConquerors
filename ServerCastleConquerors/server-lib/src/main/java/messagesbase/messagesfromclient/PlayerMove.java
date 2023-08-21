@@ -17,7 +17,7 @@ public final class PlayerMove extends UniquePlayerIdentifier {
         move = null;
     }
 
-    private PlayerMove(String uniquePlayerID, EMove move) {
+    public PlayerMove(String uniquePlayerID, EMove move) {
         super(checkNotNullOrEmpty(uniquePlayerID, "Each move must contain a non-null and non-empty player id"));
         this.move = checkNotNull(move, "Move must not be null");
     }

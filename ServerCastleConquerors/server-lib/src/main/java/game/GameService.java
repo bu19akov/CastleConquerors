@@ -131,6 +131,27 @@ public class GameService {
         setInitialPlayersForGame(game, playerIterator);
         games.get(gameID).setTurnStartTime(System.currentTimeMillis());
     }
+    
+    public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
+    	startGame(gameID);
+    	GameInfo game = games.get(gameID);
+    	PlayerState aiPlayer = new PlayerState();
+    	for (PlayerState player : game.getPlayers()) {
+    		if (player.getPlayerUsername() == "AI_Easy") {
+    			aiPlayer = player;
+    		}
+    	}
+    	if (aiPlayer.getPlayerUsername() == "AI_Easy") {
+	    	while (aiPlayer.getState() != EPlayerGameState.Won && aiPlayer.getState() != EPlayerGameState.Lost) {
+	    		while (aiPlayer.getState() != EPlayerGameState.MustAct) {
+	    			aiPlayer = game.getPlayerWithID(aiPlayer.getUniquePlayerID());
+	    		}
+	    		
+	    		processMove(gameID, new PlayerMove(aiPlayer.getPlayerUsername(), EMove.Right));
+	    	}
+    	}
+    	
+    }
 
     private static void setInitialPlayersForGame(GameInfo game, Iterator<PlayerState> playerIterator) {
         game.setCurrentPlayer(playerIterator.next());
