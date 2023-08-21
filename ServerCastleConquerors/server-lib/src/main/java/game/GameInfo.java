@@ -13,7 +13,7 @@ import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.*;
 
 public class GameInfo {
-	private static final int FAKE_OPPONENT_POSITION_TURNS = 1; // need to be 16
+	private static final int FAKE_OPPONENT_POSITION_TURNS = 16; // need to be 16
     private final UniqueGameIdentifier gameID;
     private final long creationTime;
     private final FullMapGenerator fullMapGenerator = new FullMapGenerator();
