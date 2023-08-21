@@ -190,6 +190,24 @@ public class Endpoints {
 	        return null;  // Consider a better error-handling mechanism here
 	    }
 	}
+
+    @GetMapping("/game/{gameID}/opponentdata")
+    @ResponseBody
+    public PlayerState getOpponentData(@Validated @PathVariable String gameID, HttpSession session) {
+        try {
+            // Check if the user is logged in
+            if (!isLoggedIn(session)) {
+                throw new Exception("User not logged in");
+            }
+            String loggedInUser = getLoggedInUser(session);
+
+            // Fetch and return player state data
+            return clientNetwork.getOpponentState(gameID, loggedInUser);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;  // Consider a better error-handling mechanism here
+        }
+    }
 	
 	@PostMapping("/game/{gameID}/move")
 	public ResponseEntity<String> sendMove(@PathVariable String gameID,
