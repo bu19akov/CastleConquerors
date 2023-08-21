@@ -13,7 +13,7 @@ import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.*;
 
 public class GameInfo {
-	private static final int FAKE_OPPONENT_POSITION_TURNS = 16;
+	private static final int FAKE_OPPONENT_POSITION_TURNS = 1; // need to be 16
     private final UniqueGameIdentifier gameID;
     private final long creationTime;
     private final FullMapGenerator fullMapGenerator = new FullMapGenerator();
@@ -157,11 +157,21 @@ public class GameInfo {
                         node.getY(),
                         0
                     );
+            	} else if (currentPlayer.getRevealedTreasure() || currentPlayer.getCollectedTreasure()){
+            		maskedNode = new FullMapNode(
+                        node.getTerrain(),
+                        EPlayerPositionState.EnemyPlayerPosition, // hide enemy when he enters your treasure
+                        ETreasureState.MyTreasureIsPresent,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                    );
             	} else {
             		maskedNode = new FullMapNode(
                         node.getTerrain(),
-                        EPlayerPositionState.NoPlayerPresent, // hide enemy when he enters your treasure
-                        ETreasureState.MyTreasureIsPresent,
+                        EPlayerPositionState.EnemyPlayerPosition, // hide enemy when he enters your treasure
+                        ETreasureState.NoOrUnknownTreasureState,
                         EFortState.NoOrUnknownFortState,
                         node.getX(),
                         node.getY(),

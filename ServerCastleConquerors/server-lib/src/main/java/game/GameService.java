@@ -21,12 +21,20 @@ import messagesbase.messagesfromserver.PlayerState;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -133,7 +141,50 @@ public class GameService {
     }
     
     public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
-    	startGame(gameID);
+        startGame(gameID);
+        GameInfo game = games.get(gameID);
+        PlayerState aiPlayer = getAIPlayer(game);
+        
+        if (aiPlayer != null) {
+            FullMapNode aiFortNode = getAiFortNode(game.getFullMap(), gameID, aiPlayer);
+            System.out.println("AI FORT NODE: " + aiFortNode.toString());
+            HalfMapType aiHalf = determineHalfMap(game.getFullMap(), aiFortNode);
+            aiPlayer.setAiHalf(aiHalf); // Assuming you add a setAiHalf method to PlayerState
+        }
+    }
+
+    private HalfMapType determineHalfMap(FullMap fullMap, FullMapNode aiFortNode) {
+        int maxX = fullMap.getMaxX();
+        int maxY = fullMap.getMaxY();
+
+        if (maxX == 19 && maxY == 4) {
+            if (aiFortNode.getX() <= 9) {
+                return HalfMapType.LEFT_HALF;
+            } else {
+                return HalfMapType.RIGHT_HALF;
+            }
+        } else if (maxX == 9 && maxY == 9) {
+            if (aiFortNode.getY() <= 4) {
+                return HalfMapType.UPPER_HALF;
+            } else {
+                return HalfMapType.LOWER_HALF;
+            }
+        }
+
+        throw new IllegalStateException("Unexpected map dimensions.");
+    }
+
+    private FullMapNode getAiFortNode(FullMap fullMap, UniqueGameIdentifier gameID, PlayerState aiPlayer) {
+        for (int x = 0; x <= fullMap.getMaxX(); x++) {
+            for (int y = 0; y <= fullMap.getMaxY(); y++) {
+                FullMapNode node = getFullMapNodeByXY(fullMap, x, y);
+                GameInfo game = games.get(gameID);
+                if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(aiPlayer)) {
+                    return node;
+                }
+            }
+        }
+        return null;
     }
     
     public boolean doesGameContainsAIEasy(UniqueGameIdentifier gameID) {
@@ -151,27 +202,285 @@ public class GameService {
     }
     
     public void makeAIEasyMove(UniqueGameIdentifier gameID) {
-    	GameInfo game = games.get(gameID);
-    	PlayerState aiPlayer = new PlayerState();
-    	for (PlayerState player : game.getPlayers()) {
-    		if (player.getPlayerUsername() == "AI_Easy") {
-    			aiPlayer = player;
-    		}
-    	}
-    	if (aiPlayer.getPlayerUsername() == "AI_Easy") {
-	    	if (aiPlayer.getState() != EPlayerGameState.Won && aiPlayer.getState() != EPlayerGameState.Lost) {
-	    		if (aiPlayer.getState() == EPlayerGameState.MustAct) {
-	    			processMove(gameID, new PlayerMove(aiPlayer.getPlayerUsername(), EMove.Right));
-	    			System.out.println("AI Easy has make a move");
-	    		} else {
-	    			System.out.println("AI Easy need to wait");
-	    		}
-	    	} else {
-	    		System.out.println("AI Easy has won / lost");
-	    	}
-    	}
-    	
+        GameInfo game = games.get(gameID);
+        PlayerState aiPlayer = getAIPlayer(game);
+
+        if (aiPlayer == null) {
+            System.out.println("AI player not found");
+            return;
+        }
+
+        if (!isGameFinished(aiPlayer)) {
+            if (aiPlayer.getState() == EPlayerGameState.MustAct) {
+            	if (aiPlayer.getCollectedTreasure()) {
+            		System.out.println("\n\nTREASURE IS COLLECTED\n\n");
+            	}
+                EMove aiNextMove = aiPlayer.getCollectedTreasure() ? aiSearchForEnemyFort(game, aiPlayer) : aiSearchForTreasure(game.getFullMap(), aiPlayer, gameID);
+            	System.out.println("AI is going to find next move");
+            	System.out.println("Next move: " + aiNextMove.toString());
+                processMove(gameID, new PlayerMove(aiPlayer.getPlayerUsername(), aiNextMove));
+                System.out.println("AI Easy has made a move");
+            } else {
+                System.out.println("AI Easy needs to wait");
+            }
+        } else {
+            System.out.println("AI Easy has won / lost");
+        }
     }
+
+    private PlayerState getAIPlayer(GameInfo game) {
+        for (PlayerState player : game.getPlayers()) {
+            if ("AI_Easy".equals(player.getPlayerUsername())) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    private boolean isGameFinished(PlayerState aiPlayer) {
+        return aiPlayer.getState() == EPlayerGameState.Won || aiPlayer.getState() == EPlayerGameState.Lost;
+    }
+
+    private EMove aiSearchForTreasure(FullMap fullMap, PlayerState aiPlayer, UniqueGameIdentifier gameID) {
+        AiMemory memory = aiPlayer.getAiMemory();
+
+        if (!memory.plannedMoves.isEmpty()) {
+            return memory.plannedMoves.poll();
+        }
+
+        FullMapNode aiCurrentNode = getCurrentNode(fullMap, aiPlayer, gameID);
+        memory.visitedTiles.add(aiCurrentNode);
+        System.out.println("aiCurrentNode was returned: " + aiCurrentNode.toString());
+        FullMapNode targetNode = findNearestUnvisitedGrassTile(fullMap, aiCurrentNode, memory.visitedTiles, aiPlayer);
+        
+        if (targetNode == null) {
+        	System.out.println("targetNode == null");
+            return getRandomMove();
+        }
+        
+        System.out.println("targetNode was returned: " + targetNode.toString());
+        
+        List<EMove> movesToTarget = determinePathToTarget(fullMap, aiCurrentNode, targetNode, aiPlayer);
+        System.out.println("list of movesToTarget was initialized: " + movesToTarget.toString());
+        memory.plannedMoves.addAll(movesToTarget);
+
+        return memory.plannedMoves.poll();
+    }
+    
+    private EMove aiSearchForEnemyFort(GameInfo game, PlayerState aiPlayer) {
+        HalfMapType opponentHalfMapType = getOpponentHalfMap(aiPlayer.getAiHalf());
+        AiMemory memory = aiPlayer.getAiMemory();
+
+        if (!memory.plannedMoves.isEmpty()) {
+            return memory.plannedMoves.poll();
+        }
+
+        FullMapNode aiCurrentNode = getCurrentNode(game.getFullMap(), aiPlayer, game.getGameID());
+        memory.visitedTiles.add(aiCurrentNode);
+        
+        // Check if the AI is still in its own half.
+        if (!isInHalfMap(aiCurrentNode.getX(), aiCurrentNode.getY(), opponentHalfMapType, game.getFullMap().getMaxX(), game.getFullMap().getMaxY())) {
+            FullMapNode nearestNodeInOpponentHalf = findNearestGrassTileInOpponentHalf(game.getFullMap(), aiCurrentNode, opponentHalfMapType);
+            System.out.println("NEAREST NODE IN OPONENTS HALF: " + nearestNodeInOpponentHalf.toString());
+            
+            // If a valid node in opponent's half is found, determine the path to it.
+            if (nearestNodeInOpponentHalf != null) {
+                List<EMove> movesToTarget = determinePathToTarget(game.getFullMap(), aiCurrentNode, nearestNodeInOpponentHalf, aiPlayer);
+                System.out.println("MOVES TO TARGET: " + movesToTarget.toString());
+                memory.plannedMoves.addAll(movesToTarget);
+                return memory.plannedMoves.poll();
+            }
+        }
+
+        // Continue the existing logic of searching for the enemy fort once the AI is in the opponent's half.
+        FullMapNode targetNode = findNearestUnvisitedGrassTileInOpponentHalf(game.getFullMap(), aiCurrentNode, memory.visitedTiles, opponentHalfMapType);
+        
+        if (targetNode == null) {
+            return getRandomMove();
+        }
+        
+        List<EMove> movesToTarget = determinePathToTarget(game.getFullMap(), aiCurrentNode, targetNode, aiPlayer);
+        memory.plannedMoves.addAll(movesToTarget);
+
+        return memory.plannedMoves.poll();
+    }
+    
+    private FullMapNode findNearestGrassTileInOpponentHalf(FullMap fullMap, FullMapNode start, HalfMapType opponentHalfMapType) {
+        Queue<FullMapNode> queue = new LinkedList<>();
+        Set<FullMapNode> seen = new HashSet<>();
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            FullMapNode current = queue.poll();
+            
+            // Get all valid neighbors regardless of which half they are in.
+            for (FullMapNode neighbor : getValidNeighbors(fullMap, current, opponentHalfMapType, false)) {
+                if (!seen.contains(neighbor)) {
+                    seen.add(neighbor);
+                    queue.add(neighbor);
+
+                    // Check if the node is in the opponent's half and is a grass tile.
+                    if (isInHalfMap(neighbor.getX(), neighbor.getY(), opponentHalfMapType, fullMap.getMaxX(), fullMap.getMaxY()) && 
+                        neighbor.getTerrain() == ETerrain.Grass) {
+                        return neighbor;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    private FullMapNode findNearestUnvisitedGrassTileInOpponentHalf(FullMap fullMap, FullMapNode start, Set<FullMapNode> visited, HalfMapType opponentHalfMapType) {
+        Queue<FullMapNode> queue = new LinkedList<>();
+        Set<FullMapNode> seen = new HashSet<>(visited);
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            FullMapNode current = queue.poll();
+            
+            for (FullMapNode neighbor : getValidNeighbors(fullMap, current, opponentHalfMapType, true)) {
+                if (!seen.contains(neighbor) && neighbor.getTerrain() == ETerrain.Grass) {
+                    return neighbor;
+                } else {
+                    queue.add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+
+    private HalfMapType getOpponentHalfMap(HalfMapType aiHalfMapType) {
+        switch (aiHalfMapType) {
+            case UPPER_HALF:
+                return HalfMapType.LOWER_HALF;
+            case LOWER_HALF:
+                return HalfMapType.UPPER_HALF;
+            case LEFT_HALF:
+                return HalfMapType.RIGHT_HALF;
+            case RIGHT_HALF:
+                return HalfMapType.LEFT_HALF;
+        }
+        throw new IllegalStateException("Unexpected AI half map type.");
+    }
+
+    private FullMapNode getCurrentNode(FullMap fullMap, PlayerState aiPlayer, UniqueGameIdentifier gameID) {
+        for (FullMapNode node : fullMap) {
+            if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition || (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) && node.getOwnedByPlayer() == games.get(gameID).getPlayerNumberByPlayerID(new UniquePlayerIdentifier(aiPlayer.getPlayerUsername()))) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private FullMapNode findNearestUnvisitedGrassTile(FullMap fullMap, FullMapNode start, Set<FullMapNode> visited, PlayerState aiPlayer) {
+        Queue<FullMapNode> queue = new LinkedList<>();
+        Set<FullMapNode> seen = new HashSet<>(visited);
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            FullMapNode current = queue.poll();
+            
+            for (FullMapNode neighbor : getValidNeighbors(fullMap, current, aiPlayer.getAiHalf(), true)) {
+                if (!seen.contains(neighbor) && neighbor.getTerrain() == ETerrain.Grass) { // test for ) && neighbor.getTerrain() == ETerrain.Grass
+                	return neighbor;
+                } else {
+                	queue.add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+
+    private List<FullMapNode> getValidNeighbors(FullMap fullMap, FullMapNode node, HalfMapType halfMapType, boolean restrictToHalfMap) {
+        List<FullMapNode> neighbors = new ArrayList<>();
+
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        for (int[] direction : directions) {
+            int newX = node.getX() + direction[0];
+            int newY = node.getY() + direction[1];
+
+            if (isValidCoordinate(newX, newY, fullMap.getMaxX(), fullMap.getMaxY())) {
+                if (!restrictToHalfMap || isInHalfMap(newX, newY, halfMapType, fullMap.getMaxX(), fullMap.getMaxY())) {
+                    Optional<FullMapNode> neighborOpt = fullMap.get(newX, newY);
+                    if (neighborOpt.isPresent()) {
+                        FullMapNode neighbor = neighborOpt.get();
+                        if (neighbor.getTerrain() != ETerrain.Water) {
+                            neighbors.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    private boolean isInHalfMap(int x, int y, HalfMapType halfMapType, int maxX, int maxY) {
+        switch (halfMapType) {
+            case UPPER_HALF:
+                return y <= maxY / 2;
+            case LOWER_HALF:
+                return y > maxY / 2;
+            case LEFT_HALF:
+                return x <= maxX / 2;
+            case RIGHT_HALF:
+                return x > maxX / 2;
+        }
+        return false; // Default to not in any half (though this shouldn't be reached)
+    }
+
+
+    private boolean isValidCoordinate(int x, int y, int maxX, int maxY) {
+        return x >= 0 && x <= maxX && y >= 0 && y <= maxY;
+    }
+
+    private List<EMove> determinePathToTarget(FullMap fullMap, FullMapNode start, FullMapNode target, PlayerState aiPlayer) {
+        Map<FullMapNode, FullMapNode> cameFrom = new HashMap<>();
+        Queue<FullMapNode> queue = new LinkedList<>();
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            FullMapNode current = queue.poll();
+            for (FullMapNode neighbor : getValidNeighbors(fullMap, current, aiPlayer.getAiHalf(), false)) {
+                if (!cameFrom.containsKey(neighbor)) {
+                    cameFrom.put(neighbor, current);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        List<EMove> path = new LinkedList<>();
+        FullMapNode current = target;
+        while (current != null && !current.equals(start)) {
+            FullMapNode prev = cameFrom.get(current);
+            EMove move = getMoveFromNodes(prev, current);
+
+            // Retrieve the cost for the field transition and add the move that many times
+            FieldTransition transition = new FieldTransition(prev.getTerrain(), current.getTerrain());
+            Integer cost = FIELD_TRANSITION_COST.getOrDefault(transition, 1);
+            for (int i = 0; i < cost; i++) {
+                path.add(move);
+            }
+
+            current = prev;
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    private EMove getMoveFromNodes(FullMapNode from, FullMapNode to) {
+        if (from.getX() < to.getX()) return EMove.Right;
+        if (from.getX() > to.getX()) return EMove.Left;
+        if (from.getY() < to.getY()) return EMove.Down;
+        return EMove.Up;
+    }
+
+    private EMove getRandomMove() {
+        Random rand = new Random();
+        EMove[] moves = EMove.values();
+        return moves[rand.nextInt(moves.length)];
+    }
+
 
     private static void setInitialPlayersForGame(GameInfo game, Iterator<PlayerState> playerIterator) {
         game.setCurrentPlayer(playerIterator.next());
@@ -239,7 +548,7 @@ public class GameService {
         FullMapNode nextNode = getFullMapNodeByXY(fullMap, newX, newY);
         
         if (nextNode.getTerrain() == ETerrain.Water) {
-            endGame(gameID, "Player moved into the water", false);
+            endGame(gameID, "Player " + currentPlayer.getPlayerUsername() + " moved into the water", false);
             return; // Exit the method since the game is ended
         }
         

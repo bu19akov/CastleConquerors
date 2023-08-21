@@ -93,6 +93,7 @@ public class Endpoints {
 	    		gameService.makeAIEasyMove(gameID);
 	    	}
     	} catch (Exception e) {
+    		e.printStackTrace();
     		return new ResponseEnvelope<>("Exception", e.getMessage());
     	}
 	    return new ResponseEnvelope<>("Move processed successfully");
