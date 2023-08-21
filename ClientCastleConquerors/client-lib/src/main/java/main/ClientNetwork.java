@@ -94,13 +94,27 @@ public class ClientNetwork {
             if (playerState.getUniquePlayerID().equals(playerID)) {
                 return playerState;
             }
-            else if (!playerState.getUniquePlayerID().equals(playerID) && playerState.getCollectedTreasure()) {
-                // TODO: 2023-08-16 notify about enemy collecting treasure
-            }
         }
-
         throw new ClientNetworkException("Client not found");
     }
+    public PlayerState getOpponentState(String gameID, String playerID) throws ClientNetworkException {
+        // h-p(s)://<domain>:<port>/games/<GameID>/states/<PlayerID>
+        Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
+                .uri("/" + gameID + "/states/" + playerID)
+                .retrieve().bodyToMono(ResponseEnvelope.class);
+        ResponseEnvelope<GameState> gameState = webAccess.block();
+        checkGameState(gameState);
+        Set<PlayerState> playerStates = gameState.getData().get().getPlayers();
+
+        for (PlayerState playerState : playerStates) {
+            //get player state of the player that isint the player
+            if (!playerState.getUniquePlayerID().equals(playerID)) {
+                return playerState;
+            }
+        }
+        throw new ClientNetworkException("Opponent not found");
+    }
+
 
     public void sendPlayerMove(String gameID, String playerID, EMove move) throws ClientNetworkException {
         PlayerMove playerMove = PlayerMove.of(playerID, move);
