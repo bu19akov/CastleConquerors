@@ -100,13 +100,22 @@ public class GameService {
         	return playerID;
         }
         checkIfGameIsFull(gameID);
-        
-        PlayerState newPlayer = new PlayerState(
-            playerReg.getPlayerUsername(), 
-            EPlayerGameState.MustWait,
-            playerID,
-            false
-        );
+        PlayerState newPlayer;
+        if (playerID.getUniquePlayerID() == "AI_Easy") {
+        	newPlayer = new PlayerAIEasy(
+                    playerReg.getPlayerUsername(), 
+                    EPlayerGameState.MustWait,
+                    playerID,
+                    false
+                );
+        } else {
+        	newPlayer = new PlayerState(
+	            playerReg.getPlayerUsername(), 
+	            EPlayerGameState.MustWait,
+	            playerID,
+	            false
+	        );
+        }
 
         games.get(gameID).registerPlayer(newPlayer);
 
@@ -143,48 +152,8 @@ public class GameService {
     public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
         startGame(gameID);
         GameInfo game = games.get(gameID);
-        PlayerState aiPlayer = getAIPlayer(game);
-        
-        if (aiPlayer != null) {
-            FullMapNode aiFortNode = getAiFortNode(game.getFullMap(), gameID, aiPlayer);
-            System.out.println("AI FORT NODE: " + aiFortNode.toString());
-            HalfMapType aiHalf = determineHalfMap(game.getFullMap(), aiFortNode);
-            aiPlayer.setAiHalf(aiHalf); // Assuming you add a setAiHalf method to PlayerState
-        }
-    }
-
-    private HalfMapType determineHalfMap(FullMap fullMap, FullMapNode aiFortNode) {
-        int maxX = fullMap.getMaxX();
-        int maxY = fullMap.getMaxY();
-
-        if (maxX == 19 && maxY == 4) {
-            if (aiFortNode.getX() <= 9) {
-                return HalfMapType.LEFT_HALF;
-            } else {
-                return HalfMapType.RIGHT_HALF;
-            }
-        } else if (maxX == 9 && maxY == 9) {
-            if (aiFortNode.getY() <= 4) {
-                return HalfMapType.UPPER_HALF;
-            } else {
-                return HalfMapType.LOWER_HALF;
-            }
-        }
-
-        throw new IllegalStateException("Unexpected map dimensions.");
-    }
-
-    private FullMapNode getAiFortNode(FullMap fullMap, UniqueGameIdentifier gameID, PlayerState aiPlayer) {
-        for (int x = 0; x <= fullMap.getMaxX(); x++) {
-            for (int y = 0; y <= fullMap.getMaxY(); y++) {
-                FullMapNode node = getFullMapNodeByXY(fullMap, x, y);
-                GameInfo game = games.get(gameID);
-                if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(aiPlayer)) {
-                    return node;
-                }
-            }
-        }
-        return null;
+        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIPlayer(game);
+        aiPlayer.setStartParameters(game); // Separate to new class
     }
     
     public boolean doesGameContainsAIEasy(UniqueGameIdentifier gameID) {
@@ -203,7 +172,7 @@ public class GameService {
     
     public void makeAIEasyMove(UniqueGameIdentifier gameID) {
         GameInfo game = games.get(gameID);
-        PlayerState aiPlayer = getAIPlayer(game);
+        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIPlayer(game);
 
         if (aiPlayer == null) {
             System.out.println("AI player not found");
@@ -237,11 +206,11 @@ public class GameService {
         return null;
     }
 
-    private boolean isGameFinished(PlayerState aiPlayer) {
+    private boolean isGameFinished(PlayerAIEasy aiPlayer) {
         return aiPlayer.getState() == EPlayerGameState.Won || aiPlayer.getState() == EPlayerGameState.Lost;
     }
 
-    private EMove aiSearchForTreasure(FullMap fullMap, PlayerState aiPlayer, UniqueGameIdentifier gameID) {
+    private EMove aiSearchForTreasure(FullMap fullMap, PlayerAIEasy aiPlayer, UniqueGameIdentifier gameID) {
         AiMemory memory = aiPlayer.getAiMemory();
 
         if (!memory.plannedMoves.isEmpty()) {
@@ -267,7 +236,7 @@ public class GameService {
         return memory.plannedMoves.poll();
     }
     
-    private EMove aiSearchForEnemyFort(GameInfo game, PlayerState aiPlayer) {
+    private EMove aiSearchForEnemyFort(GameInfo game, PlayerAIEasy aiPlayer) {
         HalfMapType opponentHalfMapType = getOpponentHalfMap(aiPlayer.getAiHalf());
         AiMemory memory = aiPlayer.getAiMemory();
 
@@ -363,7 +332,7 @@ public class GameService {
         throw new IllegalStateException("Unexpected AI half map type.");
     }
 
-    private FullMapNode getCurrentNode(FullMap fullMap, PlayerState aiPlayer, UniqueGameIdentifier gameID) {
+    private FullMapNode getCurrentNode(FullMap fullMap, PlayerAIEasy aiPlayer, UniqueGameIdentifier gameID) {
         for (FullMapNode node : fullMap) {
             if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition || (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) && node.getOwnedByPlayer() == games.get(gameID).getPlayerNumberByPlayerID(new UniquePlayerIdentifier(aiPlayer.getPlayerUsername()))) {
                 return node;
@@ -372,7 +341,7 @@ public class GameService {
         return null;
     }
 
-    private FullMapNode findNearestUnvisitedGrassTile(FullMap fullMap, FullMapNode start, Set<FullMapNode> visited, PlayerState aiPlayer) {
+    private FullMapNode findNearestUnvisitedGrassTile(FullMap fullMap, FullMapNode start, Set<FullMapNode> visited, PlayerAIEasy aiPlayer) {
         Queue<FullMapNode> queue = new LinkedList<>();
         Set<FullMapNode> seen = new HashSet<>(visited);
         queue.add(start);
@@ -434,7 +403,7 @@ public class GameService {
         return x >= 0 && x <= maxX && y >= 0 && y <= maxY;
     }
 
-    private List<EMove> determinePathToTarget(FullMap fullMap, FullMapNode start, FullMapNode target, PlayerState aiPlayer) {
+    private List<EMove> determinePathToTarget(FullMap fullMap, FullMapNode start, FullMapNode target, PlayerAIEasy aiPlayer) {
         Map<FullMapNode, FullMapNode> cameFrom = new HashMap<>();
         Queue<FullMapNode> queue = new LinkedList<>();
         queue.add(start);

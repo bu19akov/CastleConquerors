@@ -6,12 +6,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import messagesbase.UniquePlayerIdentifier;
 
-import game.AiMemory;
-import game.HalfMapType;
-
 @XmlRootElement(name = "player")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class PlayerState extends UniquePlayerIdentifier {
+public class PlayerState extends UniquePlayerIdentifier {
 
 	@XmlElement(name = "playerUsername", required = true)
 	private final String playerUsername;
@@ -24,9 +21,6 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	
 	private boolean revealedTreasure;
 	private boolean revealedEnemyFort;
-	
-	private AiMemory aiMemory = null;
-	private HalfMapType aiHalf;
 
 	public PlayerState() {
 		super();
@@ -42,23 +36,8 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.state = checkNotNull(state, "Player state should not be null");
 		this.collectedTreasure = collectedTreasure;
 		this.revealedTreasure = false;
-		if (playerUsername == "AI_Easy") {
-			this.aiMemory = new AiMemory();
-		}
 	}
 	
-	public HalfMapType getAiHalf() {
-        return aiHalf;
-    }
-
-    public void setAiHalf(HalfMapType aiHalf) {
-        this.aiHalf = aiHalf;
-    }
-	
-	public AiMemory getAiMemory() {
-		return aiMemory;
-	}
-
 	public boolean getRevealedTreasure() {
 		return this.revealedTreasure;
 	}
