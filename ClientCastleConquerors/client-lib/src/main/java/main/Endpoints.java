@@ -59,7 +59,7 @@ public class Endpoints {
     }
 	
 	@PostMapping("/create-account")
-    public String createBankAccount(@RequestParam String username, @RequestParam String password, Model model, HttpSession session) {
+    public String createUserAccount(@RequestParam String username, @RequestParam String password, Model model, HttpSession session) {
         try {
         	endpointsService.createPlayerAccount(username, password);
             session.setAttribute("loggedInUser", username);
