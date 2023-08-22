@@ -61,11 +61,15 @@
 		}
 		
 		.my-player {
-		    background-image: url('../images/red.png');
+		    background-image: url('../images/myPlayer.png');
 		}
 		
 		.enemy-player {
-		    background-image: url('../images/blue.png');
+		    background-image: url('../images/enemyPlayer.png');
+		}
+		
+		.both-players {
+		    background-image: url('../images/bothPlayers.png');
 		}
 
     </style>
@@ -195,13 +199,14 @@
 				const playerImg = document.createElement('img');
 				playerImg.classList.add('player-icon');
 				if (tile.playerPositionState === "MyPlayerPosition") {
-				    playerImg.src = '../images/red.png';
+				    playerImg.src = '../images/myPlayer.png';
 				    td.appendChild(playerImg);
 				} else if (tile.playerPositionState === "EnemyPlayerPosition") {
-				    playerImg.src = '../images/blue.png';
+				    playerImg.src = '../images/enemyPlayer.png';
 				    td.appendChild(playerImg);
 				} else if (tile.playerPositionState === "BothPlayerPosition") {
-		            td.innerHTML = '👥';
+		            playerImg.src = '../images/bothPlayers.png';
+				    td.appendChild(playerImg);
 		        }
 		
 		        if (tile.fortState === "MyFortPresent") {
