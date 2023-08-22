@@ -19,7 +19,9 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	@XmlElement(name = "collectedTreasure", required = true)
 	private boolean collectedTreasure;
 	
+	@XmlElement(name = "revealedTreasure", required = true)
 	private boolean revealedTreasure;
+	
 	private boolean revealedEnemyFort;
 
 	public PlayerState() {

@@ -174,12 +174,48 @@
 	    }
 	}
 
-
+	let playerTreasureRevealed = false;
+	let playerTreasureCollected = false;
+	let playerHasAlreadyVisitedTreasure = false;
     function updateGameData() {	    
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
 	    }
+	    
+	    // Fetch player data
+	    fetch(`/game/${gameID}/playerdata`).then(response => {
+			return response.json();
+	    }).then(data => {
+			if (data.revealedTreasure) {
+	            playerTreasureRevealed = true;
+	        }
+	        
+	        if (data.collectedTreasure) {
+	            playerTreasureCollected = true;
+	        }
+
+			if(!playerTreasureFound){
+				if (data && data.collectedTreasure) {
+					document.getElementById('playerTreasureCollected').style.display = 'block';
+					document.getElementById('playerTreasureNotCollected').style.display = 'none';
+
+					playerTreasureFound = true;
+				}
+			}
+		    
+			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
+		    states.forEach(stateID => {
+		        if (stateID === `state${data.state}`) {
+		            document.getElementById(stateID).style.display = 'block';
+		        } else {
+		            document.getElementById(stateID).style.display = 'none';
+		        }
+		    });
+	
+	    }).catch(error => {
+	        console.error('Player fetch Error:', error);
+	    });
 	
 	    // Fetch map data
 	    fetch(`/game/${gameID}/mapdata`).then(response => {
@@ -216,7 +252,40 @@
 		        }
 		
 		        if (tile.treasureState === "MyTreasureIsPresent") {
-		            td.innerHTML += '💰';
+					if (tile.playerPositionState === "NoPlayerPresent") {
+						if (!playerTreasureCollected) {
+							playerImg.src = '../images/treasureRevealed.png';
+				    		td.appendChild(playerImg);
+						} else {
+							playerImg.src = '../images/treasureCollected.png';
+				    		td.appendChild(playerImg);
+				    		playerHasAlreadyVisitedTreasure = true;			
+				    	}
+					} else if (tile.playerPositionState === "MyPlayerPosition") {
+						if (!playerHasAlreadyVisitedTreasure) {
+							playerImg.src = '../images/treasureFound.png';
+				    		td.appendChild(playerImg);
+						} else {
+							playerImg.src = '../images/playerHasAlreadyVisitedTreasure.png';
+				    		td.appendChild(playerImg);
+						}
+					} else if (tile.playerPositionState === "EnemyPlayerPosition") {
+						if (!playerTreasureCollected) {
+							playerImg.src = '../images/myTreasureFoundByEnemyBeforeMe.png';
+				    		td.appendChild(playerImg);
+						} else {
+							playerImg.src = '../images/myTreasureFoundByEnemy.png';
+				    		td.appendChild(playerImg);
+						}
+					} else {
+						if (!playerHasAlreadyVisitedTreasure) {
+							playerImg.src = '../images/bothPlayersOnMyTreasure.png';
+				    		td.appendChild(playerImg);
+						} else {
+							playerImg.src = '../images/bothPlayersIfPlayerHasAlreadyVisitedTreasure.png';
+				    		td.appendChild(playerImg);
+						}
+					}
 		        }
 		
 		        tr.appendChild(td);
@@ -227,33 +296,6 @@
 	
 	    }).catch(error => {
 	        console.error('Map fetch Error:', error);
-	    });
-	    
-	    // Fetch player data
-	    fetch(`/game/${gameID}/playerdata`).then(response => {
-			return response.json();
-	    }).then(data => {
-
-			if(!playerTreasureFound){
-				if (data && data.collectedTreasure) {
-					document.getElementById('playerTreasureCollected').style.display = 'block';
-					document.getElementById('playerTreasureNotCollected').style.display = 'none';
-
-					playerTreasureFound = true;
-				}
-			}
-		    
-			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
-		    states.forEach(stateID => {
-		        if (stateID === `state${data.state}`) {
-		            document.getElementById(stateID).style.display = 'block';
-		        } else {
-		            document.getElementById(stateID).style.display = 'none';
-		        }
-		    });
-	
-	    }).catch(error => {
-	        console.error('Player fetch Error:', error);
 	    });
 
 		// Fetch opponent data
