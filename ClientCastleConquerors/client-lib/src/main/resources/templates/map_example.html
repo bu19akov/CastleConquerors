@@ -61,6 +61,17 @@
 	    <p id="stateLost">Sorry, you lost. Better luck next time!</p>
 	</div>
     <div id="notification" style="display: none;">Game ID copied to clipboard!</div>
+    <button id="leaveGameButton">Leave the game</button>
+<div id="leaveGamePopup" style="display: none;">
+    <h1>Are you sure you want to leave the game?</h1>
+    <h2>This will automatically count as a loss.</h2>
+    <button id="confirmLeave">Yes</button>
+    <button id="cancelLeave">No</button>
+</div>
+
+</div>
+
+
 
 <table>
     <tr th:each="mapRow : ${map}">
@@ -266,6 +277,24 @@
         // Cleanup - remove the textarea from the document
         document.body.removeChild(textarea);
     });
+
+    document.getElementById('leaveGameButton').addEventListener('click', function() {
+        const popup = document.getElementById('leaveGamePopup');
+        popup.style.display = 'block';
+    });
+
+    document.getElementById('confirmLeave').addEventListener('click', function() {
+        const popup = document.getElementById('leaveGamePopup');
+        popup.style.display = 'none';
+        window.location.href = '/menu';
+    });
+
+
+    document.getElementById('cancelLeave').addEventListener('click', function() {
+        const popup = document.getElementById('leaveGamePopup');
+        popup.style.display = 'none';
+    });
+
 
 </script>
 </body>
