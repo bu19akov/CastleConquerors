@@ -14,12 +14,25 @@
         }
 
         td {
-            width: 50px;  /* You can adjust this to your preferred square size */
-            height: 50px;
-            text-align: center;
-            vertical-align: middle;
-            outline: 1px solid #ccc;
-        }
+		    width: 50px;
+		    height: 50px;
+		    text-align: center;
+		    vertical-align: middle;
+		    border-top: 1px solid #ccc;
+		    border-bottom: 1px solid #ccc;
+		    border-left: 1px solid #ccc;
+		    border-right: 1px solid #ccc;
+		}
+        
+        /* For horizontal red line */
+		.red-line td {
+		    border-top: 2px solid red;
+		}
+		
+		/* For vertical red line */
+		td.red-line {
+		    border-left: 2px solid red;
+		}
 
         #Grass {
             background-color: green;
@@ -111,6 +124,31 @@
 
     let playerTreasureFound = false;
 	let opponentTreasureFound = false;
+	
+	function addRedLine() {
+	    const rows = document.querySelectorAll('table tr');
+	    if (!rows.length) {
+	        console.log("No rows found.");
+	        return;
+	    }
+	
+	    const columns = rows[0].querySelectorAll('td').length;
+	    console.log(`Rows: ${rows.length}, Columns: ${columns}`);
+	
+	    if (rows.length >= columns) {
+	        const middleRowIndex = Math.floor(rows.length / 2);
+	        console.log("Adding horizontal red line at row:", middleRowIndex);
+	        rows[middleRowIndex].classList.add('red-line');
+	    } else {
+	        console.log("Adding vertical red line.");
+	        rows.forEach(row => {
+	            const cells = row.querySelectorAll('td');
+	            const middleColumnIndex = Math.floor(columns / 2);
+	            cells[middleColumnIndex].classList.add('red-line');
+	        });
+	    }
+	}
+
 
     function updateGameData() {	    
 	    if (!gameID) {
@@ -155,7 +193,7 @@
 		    });
 		    mapTable.appendChild(tr);
 		});
-
+		addRedLine();
 	
 	    }).catch(error => {
 	        console.error('Map fetch Error:', error);
