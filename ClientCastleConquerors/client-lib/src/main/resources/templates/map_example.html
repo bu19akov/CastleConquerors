@@ -239,17 +239,19 @@
 	    })
 	    .then(response => response.text())
 	    .then(result => {
-	        console.log(result);  // Handle the result as required
-	        
-	        const errorMessageDiv = document.getElementById('errorMessage');
-		    errorMessageDiv.textContent = 'An error occurred: ' + result;
-		    errorMessageDiv.style.display = 'block';
+		    console.log(result);
 		
-		    // Hide the error message after 5 seconds
-		    setTimeout(() => {
-		        errorMessageDiv.style.display = 'none';
-		    }, 5000);
-	    })
+		    if (result !== "Move accepted") {
+		        const errorMessageDiv = document.getElementById('errorMessage');
+		        errorMessageDiv.textContent = 'An error occurred: ' + result;
+		        errorMessageDiv.style.display = 'block';
+		    
+		        // Hide the error message after 5 seconds
+		        setTimeout(() => {
+		            errorMessageDiv.style.display = 'none';
+		        }, 5000);
+		    }
+		})
 	    .catch(error => {
 		    console.error('Error:', error);
 		});
