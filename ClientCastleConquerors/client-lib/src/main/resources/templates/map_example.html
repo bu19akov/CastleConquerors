@@ -177,6 +177,7 @@
 	let playerTreasureRevealed = false;
 	let playerTreasureCollected = false;
 	let playerHasAlreadyVisitedTreasure = false;
+	let playerEnemyFortRevealed = false;
     function updateGameData() {	    
 	    if (!gameID) {
 	        console.error("Game ID not found");
@@ -193,6 +194,10 @@
 	        
 	        if (data.collectedTreasure) {
 	            playerTreasureCollected = true;
+	        }
+	        
+	        if (data.revealedEnemyFort) {
+	            playerEnemyFortRevealed = true;
 	        }
 
 			if(!playerTreasureFound){
@@ -246,9 +251,24 @@
 		        }
 		
 		        if (tile.fortState === "MyFortPresent") {
-		            td.innerHTML += '🏰';
+					if (tile.playerPositionState === "MyPlayerPosition") {
+						playerImg.src = '../images/myFortAndMyPlayer.png';
+				    	td.appendChild(playerImg);
+					} else if (tile.playerPositionState === "EnemyPlayerPosition") {
+						playerImg.src = '../images/enemyCapturedMyFort.png';
+				    	td.appendChild(playerImg);
+					} else { // Both players need to be handled
+						playerImg.src = '../images/myFort.png';
+				    	td.appendChild(playerImg);
+					}
 		        } else if (tile.fortState === "EnemyFortPresent") {
-		            td.innerHTML += '⛫';
+					if (tile.playerPositionState === "MyPlayerPosition") {
+						playerImg.src = '../images/enemyFortCapturedByMe.png';
+				    	td.appendChild(playerImg);
+					} else if (playerEnemyFortRevealed) {
+						playerImg.src = '../images/enemyFort.png';
+				    	td.appendChild(playerImg);
+					}
 		        }
 		
 		        if (tile.treasureState === "MyTreasureIsPresent") {
