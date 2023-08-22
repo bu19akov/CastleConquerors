@@ -160,7 +160,7 @@ public class GameInfo {
             	} else if (currentPlayer.getRevealedTreasure() || currentPlayer.getCollectedTreasure()){
             		maskedNode = new FullMapNode(
                         node.getTerrain(),
-                        EPlayerPositionState.EnemyPlayerPosition, // hide enemy when he enters your treasure
+                        EPlayerPositionState.EnemyPlayerPosition,
                         ETreasureState.MyTreasureIsPresent,
                         EFortState.NoOrUnknownFortState,
                         node.getX(),
@@ -170,7 +170,7 @@ public class GameInfo {
             	} else {
             		maskedNode = new FullMapNode(
                         node.getTerrain(),
-                        EPlayerPositionState.EnemyPlayerPosition, // hide enemy when he enters your treasure
+                        EPlayerPositionState.EnemyPlayerPosition,
                         ETreasureState.NoOrUnknownTreasureState,
                         EFortState.NoOrUnknownFortState,
                         node.getX(),

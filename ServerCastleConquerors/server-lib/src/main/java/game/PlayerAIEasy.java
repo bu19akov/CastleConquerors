@@ -160,7 +160,9 @@ public class PlayerAIEasy extends PlayerState {
 	
 	private FullMapNode getCurrentNode() {
         for (FullMapNode node : game.getFullMap()) {
-            if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition || (node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) && node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(new UniquePlayerIdentifier(this.getPlayerUsername()))) {
+            if ((node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition && node.getOwnedByPlayer() !=  game.getPlayerNumberByPlayerID(new UniquePlayerIdentifier(this.getPlayerUsername()))) || 
+            		node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition || 
+            		(node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && node.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(new UniquePlayerIdentifier(this.getPlayerUsername())))) {
                 return node;
             }
         }
