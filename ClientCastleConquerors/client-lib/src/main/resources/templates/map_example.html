@@ -22,6 +22,7 @@
 		    border-bottom: 1px solid #ccc;
 		    border-left: 1px solid #ccc;
 		    border-right: 1px solid #ccc;
+		    position: relative;
 		}
         
         /* For horizontal red line */
@@ -34,20 +35,39 @@
 		    border-left: 2px solid red;
 		}
 
-       #Grass {
+       	#Grass {
 		    background-image: url('../images/grass.png');
 		    background-size: cover;  /* the image covers the whole cell */
 		}
 		
 		#Mountain {
-		    background-image: url('../images/mountain.png');
+		    background-image: url('../images/mountain.JPG');
 		    background-size: cover;
 		}
 		
 		#Water {
-		    background-image: url('../images/water.png');
+		    background-image: url('../images/water.JPG');
 		    background-size: cover;
 		}
+		
+		.player-icon {
+		    position: absolute;
+		    width: 40px;
+		    height: 40px;
+		    top: 50%;
+		    left: 50%;
+		    transform: translate(-50%, -50%);
+		    z-index: 2;
+		
+		
+		.my-player {
+		    background-image: url('../images/red.png');
+		}
+		
+		.enemy-player {
+		    background-image: url('../images/blue.png');
+		}
+
     </style>
 </head>
 <body>
@@ -136,11 +156,9 @@
 	    }
 	
 	    const columns = rows[0].querySelectorAll('td').length;
-	    console.log(`Rows: ${rows.length}, Columns: ${columns}`);
 	
 	    if (rows.length >= columns) {
 	        const middleRowIndex = Math.floor(rows.length / 2);
-	        console.log("Adding horizontal red line at row:", middleRowIndex);
 	        rows[middleRowIndex].classList.add('red-line');
 	    } else {
 	        console.log("Adding vertical red line.");
@@ -172,13 +190,17 @@
 		    const tr = document.createElement('tr');
 		    row.forEach(tile => {
 		        const td = document.createElement('td');
-		        td.id = tile.terrain;
-		
-		        if (tile.playerPositionState === "MyPlayerPosition") {
-		            td.innerHTML = '😎';
-		        } else if (tile.playerPositionState === "EnemyPlayerPosition") {
-		            td.innerHTML = '👤';
-		        } else if (tile.playerPositionState === "BothPlayerPosition") {
+				td.id = tile.terrain;
+				
+				const playerImg = document.createElement('img');
+				playerImg.classList.add('player-icon');
+				if (tile.playerPositionState === "MyPlayerPosition") {
+				    playerImg.src = '../images/red.png';
+				    td.appendChild(playerImg);
+				} else if (tile.playerPositionState === "EnemyPlayerPosition") {
+				    playerImg.src = '../images/blue.png';
+				    td.appendChild(playerImg);
+				} else if (tile.playerPositionState === "BothPlayerPosition") {
 		            td.innerHTML = '👥';
 		        }
 		
