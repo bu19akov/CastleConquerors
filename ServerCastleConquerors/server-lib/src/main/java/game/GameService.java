@@ -216,7 +216,7 @@ public class GameService {
         }
         
         FullMap fullMap = game.getFullMap();
-        PlayerState currentPlayer = game.getCurrentPlayer();
+        PlayerState currentPlayer = game.getPlayerWithID(playerMove.getUniquePlayerID()); // game.getCurrentPlayer();
         
         FullMapNode currentNode = getCurrentPosition(fullMap, currentPlayer, game);
         int currentX = currentNode.getX();
@@ -332,7 +332,7 @@ public class GameService {
                             
                             if (neighborNode.getOwnedByPlayer() == 0 || 
                                 neighborNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
-                                neighborNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
+                                // neighborNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
                                 if (neighborNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
                                 	System.out.println("FOUND TREASURE ON: " + neighborX + " " + neighborY);
                                 	currentPlayer.setRevealedTreasureToTrue();

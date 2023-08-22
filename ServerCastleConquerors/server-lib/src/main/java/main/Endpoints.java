@@ -84,7 +84,7 @@ public class Endpoints {
 	   @Validated @RequestBody PlayerMove playerMove) {
 	
     	try {
-    		gameService.processMove(gameID, playerMove);
+    		GameService.processMove(gameID, playerMove);
     	} catch (IllegalArgumentException e) {
     		return new ResponseEnvelope<>("IllegalArgumentException", e.getMessage());
     	}

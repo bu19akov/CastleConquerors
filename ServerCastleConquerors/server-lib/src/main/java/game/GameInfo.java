@@ -108,7 +108,7 @@ public class GameInfo {
         	}
         	if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
         		FullMapNode maskedNode;
-        		if (currentPlayer.getCollectedTreasure()) {
+        		if (getPlayerWithID(playerID.getUniquePlayerID()).getCollectedTreasure()) { // if (currentPlayer.getCollectedTreasure()) {
         			maskedNode = new FullMapNode(
                             node.getTerrain(),
                             EPlayerPositionState.MyPlayerPosition,
@@ -157,7 +157,8 @@ public class GameInfo {
                         node.getY(),
                         0
                     );
-            	} else if (currentPlayer.getRevealedTreasure() || currentPlayer.getCollectedTreasure()){
+            	}
+            	else if (getPlayerWithID(playerID.getUniquePlayerID()).getCollectedTreasure() || getPlayerWithID(playerID.getUniquePlayerID()).getRevealedTreasure()) { // } else if (currentPlayer.getRevealedTreasure() || currentPlayer.getCollectedTreasure()) {
             		maskedNode = new FullMapNode(
                         node.getTerrain(),
                         EPlayerPositionState.EnemyPlayerPosition,
@@ -167,7 +168,7 @@ public class GameInfo {
                         node.getY(),
                         0
                     );
-            	} else {
+            	} else { // If enemy enters my treasure, that has been discovered, and I send move request, the treasure disappears
             		maskedNode = new FullMapNode(
                         node.getTerrain(),
                         EPlayerPositionState.EnemyPlayerPosition,
