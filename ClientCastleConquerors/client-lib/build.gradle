@@ -50,7 +50,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-mongodb:${springBootVersion}"
-    
+
     // automatically restarts the server when the implementation or resources are changed such that you don't need to do it manually
     compileOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
     
@@ -59,7 +59,7 @@ dependencies {
     implementation "javax.xml.bind:jaxb-api:2.3.1"
     implementation "com.sun.istack:istack-commons-runtime:4.0.1"
     
-    // valiation commands on jaxb entities
+    // validation commands on jaxb entities
     implementation "javax.validation:validation-api:2.0.1.Final"
     implementation "org.hibernate:hibernate-validator:7.0.1.Final"
     implementation "org.hibernate:hibernate-validator-annotation-processor:7.0.1.Final"
@@ -70,6 +70,7 @@ dependencies {
     // JUnit 4 should no longer be used, check out the unit testing slides on Moodle 
     // to get some assistance when transitioning existing tests from 4 to 5
     testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1' //for data driven tests

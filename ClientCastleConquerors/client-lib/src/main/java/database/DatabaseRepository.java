@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class DatabaseRepository {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseRepository.class);
-    
+
     private static final MongoClient mongoClient;
     private static final MongoDatabase database;
     private static final MongoCollection<Document> credentialsCollection;
@@ -29,12 +29,12 @@ public class DatabaseRepository {
         database = mongoClient.getDatabase("CastleConquerorsData");
         credentialsCollection = database.getCollection("UserCredentials");
     }
-    
+
     public static boolean verifyLogin(String playerUsername, String password) {
         Document document = new Document("playerUsername", playerUsername).append("password", password);
         return credentialsCollection.find(document).first() != null;
     }
-    
+
     public static Player findAccountByUsername(String playerUsername) {
         Document query = new Document("playerUsername", playerUsername);
         Document document = credentialsCollection.find(query).first();
@@ -44,14 +44,33 @@ public class DatabaseRepository {
         }
         return null;
     }
-    
+
     public static void createPlayerAccount(Player player, String password) {
         Document document = new Document("playerUsername", player.getUsername())
                 .append("password", password);
         try {
         	credentialsCollection.insertOne(document);
-            logger.info("Player's acount with username {} created successfully", player.getUsername());
+            logger.info("Player's account with username {} created successfully", player.getUsername());
         } catch (MongoException e) {
+            logger.error("Failed to create new Player Account with username {}", player.getUsername(), e);
+        }
+    }
+
+    public static void deletePlayerAccount(Player player, String password) {
+        Document account = new Document("playerUsername", player.getUsername())
+                .append("password", password);
+
+        try {
+            Document accountFromDatabase = credentialsCollection.find(account).first();
+
+            if (accountFromDatabase == null) {
+                throw new RuntimeException("Failed to delete account: no account with such user credentials");
+            }
+
+            credentialsCollection.deleteOne(accountFromDatabase);
+        } catch (MongoException e) {
+            logger.error("Failed to delete Player Account with username {}", player.getUsername(), e);
+        } catch (RuntimeException e) {
             logger.error("Failed to create new Player Account with username {}", player.getUsername(), e);
         }
     }
