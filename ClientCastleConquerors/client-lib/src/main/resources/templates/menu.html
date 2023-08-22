@@ -31,7 +31,7 @@
 
 <!--basically here is the text that would be here without the .js -->
 <!--but I doubt there's going to be people on this page without logging in-->
-<h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">default</span>?</h2>
+<h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">adventurer</span>?</h2>
 
 
 <div class="login-container">
@@ -70,20 +70,111 @@
     <div id="gameRulesModal" class="modal" onclick="closeModal()">
         <div class="modal-content">
             <h2>Game Rules</h2>
-            <p>sup</p>
-        </div>
+            <p>
+            Come and conquer! Climb tall mountains to get a chance to have a better look on surrounding areas,
+            get through high grass in search of a treasure or an enemy's castle and avoid lakes full of piranhas that will eat you instantly.
+            </p>
+            <br>
+            <br>
 
+            Use your found treasure to bribe castle's guards and steel crown of your enemy before they got a chance to do it before you!
+            <br>
+            <br>
+
+            <div class="button-group">
+                <button class="login-btn" onclick="openGameMechanicsModal()">Game Mechanics</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Modal for game mechanics -->
+    <div id="gameMechanicsModal" class="modal" onclick="closeGameMechanicsModal()">
+        <div class="modal-content">
+            <h3>Map tiles:</h3>
+                <div>
+<!--                    Grassland -->
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td rowspan="3">Green<br>(grassland)</td>
+                            <td><strong>movement</strong></td>
+                            <td>1 move to get in <br>1 move to get out<br></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>visibility</strong></td>
+                            <td>while inside, you can see only what is inside of this field</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>special</strong></td>
+                            <td>May contain a treasure or a castle
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+    <!--                Mountain -->
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td rowspan="3">Gray<br>(mountain)</td>
+                            <td><strong>movement</strong></td>
+                            <td>2 moves to get in <br>2 moves to get out<br></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>visibility</strong></td>
+                            <td>while inside, you can see what is inside of this field and nearby tiles</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>special</strong></td>
+                            <td>You can see what is inside neighbour tiles: you will see all treasures and castles
+                                that are in 3x3 square (<i>your position is in the centre</i>)
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+    <!--                Water -->
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td rowspan="3">Blue<br>(water)</td>
+                            <td><strong>movement</strong></td>
+                            <td>1 move to get in<br></td>
+                        </tr>
+                        <tr>
+                            <td><strong>visibility</strong></td>
+                            <td>none</td>
+                        </tr>
+                        <tr>
+                            <td><strong>special</strong></td>
+                            <td bgcolor="#bc8f8f">instant loss</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                <br>
+        </div>
+    </div>
 </div>
 
 <script>
     function openModal() {
         document.getElementById('gameRulesModal').style.display = 'flex';
     }
-
     function closeModal() {
         document.getElementById('gameRulesModal').style.display = 'none';
+    }
+
+
+    function openGameMechanicsModal() {
+        document.getElementById('gameMechanicsModal').style.display = 'flex';
+    }
+
+    function closeGameMechanicsModal() {
+        document.getElementById('gameMechanicsModal').style.display = 'none';
     }
 
     function connectToGame() {
