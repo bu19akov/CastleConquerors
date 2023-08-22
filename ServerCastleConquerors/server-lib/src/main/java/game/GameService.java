@@ -242,8 +242,8 @@ public class GameService {
 	    }
         
         if (newX < 0 || newX > fullMap.getMaxX() || newY < 0 || newY > fullMap.getMaxY()) {
-            logger.error("Player {} attempted to move outside the map boundaries!", playerMove.getUniquePlayerID());
-            endGame(gameID, "Player moved outside of the map boundaries!", false);
+            logger.error("Player {} attempted to move outside the map boundaries!", playerMove.getUniquePlayerID()); // TODO throw exception
+            endGame(gameID, "moved outside of the map boundaries!", false);
             return;
         }
         
@@ -256,7 +256,7 @@ public class GameService {
         FullMapNode nextNode = nextNodeOpt.get();
         
         if (nextNode.getTerrain() == ETerrain.Water) {
-            endGame(gameID, "Player " + currentPlayer.getPlayerUsername() + " moved into the water", false);
+            endGame(gameID, "moved into the water!", false);
             return; // Exit the method since the game is ended
         }
         
@@ -452,7 +452,7 @@ public class GameService {
         game.incrementTurnCount();
     }
     
-    private static void endGame(UniqueGameIdentifier gameID, String reason, boolean currentPlayerWins) {
+    private static void endGame(UniqueGameIdentifier gameID, String reason, boolean currentPlayerWins) throws IllegalArgumentException{
         logger.info("Game {} was ended! Reason: {}", gameID.getUniqueGameID(), reason);
 
         GameInfo game = games.get(gameID);
@@ -481,6 +481,8 @@ public class GameService {
                         player.setPlayerGameState(EPlayerGameState.Won);
                         logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
                     });
+                
+                throw new IllegalArgumentException("You " + reason);
             }
         }
 

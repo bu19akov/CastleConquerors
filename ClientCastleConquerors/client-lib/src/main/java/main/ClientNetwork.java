@@ -141,7 +141,7 @@ public class ClientNetwork {
             System.err.println("Client error, errormessage: " + requestState.getExceptionMessage());
 
             logger.error("Your move was not registered");
-            throw new ClientNetworkException("Movement error!");
+            throw new ClientNetworkException(requestState.getExceptionMessage());
         }
     }
 }
