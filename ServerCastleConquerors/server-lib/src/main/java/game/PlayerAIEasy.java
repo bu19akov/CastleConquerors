@@ -44,6 +44,9 @@ public class PlayerAIEasy extends PlayerState {
         System.out.println("AI FORT NODE: " + aiFortNode.toString());
         HalfMapType aiHalf = determineHalfMap(game.getFullMap(), aiFortNode);
         setAiHalf(aiHalf);
+        if (this.getState() == EPlayerGameState.MustAct) {
+        	makeMove();
+        }
 	}
 	
 	private FullMapNode getAiFortNode(FullMap fullMap, UniqueGameIdentifier gameID) {
