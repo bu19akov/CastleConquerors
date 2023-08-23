@@ -127,7 +127,7 @@ body {
     width: 45vw;
     height: 45px;
     background-color: #092855;
-    color: white;
+    color: lightgray;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -197,8 +197,8 @@ body {
     text-align: center;
     background: #3983e4;
     padding: 20px;
-    width: 42%;
-    height: 80%;
+    width: 50%;
+    height: 60%;
     border-radius: 15px;
     overflow: auto;
 }
@@ -235,7 +235,27 @@ body {
     }
 }
 
+.map-node-icon {
+    width: 15%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: center;
+    aspect-ratio: 1;
+    background-color: lightgray;
+}
 
+.map-node-details {
+    width: 85%;
+    align-content: center;
+    horiz-align: center;
+    background: lightgray;
+    font-family: Joystix Monospace, serif;
+    color: saddlebrown;
+    vertical-align: center;
+}
 
-
-
+.game-rules {
+    font-family: Joystix Monospace, serif;
+    color: saddlebrown;
+    font-size: larger;
+}

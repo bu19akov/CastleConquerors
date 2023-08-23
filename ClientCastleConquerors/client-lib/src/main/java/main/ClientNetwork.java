@@ -77,7 +77,6 @@ public class ClientNetwork {
                 .retrieve().bodyToMono(ResponseEnvelope.class); // specify the object returned by the server
         ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
         if (resultReg.getState() == ERequestState.Error) {
-        	logger.error("Registration error!");
             throw new ClientNetworkException("Registration error!");
         } else {
             return resultReg.getData().get().getUniquePlayerID();

@@ -94,7 +94,7 @@ public class GameInfo {
         filteredMap.setMaxY(fullMap.getMaxY());
 
         for (FullMapNode node : fullMap.getMapNodes()) {
-        	if (getTurnCount() > FAKE_OPPONENT_POSITION_TURNS && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
+        	if (getTurnCount() >= FAKE_OPPONENT_POSITION_TURNS && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
         		FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),
                         EPlayerPositionState.EnemyPlayerPosition,
@@ -192,7 +192,19 @@ public class GameInfo {
                         node.getOwnedByPlayer()
                 );
                 filteredMap.add(maskedNode);
-            } // show enemy fort location
+            } 
+            else if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() != currentPlayerNumber) {
+            	FullMapNode maskedNode = new FullMapNode(
+            			node.getTerrain(),
+                        EPlayerPositionState.BothPlayerPosition,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                );
+                filteredMap.add(maskedNode);
+            }
             else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
             	FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),
@@ -219,30 +231,30 @@ public class GameInfo {
             }
         }
         
-        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS && fakeOpponentX != -1 && fakeOpponentY != -1) {
-        	Optional<FullMapNode> randomNodeOpt = filteredMap.get(fakeOpponentX, fakeOpponentY);
-            if (randomNodeOpt.isPresent()) {
-                FullMapNode randomNode = randomNodeOpt.get();
-                if (randomNode.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition) {
-                	randomNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
-                } else {
-                    randomNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
-                }
-            }
-        }
-        
-        // For the first 16 turns, determine random x and y
-        if (this.stateID != this.stateIDBackUp) {
-        	System.out.println(stateID);
-        	this.stateIDBackUp = this.stateID;
-	        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS) {
-	            int randomX = rand.nextInt(filteredMap.getMaxX() + 1);
-	            int randomY = rand.nextInt(filteredMap.getMaxY() + 1);
-	
-	            this.fakeOpponentX = randomX;
-	            this.fakeOpponentY = randomY;
-	        } 
-        }
+//        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS && fakeOpponentX != -1 && fakeOpponentY != -1) {
+//        	Optional<FullMapNode> randomNodeOpt = filteredMap.get(fakeOpponentX, fakeOpponentY);
+//            if (randomNodeOpt.isPresent()) {
+//                FullMapNode randomNode = randomNodeOpt.get();
+//                if (randomNode.getPlayerPositionState() != EPlayerPositionState.MyPlayerPosition) {
+//                	randomNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+//                } else {
+//                    randomNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+//                }
+//            }
+//        }
+//        
+//        // For the first 16 turns, determine random x and y
+//        if (this.stateID != this.stateIDBackUp) {
+//        	System.out.println(stateID);
+//        	this.stateIDBackUp = this.stateID;
+//	        if (getTurnCount() <= FAKE_OPPONENT_POSITION_TURNS) {
+//	            int randomX = rand.nextInt(filteredMap.getMaxX() + 1);
+//	            int randomY = rand.nextInt(filteredMap.getMaxY() + 1);
+//	
+//	            this.fakeOpponentX = randomX;
+//	            this.fakeOpponentY = randomY;
+//	        } 
+//        }
         return filteredMap;
     }
 

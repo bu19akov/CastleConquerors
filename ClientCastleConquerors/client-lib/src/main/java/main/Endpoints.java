@@ -131,7 +131,6 @@ public class Endpoints {
         try {
         	clientNetwork.sendPlayerRegistration(gameID, playerReg);  // TODO Check if client is already registered
         } catch (ClientNetworkException e) {
-        	
         }
         try {
             FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);

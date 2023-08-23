@@ -3,83 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>🏰 Castle Conquerors</title>
-
     <link rel="stylesheet" href="../static/styles/mapExample.css">
     <link rel="stylesheet" th:href="@{~/styles/mapExample.css}">
-
-    <style>
-        table {
-            margin: auto;
-            border-collapse: collapse;
-			/* To keep pixel art crisp */
-			image-rendering: pixelated;
-			image-rendering: -moz-crisp-edges;
-			image-rendering: crisp-edges;
-        }
-
-        td {
-		    width: 50px;
-		    height: 50px;
-		    text-align: center;
-		    vertical-align: middle;
-		    border-top: 1px solid #ccc;
-		    border-bottom: 1px solid #ccc;
-		    border-left: 1px solid #ccc;
-		    border-right: 1px solid #ccc;
-		    position: relative;
-		}
-        
-        /* For horizontal red line */
-		.red-line td {
-		    border-top: 2px solid red;
-		}
-		
-		/* For vertical red line */
-		td.red-line {
-		    border-left: 2px solid red;
-		}
-
-       	#Grass {
-		    background-image: url('../images/grass.png');
-		    background-size: cover;  /* the image covers the whole cell */
-		}
-		
-		#Mountain {
-		    background-image: url('../images/mountain.png');
-		    background-size: cover;
-		}
-		
-		#Water {
-		    background-image: url('../images/water.png');
-		    background-size: cover;
-		}
-		
-		.player-icon {
-		    position: absolute;
-		    width: 40px;
-		    height: 40px;
-		    top: 50%;
-		    left: 50%;
-		    transform: translate(-50%, -50%);
-		    z-index: 2;
-		}
-		
-		.my-player {
-		    background-image: url('../images/myPlayer.png');
-		}
-		
-		.enemy-player {
-		    background-image: url('../images/enemyPlayer.png');
-		}
-		
-		.both-players {
-		    background-image: url('../images/bothPlayers.png');
-		}
-
-    </style>
 </head>
 <body>
 
+<!--Clouds-->
 <div class="clouds">
     <div class="cloud"></div>
     <div class="cloud"></div>
@@ -94,61 +23,109 @@
     <div class="cloud"></div>
 </div>
 
-    <h4><span th:text="'Game ID: ' + ${gameID}">default game ID</span><button id="copyButton"></button></h4>
-	<h2 th:text="${playerState.getPlayerUsername()}"></h2>
-	<div id="playerStateDiv">
-	    <p id="stateMustAct">It's your turn to act.</p>
-	    <p id="stateMustWait">Please wait for your opponent.</p>
-		<p id="playerTreasureCollected" style="display: none;">You have collected the treasure! 💎</p>
-		<p id="playerTreasureNotCollected">You haven't collected the treasure yet.</p>
-	    <p id="stateWon">Congratulations, you won!</p>
-	    <p id="stateLost">Sorry, you lost. Better luck next time!</p>
-	</div>
-    <div id="notification" style="display: none;">Game ID copied to clipboard!</div>
+
+<!--The leaveGameButton and Game ID with the copy button-->
+<!--are both wrapped in a container to be at the bottom right of the screen-->
+<div class="bottom-right-container">
+    <div class="copy-container">
+        <span th:text="'Game ID: ' + ${gameID}">default game ID</span>
+        <button id="copyButton"></button>
+    </div>
     <button id="leaveGameButton">Leave the game</button>
+</div>
+
+
+<!--Player's info box and game state-->
+<div class="player-info">
+    <div class="player-box">
+        <span class="username-icon"><img src="../images/myPlayer.png" alt="Player Icon"></span>
+        <h2 th:text="${playerState.getPlayerUsername()}"></h2>
+    </div>
+    <div id="playerStateDiv">
+        <p id="playerTreasureCollected" style="display: none;">You have collected the treasure! 💎</p>
+        <p id="playerTreasureNotCollected">You haven't collected the treasure yet.</p>
+    </div>
+</div>
+
+<!--Game title-->
+<h1 id="gameTitle">Castle Conquerors</h1>
+
+<!--Opponent's info box and game state-->
+<div class="opponent-info">
+    <div class="opponent-box">
+        <h2 id="opponentUsername" style="display: none;"></h2>
+        <span class="opponent-icon"><img src="../images/enemyPlayer.png" alt="Player Icon"></span>
+    </div>
+    <div id="opponentStateDiv">
+        <p id="opponentTreasureCollected" style="display: none;">Enemy has collected the treasure 💀</p>
+        <p id="opponentTreasureNotCollected">Enemy hasn't found the treasure.</p>
+    </div>
+</div>
+
+
+<!--Game container (state messages, and the tabla/map itself)-->
+<div class="game-container">
+    <div class="state-messages">
+        <p id="stateWon">Congratulations, you won!</p>
+        <p id="stateLost">Sorry, you lost. Better luck next time!</p>
+        <p id="stateMustAct">It's your turn to act.</p>
+        <p id="stateMustWait">Please wait for your opponent.</p>
+    </div>
+
+<!--End game container!-->
+    <div id="endGameContainer">
+        <div class="shadowBox">
+            <h1 id="endGameMessage"></h1>
+            <!--Game error message-->
+            <div id="errorMessage">Sample error message</div>
+            <div id="return">Press anywhere to return to menu</div>
+        </div>
+    </div>
+
+
+
+ <!--Moved the table styling into mapExample.css-->
+    <div class="table-container">
+        <table>
+            <tr th:each="mapRow : ${map}">
+                <td th:each="tile : ${mapRow}"
+                    th:id="${tile.getTerrain().toString()}">
+                    <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).MyPlayerPosition}">🥷</div>
+                    <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).EnemyPlayerPosition}">👤</div>
+                    <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).BothPlayerPosition}">👥</div>
+                    <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).MyFortPresent}">🏰</div>
+                    <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).EnemyFortPresent}">⛫</div>
+                    <div th:if="${tile.getTreasureState() == T(messagesbase.messagesfromserver.ETreasureState).MyTreasureIsPresent}">💰</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!--Notification after copying the Game ID-->
+<div id="notification" style="display: none;">Game ID copied to clipboard!</div>
+
+<!--Leave the game button with its pop-ups-->
 <div id="leaveGamePopup" style="display: none;">
-    <h1>Are you sure you want to leave the game?</h1>
-    <h2>This will automatically count as a loss.</h2>
+    <h1>Are you sure you want to go back to the menu?</h1>
+    <h2>This will automatically count as a loss!</h2>
     <button id="confirmLeave">Yes</button>
     <button id="cancelLeave">No</button>
 </div>
 
-</div>
 
+<!--Control buttons-->
+<div id="buttonDiv">
+    <button id="upButton" data-move="Up"></button>
 
-
-<table>
-    <tr th:each="mapRow : ${map}">
-        <td th:each="tile : ${mapRow}"
-            th:id="${tile.getTerrain().toString()}">
-            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).MyPlayerPosition}">🥷</div>
-            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).EnemyPlayerPosition}">👤</div>
-            <div th:if="${tile.getPlayerPositionState() == T(messagesbase.messagesfromserver.EPlayerPositionState).BothPlayerPosition}">👥</div>
-            <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).MyFortPresent}">🏰</div>
-            <div th:if="${tile.getFortState() == T(messagesbase.messagesfromserver.EFortState).EnemyFortPresent}">⛫</div>
-            <div th:if="${tile.getTreasureState() == T(messagesbase.messagesfromserver.ETreasureState).MyTreasureIsPresent}">💰</div>
-        </td>
-    </tr>
-</table>
-
-	<h2 id="opponentUsername" style="display: none;"></h2>
-	<div id="opponentStateDiv">
-		<p id="opponentTreasureCollected" style="display: none;">Enemy has collected the treasure 💀</p>
-		<p id="opponentTreasureNotCollected">Enemy hasn't found the treasure.</p>
-	</div>
-
-<div id="buttonDiv" style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
-    <button id="upButton" data-move="Up">Up</button>
-    
-    <div style="display: flex; justify-content: space-between; width: 150px;">
-        <button id="leftButton" data-move="Left">Left</button>
-        <button id="rightButton" data-move="Right">Right</button>
+    <div class="directional-buttons">
+        <button id="leftButton" data-move="Left"></button>
+        <button id="downButton" data-move="Down"></button>
+        <button id="rightButton" data-move="Right"></button>
     </div>
-
-    <button id="downButton" data-move="Down">Down</button>
 </div>
 
-<div id="errorMessage" style="color: red; display: none;">Sample error message</div>
+
 
 <script>
 	const gameID = "[[${gameID}]]";
@@ -388,7 +365,7 @@
 		
 		    if (result !== "Move accepted") {
 		        const errorMessageDiv = document.getElementById('errorMessage');
-		        errorMessageDiv.textContent = 'An error occurred: ' + result;
+		        errorMessageDiv.textContent = 'Check the rules again! ' + result;
 		        errorMessageDiv.style.display = 'block';
 		    
 		        // Hide the error message after 5 seconds
@@ -403,8 +380,8 @@
 	}
 
     document.getElementById('copyButton').addEventListener('click', function() {
-        const gameIdElement = document.querySelector('h4');
-        const gameIdValue = gameIdElement.textContent.replace('Game ID: ', '');  // Extract only the Game ID value
+        const gameIdElement = document.querySelector('.copy-container span');
+        const gameIdValue = gameIdElement.textContent.replace('Game ID: ', '');
         const textarea = document.createElement('textarea');
 
         // Set the value of the textarea to the extracted Game ID value
@@ -452,6 +429,53 @@
         const popup = document.getElementById('leaveGamePopup');
         popup.style.display = 'none';
     });
+
+
+
+    function endGame(isWinner) {
+        // Show the end game container
+        document.getElementById('endGameContainer').style.display = 'block';
+
+        // Set the message based on whether the player won or lost
+        let message = isWinner ? "You won!" : "You lost!";
+        document.getElementById('endGameMessage').innerText = message;
+
+        // Set up click event to return to the menu
+        document.getElementById('endGameContainer').addEventListener('click', function() {
+            window.location.href = "/menu";
+        });
+    }
+
+    function checkEndGameState() {
+        const stateWon = document.getElementById('stateWon');
+        const stateLost = document.getElementById('stateLost');
+
+        if (stateWon.style.display === 'block') {
+            endGame(true);
+        } else if (stateLost.style.display === 'block') {
+            endGame(false);
+        }
+    }
+
+    // This is the callback function that the observer will run
+    // when it notices a change in the targeted elements.
+    function mutationCallback(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                checkEndGameState();
+            }
+        }
+    }
+
+    // Setting up the observer
+    const observer = new MutationObserver(mutationCallback);
+
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: false, subtree: false };
+
+    // Start observing the target nodes for configured mutations
+    observer.observe(document.getElementById('stateWon'), config);
+    observer.observe(document.getElementById('stateLost'), config);
 
 
 </script>
