@@ -133,7 +133,7 @@
 		<p id="opponentTreasureNotCollected">Enemy hasn't found the treasure.</p>
 	</div>
 
-<div style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
+<div id="buttonDiv" style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
     <button id="upButton" data-move="Up">Up</button>
     
     <div style="display: flex; justify-content: space-between; width: 150px;">
@@ -174,10 +174,12 @@
 	    }
 	}
 
+	let playerCanMakeMove = false;
 	let playerTreasureRevealed = false;
 	let playerTreasureCollected = false;
 	let playerHasAlreadyVisitedTreasure = false;
 	let playerEnemyFortRevealed = false;
+
     function updateGameData() {	    
 	    if (!gameID) {
 	        console.error("Game ID not found");
@@ -217,7 +219,17 @@
 		            document.getElementById(stateID).style.display = 'none';
 		        }
 		    });
-	
+
+			// Check if can make to alter buttons
+			console.log(states[0], data.state, (states[0] == data.state))
+			if("MustAct" == data.state){
+				document.getElementById("buttonDiv").style.display = 'flex'
+				playerCanMakeMove = true;
+			} else {
+				document.getElementById("buttonDiv").style.display = 'none'
+				playerCanMakeMove = false
+			}
+
 	    }).catch(error => {
 	        console.error('Player fetch Error:', error);
 	    });
