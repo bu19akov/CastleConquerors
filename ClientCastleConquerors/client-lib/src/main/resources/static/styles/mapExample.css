@@ -270,6 +270,10 @@ table {
     /*margin: auto;*/
     border-collapse: collapse;
     width: 100%; /* Assuming you want the table to take the full width of its container */
+    /* To keep pixel art crisp */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 
