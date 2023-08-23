@@ -22,6 +22,9 @@ import messagesbase.messagesfromserver.PlayerState;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -510,8 +513,11 @@ public class GameService {
             }
         }
 
-        // Remove game from active games list
-        //games.remove(gameID);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(() -> {
+            games.remove(gameID);
+            scheduler.shutdown(); // shut down the scheduler to free resources
+        }, 1, TimeUnit.SECONDS);
     }
 
 }

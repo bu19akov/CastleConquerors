@@ -154,14 +154,17 @@
 	        });
 	    }
 	}
-
+	let gameHasEnded = false;
 	let playerCanMakeMove = false;
 	let playerTreasureRevealed = false;
 	let playerTreasureCollected = false;
 	let playerHasAlreadyVisitedTreasure = false;
 	let playerEnemyFortRevealed = false;
 
-    function updateGameData() {	    
+    function updateGameData() {	 
+		if (gameHasEnded) {
+	        return; // Early exit if game has ended
+	    }   
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
@@ -200,11 +203,6 @@
 		        const errorMessageDiv = document.getElementById('errorMessage');
 		        errorMessageDiv.textContent = 'You exceeded your turn time!';
 		        errorMessageDiv.style.display = 'block';
-		
-		        // Hide the error message after 5 seconds
-		        setTimeout(() => {
-		            errorMessageDiv.style.display = 'none';
-		        }, 5000);
 		    }
 		
 		    const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
@@ -215,6 +213,10 @@
 		            document.getElementById(stateID).style.display = 'none';
 		        }
 		    });
+		    
+		    if (data.state === 'Won' || data.state === 'Lost') {
+		        gameHasEnded = true; // Set the flag to true
+		    }
 		
 		    // Check if can make to alter buttons
 		    if("MustAct" == data.state){
@@ -382,11 +384,6 @@
 		        const errorMessageDiv = document.getElementById('errorMessage');
 		        errorMessageDiv.textContent = 'Check the rules again! ' + result;
 		        errorMessageDiv.style.display = 'block';
-		    
-		        // Hide the error message after 5 seconds
-		        setTimeout(() => {
-		            errorMessageDiv.style.display = 'none';
-		        }, 5000);
 		    }
 		})
 	    .catch(error => {

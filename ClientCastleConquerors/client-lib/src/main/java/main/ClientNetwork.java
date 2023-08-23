@@ -39,8 +39,7 @@ public class ClientNetwork {
 
     private static void checkGameState(ResponseEnvelope<GameState> gameState) throws ClientNetworkException {
         if (gameState.getState() == ERequestState.Error) {
-            System.err.println("Client error, errormessage: " + gameState.getExceptionMessage());
-            throw new ClientNetworkException("Error retrieving map state BBBBBB");
+            throw new ClientNetworkException("Error retrieving map state");
         }
     }
 
@@ -137,8 +136,6 @@ public class ClientNetwork {
         ResponseEnvelope<?> requestState = webAccess.block();
 
         if (requestState.getState() == ERequestState.Error) {
-            System.err.println("Client error, errormessage: " + requestState.getExceptionMessage());
-
             logger.error("Your move was not registered");
             throw new ClientNetworkException(requestState.getExceptionMessage());
         }
