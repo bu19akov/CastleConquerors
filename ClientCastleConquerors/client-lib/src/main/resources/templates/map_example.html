@@ -51,6 +51,7 @@
 <!--Game title-->
 <h1 id="gameTitle">Castle Conquerors</h1>
 
+
 <!--Opponent's info box and game state-->
 <div class="opponent-info">
     <div class="opponent-box">
@@ -73,7 +74,17 @@
         <p id="stateMustWait">Please wait for your opponent.</p>
     </div>
 
-<!--Moved the table styling into mapExample.css-->
+<!--End game container!-->
+    <div id="endGameContainer">
+        <div class="shadowBox">
+            <h1 id="endGameMessage"></h1>
+            <p id="countdown">You will be put back in the menu in <span id="count">5</span></p>
+        </div>
+    </div>
+
+
+
+ <!--Moved the table styling into mapExample.css-->
     <div class="table-container">
         <table>
             <tr th:each="mapRow : ${map}">
@@ -100,6 +111,7 @@
 <!--Leave the game button with its pop-ups-->
 <div id="leaveGamePopup" style="display: none;">
     <h1>Are you sure you want to go back to the menu?</h1>
+    <h2>This will automatically count as a loss!</h2>
     <button id="confirmLeave">Yes</button>
     <button id="cancelLeave">No</button>
 </div>
@@ -356,7 +368,7 @@
 		
 		    if (result !== "Move accepted") {
 		        const errorMessageDiv = document.getElementById('errorMessage');
-		        errorMessageDiv.textContent = 'An error occurred: ' + result;
+		        errorMessageDiv.textContent = 'Check the rules again! ' + result;
 		        errorMessageDiv.style.display = 'block';
 		    
 		        // Hide the error message after 5 seconds
@@ -420,6 +432,62 @@
         const popup = document.getElementById('leaveGamePopup');
         popup.style.display = 'none';
     });
+
+
+
+    function endGame(isWinner) {
+        // Show the end game container
+        document.getElementById('endGameContainer').style.display = 'block';
+
+        // Set the message based on whether the player won or lost
+        let message;
+        message = isWinner ? "You won!" : "You lost!";
+        document.getElementById('endGameMessage').innerText = message;
+
+        // Start the countdown
+        let countdown = 5;
+        const intervalId = setInterval(() => {
+            countdown -= 1;
+            document.getElementById('count').innerText = countdown;
+
+            // When countdown ends, clear the interval and redirect the user
+            if (countdown === 0) {
+                clearInterval(intervalId);
+                window.location.href = "/menu";
+            }
+        }, 1000);
+    }
+
+    function checkEndGameState() {
+        const stateWon = document.getElementById('stateWon');
+        const stateLost = document.getElementById('stateLost');
+
+        if (stateWon.style.display === 'block') {
+            endGame(true);
+        } else if (stateLost.style.display === 'block') {
+            endGame(false);
+        }
+    }
+
+    // This is the callback function that the observer will run
+    // when it notices a change in the targeted elements.
+    function mutationCallback(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                checkEndGameState();
+            }
+        }
+    }
+
+    // Setting up the observer
+    const observer = new MutationObserver(mutationCallback);
+
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: false, subtree: false };
+
+    // Start observing the target nodes for configured mutations
+    observer.observe(document.getElementById('stateWon'), config);
+    observer.observe(document.getElementById('stateLost'), config);
 
 
 </script>

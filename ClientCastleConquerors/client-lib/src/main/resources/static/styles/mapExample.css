@@ -203,12 +203,18 @@ button#copyButton {
     margin-bottom: 10px;
 }
 
+#leaveGamePopup h2 {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
 
 #leaveGamePopup button {
     margin: 10px;
     padding: 5px 15px;
     cursor: pointer;
     border-radius: 5px;
+    font-family: Joystix Monospace, serif;
 }
 
 #confirmLeave {
@@ -435,5 +441,38 @@ h2 {
     width: 30%;
 }
 
+#endGameContainer {
+    display: none;
+    position: fixed;         /* Changed to fixed */
+    top: 0;
+    left: 0;
+    width: 100%;            /* Full viewport width */
+    height: 100%;           /* Full viewport height */
+    background-color: rgba(0, 0, 0, 0.6);  /* A slightly transparent black to act as an overlay */
+    z-index: 1000;
+    color: #f6ff00;
+}
 
+.shadowBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(16, 15, 15, 0.85);
+    padding: 50px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 80%;
+}
 
+#endGameMessage {
+    font-size: 5rem;
+    margin-bottom: 10px;
+    font-family: StgoticW00-Regular, Serif;
+}
+
+#countdown {
+    font-size: 2.5rem;
+    font-family: Joystix Monospace, serif;
+    padding: 20px;
+}
