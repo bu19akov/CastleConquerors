@@ -71,25 +71,6 @@ public class DatabaseRepository {
         }
     }
 
-    public static void deletePlayerAccount(Player player, String password) {
-        Document account = new Document("playerUsername", player.getUsername())
-                .append("password", password);
-
-        try {
-            Document accountFromDatabase = credentialsCollection.find(account).first();
-
-            if (accountFromDatabase == null) {
-                throw new RuntimeException("Failed to delete account: no account with such user credentials");
-            }
-
-            credentialsCollection.deleteOne(accountFromDatabase);
-        } catch (MongoException e) {
-            logger.error("Failed to delete Player Account with username {}", player.getUsername(), e);
-        } catch (RuntimeException e) {
-            logger.error("Failed to create new Player Account with username {}", player.getUsername(), e);
-        }
-    }
-
     public static void close() {
         mongoClient.close();
         logger.info("Connection to Mongo is closed");
