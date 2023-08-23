@@ -40,8 +40,8 @@ test {
 
 //specifies the expected java versions
 //Note, not all libraries officially support higher versions
-sourceCompatibility = 1.17
-targetCompatibility = 1.17
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
 	// Spring boot
@@ -107,5 +107,18 @@ bootJar {
             'Built-By'       : System.properties['user.name'],
             'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
         )
+    }
+}
+
+
+task stage(dependsOn: ['bootJar']) {
+    doLast {
+        copy {
+            from bootJar.archiveFile
+            into project.rootDir
+            rename { String fileName ->
+                "client-lib.jar"
+            }
+        }
     }
 }
