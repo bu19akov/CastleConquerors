@@ -11,6 +11,10 @@
         table {
             margin: auto;
             border-collapse: collapse;
+			/* To keep pixel art crisp */
+			image-rendering: pixelated;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: crisp-edges;
         }
 
         td {
@@ -41,12 +45,12 @@
 		}
 		
 		#Mountain {
-		    background-image: url('../images/mountain.JPG');
+		    background-image: url('../images/mountain.png');
 		    background-size: cover;
 		}
 		
 		#Water {
-		    background-image: url('../images/water.JPG');
+		    background-image: url('../images/water.png');
 		    background-size: cover;
 		}
 		
