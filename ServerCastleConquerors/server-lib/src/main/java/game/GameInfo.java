@@ -192,7 +192,19 @@ public class GameInfo {
                         node.getOwnedByPlayer()
                 );
                 filteredMap.add(maskedNode);
-            } // show enemy fort location
+            } 
+            else if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition && node.getTreasureState() == ETreasureState.MyTreasureIsPresent && node.getOwnedByPlayer() != currentPlayerNumber) {
+            	FullMapNode maskedNode = new FullMapNode(
+            			node.getTerrain(),
+                        EPlayerPositionState.BothPlayerPosition,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        node.getX(),
+                        node.getY(),
+                        0
+                );
+                filteredMap.add(maskedNode);
+            }
             else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && playerNumber.get(currentPlayerNumber).getRevealedEnemyFort()) {
             	FullMapNode maskedNode = new FullMapNode(
                         node.getTerrain(),

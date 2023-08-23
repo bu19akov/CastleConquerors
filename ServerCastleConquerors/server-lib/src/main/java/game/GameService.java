@@ -273,26 +273,32 @@ public class GameService {
 
         // Update FullMap with the new player position
         if (remainingMoves == 0 && (newX != currentX || newY != currentY)) {
-        	if (currentNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer) && (currentNode.getTreasureState() == ETreasureState.MyTreasureIsPresent || currentNode.getFortState() == EFortState.MyFortPresent)) {
-        		currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
-        	}
             // remove player field occupation if it is not fort or treasure
             if (currentNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
-            	// Remove player from the current node
-                currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            	if (currentNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
+            		currentNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
+            	} else {
+            		currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            	}
                 if (currentNode.getFortState() != EFortState.MyFortPresent && currentNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
             		currentNode.setOwnedByPlayer(0); // TODO check BothPlayer
             	}
             }
             
-            if (currentNode.getOwnedByPlayer() == 0 && currentNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
+            else if (currentNode.getOwnedByPlayer() == 0 && currentNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
             	currentNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
             	if (game.getPlayerNumberByPlayerID(currentPlayer) == 1) {
             		currentNode.setOwnedByPlayer(2);
             	} else {
             		currentNode.setOwnedByPlayer(1);
             	}
-            }
+            } else if (currentNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer) && (currentNode.getTreasureState() == ETreasureState.MyTreasureIsPresent || currentNode.getFortState() == EFortState.MyFortPresent)) {
+            	if (currentNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition) {
+            		currentNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+            	} else {
+            		currentNode.setPlayerPositionState(EPlayerPositionState.NoPlayerPresent);
+            	}
+        	}
 
             // Place player on the new node
             Optional<FullMapNode> newNodeOpt = fullMap.get(newX, newY);
@@ -353,8 +359,20 @@ public class GameService {
             	newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
             } else if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)){
             	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
-            } else if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
-            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition); // TRY TO FIX enemy treasure is shown for my player, and for origin player it disappears
+            } else if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+            	if (newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
+	            	if (newNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
+	            		newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+	            	} else {
+	            		newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition); // TRY TO FIX enemy treasure is shown for my player, and for origin player it disappears
+	            	}
+            	} else if (newNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
+            		if (newNode.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
+	            		newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
+	            	} else {
+	            		newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
+	            	}
+            	}
             } else {
             	newNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
             	newNode.setPlayerPositionState(EPlayerPositionState.MyPlayerPosition);
