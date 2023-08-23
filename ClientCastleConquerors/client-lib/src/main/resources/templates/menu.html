@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="../static/styles/clouds.css">
     <link rel="stylesheet" href="styles/menu.css">
     <link rel="stylesheet" href="styles/clouds.css">
+
+<!--    <style>-->
+<!--        td {-->
+<!--            word-wrap: normal-->
+<!--        }-->
+<!--    </style>-->
 </head>
 <body>
 
@@ -91,71 +97,91 @@
     <div id="gameMechanicsModal" class="modal" onclick="closeGameMechanicsModal()">
         <div class="modal-content">
             <h3>Map tiles:</h3>
-                <div>
-<!--                    Grassland -->
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td rowspan="3">Green<br>(grassland)</td>
-                            <td><strong>movement</strong></td>
-                            <td>1 move to get in <br>1 move to get out<br></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><strong>visibility</strong></td>
-                            <td>while inside, you can see only what is inside of this field</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><strong>special</strong></td>
-                            <td>May contain a treasure or a castle
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <br>
-    <!--                Mountain -->
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td rowspan="3">Gray<br>(mountain)</td>
-                            <td><strong>movement</strong></td>
-                            <td>2 moves to get in <br>2 moves to get out<br></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><strong>visibility</strong></td>
-                            <td>while inside, you can see what is inside of this field and nearby tiles</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><strong>special</strong></td>
-                            <td>You can see what is inside neighbour tiles: you will see all treasures and castles
-                                that are in 3x3 square (<i>your position is in the centre</i>)
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <br>
-    <!--                Water -->
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td rowspan="3">Blue<br>(water)</td>
-                            <td><strong>movement</strong></td>
-                            <td>1 move to get in<br></td>
-                        </tr>
-                        <tr>
-                            <td><strong>visibility</strong></td>
-                            <td>none</td>
-                        </tr>
-                        <tr>
-                            <td><strong>special</strong></td>
-                            <td bgcolor="#bc8f8f">instant loss</td>
-                        </tr>
-                        </tbody>
-                    </table>
+
+            <!--            Container with MapNodes and their details -->
+            <div title="map-nodes">
+                <!--                    Grassland -->
+                <div class="container" style="display: flex; height: auto;">
+                    <!--                Div with MapNode texture -->
+                    <div class="map-node-icon"
+                         style="background-image: url('../images/grass.png');"></div>
+                    <!--                Div with MapNode description -->
+                    <div class="map-node-details">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td><strong>Movement</strong></td>
+                                <td>1 moves to get in <br>1 moves to get out<br></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Visibility</strong></td>
+                                <td>While inside, you can see only what is inside this field</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Special</strong></td>
+                                <td>
+                                    <p>May contain a treasure or a castle
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <br>
+
+                <!--                    Mountain -->
+                <div class="container" style="display: flex; height: auto;">
+                    <!--                Div with MapNode texture -->
+                    <div class="map-node-icon" style="background-image: url('../images/mountain.JPG');"></div>
+                    <!--                Div with MapNode description -->
+                    <div class="map-node-details">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td><strong>Movement</strong></td>
+                                <td>2 moves to get in <br>2 moves to get out<br></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Visibility</strong></td>
+                                <td>
+                                    <p>You will
+                                        see all treasures and enemy's castle (<i>if you already found your treasure</i>)
+                                        that are in 3x3 square (<i>your position
+                                            is in the centre</i>)</p>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <br>
+
+                <!--                    Water -->
+                <div class="container" style="display: flex; height: auto;">
+                    <!--                Div with MapNode texture -->
+                    <div class="map-node-icon" style="background-image: url('../images/water.JPG');"></div>
+                    <!--                Div with MapNode description -->
+                    <div class="map-node-details">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td><strong>Movement</strong></td>
+                                <td>1 move to get in<br></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Visibility</strong></td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Special</strong></td>
+                                <td>Instant loss</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
