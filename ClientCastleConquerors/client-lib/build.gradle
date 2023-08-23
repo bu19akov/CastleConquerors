@@ -89,6 +89,9 @@ dependencies {
 
     // Dependency to run project on M1 mac processors as well
     //implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', version: 'xxx', classifier: 'osx-aarch_64'
+    
+    //hashing
+    implementation 'org.mindrot:jbcrypt:0.4'
 }
 
 processResources {
