@@ -191,6 +191,11 @@ body {
     background: rgba(0,0,0,0.6);
     align-items: center;
     justify-content: center;
+
+    /* To keep pixel art crisp */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .modal-content {
