@@ -168,31 +168,46 @@
 	    }
 	    
 	    // Fetch player data
-	    fetch(`/game/${gameID}/playerdata`).then(response => {
-			return response.json();
-	    }).then(data => {
-			if (data.revealedTreasure) {
-	            playerTreasureRevealed = true;
-	        }
-	        
-	        if (data.collectedTreasure) {
-	            playerTreasureCollected = true;
-	        }
-	        
-	        if (data.revealedEnemyFort) {
-	            playerEnemyFortRevealed = true;
-	        }
-
-			if(!playerTreasureFound){
-				if (data && data.collectedTreasure) {
-					document.getElementById('playerTreasureCollected').style.display = 'block';
-					document.getElementById('playerTreasureNotCollected').style.display = 'none';
-
-					playerTreasureFound = true;
-				}
-			}
-		    
-			const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
+		fetch(`/game/${gameID}/playerdata`).then(response => {
+		    return response.json();
+		}).then(data => {
+		    if (data.revealedTreasure) {
+		        playerTreasureRevealed = true;
+		    }
+		
+		    if (data.collectedTreasure) {
+		        playerTreasureCollected = true;
+		    }
+		
+		    if (data.revealedEnemyFort) {
+		        playerEnemyFortRevealed = true;
+		    }
+		
+		    if(!playerTreasureFound){
+		        if (data && data.collectedTreasure) {
+		            document.getElementById('playerTreasureCollected').style.display = 'block';
+		            document.getElementById('playerTreasureNotCollected').style.display = 'none';
+		
+		            playerTreasureFound = true;
+		        }
+		    }
+		
+		    // Check for turn time exceeded
+		    if (data.turnTimeExceeded) {
+		        data.state = 'Lost'; // Set the state to Lost
+		
+		        // Display the error message
+		        const errorMessageDiv = document.getElementById('errorMessage');
+		        errorMessageDiv.textContent = 'You exceeded your turn time!';
+		        errorMessageDiv.style.display = 'block';
+		
+		        // Hide the error message after 5 seconds
+		        setTimeout(() => {
+		            errorMessageDiv.style.display = 'none';
+		        }, 5000);
+		    }
+		
+		    const states = ['stateMustAct', 'stateMustWait', 'stateWon', 'stateLost'];
 		    states.forEach(stateID => {
 		        if (stateID === `state${data.state}`) {
 		            document.getElementById(stateID).style.display = 'block';
@@ -200,19 +215,19 @@
 		            document.getElementById(stateID).style.display = 'none';
 		        }
 		    });
-
-			// Check if can make to alter buttons
-			if("MustAct" == data.state){
-				document.getElementById("buttonDiv").style.display = 'flex'
-				playerCanMakeMove = true;
-			} else {
-				document.getElementById("buttonDiv").style.display = 'none'
-				playerCanMakeMove = false
-			}
-
-	    }).catch(error => {
-	        console.error('Player fetch Error:', error);
-	    });
+		
+		    // Check if can make to alter buttons
+		    if("MustAct" == data.state){
+		        document.getElementById("buttonDiv").style.display = 'flex';
+		        playerCanMakeMove = true;
+		    } else {
+		        document.getElementById("buttonDiv").style.display = 'none';
+		        playerCanMakeMove = false;
+		    }
+		
+		}).catch(error => {
+		    console.error('Player fetch Error:', error);
+		});
 	
 	    // Fetch map data
 	    fetch(`/game/${gameID}/mapdata`).then(response => {
