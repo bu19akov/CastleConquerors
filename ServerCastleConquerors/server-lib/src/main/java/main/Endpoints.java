@@ -11,8 +11,8 @@ import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import exceptions.GenericExampleException;
-import game.GameService;
-import game.GameInfo;
+import main.game.GameInfo;
+import main.game.GameService;
 
 @RestController
 @RequestMapping("/games")
@@ -66,6 +66,10 @@ public class Endpoints {
         GameService.checkIfPlayerExist(gameID, playerID.getUniquePlayerID());
 
         GameInfo game = GameService.getGames().get(gameID);
+        
+//        if (game.getPlayerWithID(playerID.getUniquePlayerID()).getTurnTimeExceeded()) {
+//        	return new ResponseEnvelope<>("Exception","You exceeded your maximum turn time!");
+//        }
         GameState gameState = new GameState(game.getFilteredMapForPlayer(playerID), 
                                             game.getPlayers(), 
                                             "testID");

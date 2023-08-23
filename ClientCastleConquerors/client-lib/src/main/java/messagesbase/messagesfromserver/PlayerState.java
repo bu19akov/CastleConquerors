@@ -8,7 +8,7 @@ import messagesbase.UniquePlayerIdentifier;
 
 @XmlRootElement(name = "player")
 @XmlAccessorType(XmlAccessType.NONE)
-public final class PlayerState extends UniquePlayerIdentifier {
+public class PlayerState extends UniquePlayerIdentifier {
 
 	@XmlElement(name = "playerUsername", required = true)
 	private final String playerUsername;
@@ -24,6 +24,9 @@ public final class PlayerState extends UniquePlayerIdentifier {
 	
 	@XmlElement(name = "revealedEnemyFort", required = true)
 	private boolean revealedEnemyFort;
+	
+	@XmlElement(name = "turnTimeExceeded", required = true)
+	private boolean turnTimeExceeded = false;
 
 	public PlayerState() {
 		super();
@@ -39,6 +42,14 @@ public final class PlayerState extends UniquePlayerIdentifier {
 		this.state = checkNotNull(state, "Player state should not be null");
 		this.collectedTreasure = collectedTreasure;
 		this.revealedTreasure = false;
+	}
+	
+	public boolean getTurnTimeExceeded() {
+		return this.turnTimeExceeded;
+	}
+	
+	public void setTurnTimeExceededToTrue() {
+		this.turnTimeExceeded = true;
 	}
 	
 	public boolean getRevealedTreasure() {

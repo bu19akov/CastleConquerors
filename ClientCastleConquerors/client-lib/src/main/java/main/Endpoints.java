@@ -166,7 +166,6 @@ public class Endpoints {
 	        FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);
 	        return endpointsService.getOrderedArray(fullMap);
 	    } catch (Exception e) {
-	        System.out.println(e.getMessage());
 	        return null;  // TODO Consider a better error-handling mechanism here
 	    }
 	}
@@ -185,7 +184,6 @@ public class Endpoints {
 	        // Fetch and return player state data
 	        return clientNetwork.getPlayerState(gameID, loggedInUser);
 	    } catch (Exception e) {
-	        System.out.println(e.getMessage());
 	        return null;  // Consider a better error-handling mechanism here
 	    }
 	}

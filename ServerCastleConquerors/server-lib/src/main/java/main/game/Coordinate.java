@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 public class Coordinate {
     private int x, y;

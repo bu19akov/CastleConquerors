@@ -5,6 +5,9 @@ import testResult.TestResultLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import main.game.FullMapGenerator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;

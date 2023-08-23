@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -438,15 +438,16 @@ public class GameService {
 //      return System.currentTimeMillis();
 //  }
 //  
-	@Scheduled(fixedRate = 1000) // Check every second
-	public void checkTurnTime() {
-	    games.values().forEach(game -> {
-	        // Check if turn time has been exceeded
-	if (game.getTurnStartTime() != 0 && System.currentTimeMillis() - game.getTurnStartTime() > MAX_TURN_TIME) {
-	    endGame(game.getGameID(), "Turn time exceeded", false);
-	        }
-	    });
-	} 
+    @Scheduled(fixedRate = 1000)
+    public void checkTurnTime() {
+        games.values().forEach(game -> {
+            // Check if turn time has been exceeded
+            if (game.getTurnStartTime() != 0 && System.currentTimeMillis() - game.getTurnStartTime() > MAX_TURN_TIME) {
+                logger.info("Turn time exceeded for game with ID: {}", game.getGameID());
+                endGame(game.getGameID(), "exceeded your maximum turn time!", false);
+            }
+        });
+    }
 	
     public static void nextTurn(UniqueGameIdentifier gameID) {
     	GameInfo game = games.get(gameID);
@@ -466,7 +467,7 @@ public class GameService {
         if (games.get(gameID).getTurnCount() >= MAX_TURNS) {
             endGame(gameID, "Maximum turns reached", false);
         } else {
-            games.get(gameID).setTurnStartTime(System.currentTimeMillis());
+        	games.get(gameID).setTurnStartTime(System.currentTimeMillis());
         }
         game.incrementTurnCount();
     }
@@ -501,7 +502,11 @@ public class GameService {
                         logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
                     });
                 
-                throw new IllegalArgumentException("You " + reason);
+                if (reason == "exceeded your maximum turn time!") {
+                	currentPlayer.setTurnTimeExceededToTrue();
+                } else {
+                	throw new IllegalArgumentException("You " + reason);
+                }
             }
         }
 

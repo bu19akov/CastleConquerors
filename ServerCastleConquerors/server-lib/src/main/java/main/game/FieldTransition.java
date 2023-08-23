@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import messagesbase.messagesfromserver.ETerrain;
 
