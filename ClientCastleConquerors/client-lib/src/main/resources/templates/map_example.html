@@ -39,7 +39,7 @@
 <!--Player's info box and game state-->
 <div class="player-info">
     <div class="player-box">
-        <span class="username-icon">😀</span>
+        <span class="username-icon"><img src="../images/myPlayer.png" alt="Player Icon"></span>
         <h2 th:text="${playerState.getPlayerUsername()}"></h2>
     </div>
     <div id="playerStateDiv">
@@ -51,12 +51,11 @@
 <!--Game title-->
 <h1 id="gameTitle">Castle Conquerors</h1>
 
-
 <!--Opponent's info box and game state-->
 <div class="opponent-info">
     <div class="opponent-box">
-        <span class="opponent-icon">👾</span>
         <h2 id="opponentUsername" style="display: none;"></h2>
+        <span class="opponent-icon"><img src="../images/enemyPlayer.png" alt="Player Icon"></span>
     </div>
     <div id="opponentStateDiv">
         <p id="opponentTreasureCollected" style="display: none;">Enemy has collected the treasure 💀</p>
@@ -78,7 +77,9 @@
     <div id="endGameContainer">
         <div class="shadowBox">
             <h1 id="endGameMessage"></h1>
-            <p id="countdown">You will be put back in the menu in <span id="count">5</span></p>
+            <!--Game error message-->
+            <div id="errorMessage">Sample error message</div>
+            <div id="return">Press anywhere to return to menu</div>
         </div>
     </div>
 
@@ -101,9 +102,6 @@
         </table>
     </div>
 </div>
-
-<!--Game error message-->
-<div id="errorMessage">Sample error message</div>
 
 <!--Notification after copying the Game ID-->
 <div id="notification" style="display: none;">Game ID copied to clipboard!</div>
@@ -440,22 +438,13 @@
         document.getElementById('endGameContainer').style.display = 'block';
 
         // Set the message based on whether the player won or lost
-        let message;
-        message = isWinner ? "You won!" : "You lost!";
+        let message = isWinner ? "You won!" : "You lost!";
         document.getElementById('endGameMessage').innerText = message;
 
-        // Start the countdown
-        let countdown = 5;
-        const intervalId = setInterval(() => {
-            countdown -= 1;
-            document.getElementById('count').innerText = countdown;
-
-            // When countdown ends, clear the interval and redirect the user
-            if (countdown === 0) {
-                clearInterval(intervalId);
-                window.location.href = "/menu";
-            }
-        }, 1000);
+        // Set up click event to return to the menu
+        document.getElementById('endGameContainer').addEventListener('click', function() {
+            window.location.href = "/menu";
+        });
     }
 
     function checkEndGameState() {
