@@ -38,8 +38,8 @@ test {
 
 //specifies the expected java versions
 //Note, not all libraries officially support higher versions
-sourceCompatibility = 1.17
-targetCompatibility = 1.17
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
 	// Spring boot
@@ -97,3 +97,17 @@ bootJar {
         )
     }
 }
+
+task stage(dependsOn: ['bootJar']) {
+    doLast {
+        copy {
+            from bootJar.archiveFile
+            into project.rootDir
+            rename { String fileName ->
+                "server-lib.jar"
+            }
+        }
+    }
+}
+
+
