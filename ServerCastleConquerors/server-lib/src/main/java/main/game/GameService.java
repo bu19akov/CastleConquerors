@@ -440,7 +440,6 @@ public class GameService {
 //  
     @Scheduled(fixedRate = 1000)
     public void checkTurnTime() {
-        logger.info("Checking turn times for all games...");
         games.values().forEach(game -> {
             // Check if turn time has been exceeded
             if (game.getTurnStartTime() != 0 && System.currentTimeMillis() - game.getTurnStartTime() > MAX_TURN_TIME) {
