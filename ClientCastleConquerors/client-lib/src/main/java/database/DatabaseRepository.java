@@ -12,6 +12,8 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class DatabaseRepository {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseRepository.class);
 
@@ -31,8 +33,18 @@ public class DatabaseRepository {
     }
 
     public static boolean verifyLogin(String playerUsername, String password) {
-        Document document = new Document("playerUsername", playerUsername).append("password", password);
-        return credentialsCollection.find(document).first() != null;
+        Document query = new Document("playerUsername", playerUsername);
+        Document document = credentialsCollection.find(query).first();
+
+        if (document != null) {
+            String storedHashedPassword = document.getString("password");
+            
+            // Check that an unencrypted password matches one that has been hashed
+            if (BCrypt.checkpw(password, storedHashedPassword)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Player findAccountByUsername(String playerUsername) {
@@ -46,8 +58,11 @@ public class DatabaseRepository {
     }
 
     public static void createPlayerAccount(Player player, String password) {
+        // Hash the password
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
         Document document = new Document("playerUsername", player.getUsername())
-                .append("password", password);
+                .append("password", hashedPassword);
         try {
         	credentialsCollection.insertOne(document);
             logger.info("Player's account with username {} created successfully", player.getUsername());
