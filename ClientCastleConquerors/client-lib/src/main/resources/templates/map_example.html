@@ -76,8 +76,9 @@
     <div id="endGameContainer">
         <div class="shadowBox">
             <h1 id="endGameMessage"></h1>
+
             <!--Game error message-->
-            <div id="errorMessage">Sample error message</div>
+            <div id="errorMessage"></div>
             <div id="return">Press anywhere to return to menu</div>
         </div>
     </div>
@@ -445,18 +446,34 @@
 
 
     function endGame(isWinner) {
-        // Show the end game container
-        document.getElementById('endGameContainer').style.display = 'block';
+        let delay = isWinner ? 3000 : 1000;  // 3 seconds for win, 1 second for loss
 
-        // Set the message based on whether the player won or lost
-        let message = isWinner ? "You won!" : "You lost!";
-        document.getElementById('endGameMessage').innerText = message;
+        setTimeout(() => {
+            // Show the end game container
+            document.getElementById('endGameContainer').style.display = 'block';
 
-        // Set up click event to return to the menu
-        document.getElementById('endGameContainer').addEventListener('click', function() {
-            window.location.href = "/menu";
-        });
+            // Set the message and color based on whether the player won or lost
+            let message, color;
+            if (isWinner) {
+                message = "You won!";
+                color = "green";
+            } else {
+                message = "You lost!";
+                color = "red";
+            }
+
+            const endGameMessageElement = document.getElementById('endGameMessage');
+            endGameMessageElement.innerText = message;
+            endGameMessageElement.style.color = color;  // Set color
+
+            // Set up click event to return to the menu
+            document.getElementById('endGameContainer').addEventListener('click', function() {
+                window.location.href = "/menu";
+            });
+        }, delay);
     }
+
+
 
     function checkEndGameState() {
         const stateWon = document.getElementById('stateWon');
