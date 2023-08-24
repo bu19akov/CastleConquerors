@@ -106,7 +106,8 @@ public class GameInfo {
     			node.getOwnedByPlayer() != currentPlayerNumber && 
     			node.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
     		return getMaskedEnemyPlayer(node, ETreasureState.NoOrUnknownTreasureState);
-    	} else if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition && 
+    	} 
+    	if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition && 
     			node.getFortState() == EFortState.MyFortPresent) {
     		if (node.getOwnedByPlayer() == currentPlayerNumber) {
     			return getMaskedBothPlayers(node, EFortState.MyFortPresent);

@@ -57,12 +57,15 @@ public class DatabaseRepository {
         return null;
     }
 
-    public static void createPlayerAccount(Player player, String password) {
+    public static void createPlayerAccount(Player player, String password, String email) {
         // Hash the password
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         Document document = new Document("playerUsername", player.getUsername())
-                .append("password", hashedPassword);
+        		.append("email", email)
+        		.append("password", hashedPassword)
+        		.append("wonGames", 0)
+        		.append("lostGames", 0);
         try {
         	credentialsCollection.insertOne(document);
             logger.info("Player's account with username {} created successfully", player.getUsername());
@@ -70,6 +73,28 @@ public class DatabaseRepository {
             logger.error("Failed to create new Player Account with username {}", player.getUsername(), e);
         }
     }
+    
+    public static void updatePlayerGameStatistics(String playerUsername, String outcome) {
+        Document query = new Document("playerUsername", playerUsername);
+        
+        Document updateDocument;
+        if ("Won".equalsIgnoreCase(outcome)) {
+            updateDocument = new Document("$inc", new Document("wonGames", 1));
+        } else if ("Lost".equalsIgnoreCase(outcome)) {
+            updateDocument = new Document("$inc", new Document("lostGames", 1));
+        } else {
+            logger.error("Invalid game outcome provided: {}", outcome);
+            return;
+        }
+        
+        try {
+            credentialsCollection.updateOne(query, updateDocument);
+            logger.info("Updated game stats for {}. {} games incremented.", playerUsername, outcome);
+        } catch (MongoException e) {
+            logger.error("Failed to update game stats for {}", playerUsername, e);
+        }
+    }
+
 
     public static void close() {
         mongoClient.close();

@@ -17,13 +17,13 @@ public class EndpointsService {
         return DatabaseRepository.verifyLogin(username, password);
     }
 
-    public void createPlayerAccount(String username, String password) {
+    public void createPlayerAccount(String username, String password, String email) {
         if (DatabaseRepository.findAccountByUsername(username) != null) {
             throw new IllegalArgumentException("Username already exists");
         }
         Player player = new Player(username);
         logger.info("A new player account was created with username {}", username);
-        DatabaseRepository.createPlayerAccount(player, password);
+        DatabaseRepository.createPlayerAccount(player, password, email);
     }
 
     public FullMapNode[][] getOrderedArray(FullMap map) {

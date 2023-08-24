@@ -148,7 +148,6 @@
 	        const middleRowIndex = Math.floor(rows.length / 2);
 	        rows[middleRowIndex].classList.add('red-line');
 	    } else {
-	        console.log("Adding vertical red line.");
 	        rows.forEach(row => {
 	            const cells = row.querySelectorAll('td');
 	            const middleColumnIndex = Math.floor(columns / 2);
@@ -217,8 +216,31 @@
 		    });
 		    
 		    if (data.state === 'Won' || data.state === 'Lost') {
-		        gameHasEnded = true; // Set the flag to true
-		    }
+			    gameHasEnded = true; // Set the flag to true
+			    
+			    // Sending the POST request when the game has ended
+			    fetch(`/game/${gameID}/end`, {
+			        method: 'POST',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify({
+			            playerID: data.playerUsername,
+			            message: data.state
+			        })
+			    })
+			    .then(response => {
+			        if (response.ok) {
+			            console.log('Game end data successfully sent.');
+			        } else {
+			            throw new Error('Failed to send game end data.');
+			        }
+			    })
+			    .catch(error => {
+			        console.error('Error:', error);
+			    });
+			}
+
 		
 		    // Check if can make to alter buttons
 		    if("MustAct" == data.state){
