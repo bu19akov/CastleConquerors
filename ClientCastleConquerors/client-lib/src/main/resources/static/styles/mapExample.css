@@ -452,8 +452,12 @@ h2 {
     background-image: url('../images/arrowDown.png');
 }
 
-#leftButton, #rightButton {
-    background-image: url('../images/sideArrow.png');
+#leftButton {
+    background-image: url('../images/arrowLeft.png');
+}
+
+#rightButton {
+    background-image: url('../images/arrowRight.png');
 }
 
 /* Animation for button press */
