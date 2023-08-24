@@ -69,120 +69,94 @@
     <!-- Modal for Game Rules -->
     <div id="gameRulesModal" class="modal game-rules" onclick="closeModal()">
         <div class="modal-content">
-            <h2>Game Rules</h2>
-            <p>
-            Come and conquer! Climb tall mountains to get a chance to have a better look on surrounding areas,
-            get through high grass in search of a treasure or an enemy's castle and avoid lakes full of piranhas that
-                will eat you instantly.
-            </p>
-            <br>
-            <br>
-
-            Find and use your treasure to bribe castle's guards and steal crown of your enemy before they got a chance to
-            do it faster than you!
-            <br>
-            <br>
-
-            <div class="button-group">
-                <button class="login-btn" onclick="openGameMechanicsModal()">Game Mechanics</button>
+            <div class="content-body">
+                <h1>Game Rules</h1>
+                <section class="rule-description">
+                    <p>
+                        Come and conquer! Climb tall mountains to get a chance to have a better look at surrounding areas,
+                        get through high grass in search of a treasure or an enemy's castle, and avoid lakes full of piranhas that
+                        will eat you instantly.
+                    </p>
+                    <p>
+                        Find and use your treasure to bribe castle's guards and steal the crown of your enemy before they get a chance to
+                        do it faster than you!
+                    </p>
+                </section>
             </div>
+            <button class="game-mechanics-btn" onclick="openGameMechanicsModal()">Detailed Game Mechanics</button>
         </div>
     </div>
+
+
 
     <!-- Modal for game mechanics -->
     <div id="gameMechanicsModal" class="modal" onclick="closeGameMechanicsModal()">
         <div class="modal-content">
-            <h3 style="font-family: Joystix Monospace, serif;
-                color: saddlebrown;
-                font-size: x-large;">Map tiles:</h3>
+            <h1 class="mechanic-title">Map tiles</h1>
 
-            <!--            Container with MapNodes and their details -->
-            <div title="map-nodes">
-                <!--                    Grassland -->
-                <div class="container" style="display: flex; height: auto;">
-                    <!--                Div with MapNode texture -->
-                    <div class="map-node-icon"
-                         style="background-image: url('../images/grass.png');"></div>
-                    <!--                Div with MapNode description -->
-                    <div class="map-node-details">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td><strong>Movement</strong></td>
-                                <td>1 move to get in <br>1 move to get out<br></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Visibility</strong></td>
-                                <td>While inside, you can see only what is inside this field</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Special</strong></td>
-                                <td>
-                                    <p>May contain a treasure or a castle
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <br>
+            <!-- Grassland -->
+            <div class="map-node-container">
+                <!-- Icon -->
+                <div class="map-node-icon" style="background-image: url('../images/grass.png');"></div>
 
-                <!--                    Mountain -->
-                <div class="container" style="display: flex; height: auto;">
-                    <!--                Div with MapNode texture -->
-                    <div class="map-node-icon" style="background-image: url('../images/mountain.png');"></div>
-                    <!--                Div with MapNode description -->
-                    <div class="map-node-details">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td><strong>Movement</strong></td>
-                                <td>2 moves to get in <br>2 moves to get out<br></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Visibility</strong></td>
-                                <td>
-                                    <p>You will
-                                        see all treasures and enemy's castle (<i>if you already found your treasure</i>)
-                                        that are in 3x3 square (<i>your position
-                                            is in the centre</i>)</p>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Property titles -->
+                <div class="map-node-properties">
+                    <div class="property-title">Movement</div>
+                    <div class="property-title">Visibility</div>
+                    <div class="property-title">Special</div>
                 </div>
 
-                <br>
+                <!-- Descriptions -->
+                <div class="map-node-descriptions">
+                    <div class="property-desc">1 move to get in, 1 move to get out</div>
+                    <div class="property-desc">While inside, you can see only what is inside this field</div>
+                    <div class="property-desc">May contain a treasure or a castle</div>
+                </div>
+            </div>
 
-                <!--                    Water -->
-                <div class="container" style="display: flex; height: auto;">
-                    <!--                Div with MapNode texture -->
-                    <div class="map-node-icon" style="background-image: url('../images/water.png');"></div>
-                    <!--                Div with MapNode description -->
-                    <div class="map-node-details">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td><strong>Movement</strong></td>
-                                <td>1 move to get in<br></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Visibility</strong></td>
-                                <td>None</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Special</strong></td>
-                                <td>Instant loss</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <!-- Mountain -->
+            <div class="map-node-container">
+                <div class="map-node-icon" style="background-image: url('../images/mountain.png');"></div>
+
+                <div class="map-node-properties">
+                    <div class="property-title">Movement</div>
+                    <div class="property-title">Visibility</div>
+                    <div class="property-title">Special</div>
+                </div>
+
+                <div class="map-node-descriptions">
+                    <div class="property-desc">2 moves to get in, 2 moves to get out</div>
+                    <div class="property-desc">You will spot any treasures or castles around you</div>
+                    <div class="property-desc">None</div>
+                </div>
+            </div>
+
+            <!-- Water -->
+            <div class="map-node-container">
+                <!-- Icon -->
+                <div class="map-node-icon" style="background-image: url('../images/water.png');"></div>
+
+                <!-- Property titles -->
+                <div class="map-node-properties">
+                    <div class="property-title">Movement</div>
+                    <div class="property-title">Visibility</div>
+                    <div class="property-title">Special</div>
+                </div>
+
+                <!-- Descriptions -->
+                <div class="map-node-descriptions">
+                    <div class="property-desc">1 move to get in</div>
+                    <div class="property-desc">None</div>
+                    <div class="property-desc">Instant loss</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
 
 <script>
     function openModal() {
@@ -211,7 +185,7 @@
     }
 
     function signOut() {
-		window.location.href = "logout";
+        window.location.href = "logout";
     }
 </script>
 

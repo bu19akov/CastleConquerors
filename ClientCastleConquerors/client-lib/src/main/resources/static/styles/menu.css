@@ -181,33 +181,6 @@ body {
     width: 100%;        /* Button will take up the entire available space, so it's responsive */
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    align-items: center;
-    justify-content: center;
-
-    /* To keep pixel art crisp */
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-}
-
-.modal-content {
-    text-align: center;
-    background: #3983e4;
-    padding: 20px;
-    width: 50%;
-    height: 60%;
-    border-radius: 15px;
-    overflow: auto;
-}
-
 .sign-out-btn {
     background-color: darkred;
 }
@@ -240,27 +213,149 @@ body {
     }
 }
 
-.map-node-icon {
-    width: 15%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    vertical-align: center;
-    aspect-ratio: 1;
-    background-color: lightgray;
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+
+    /* To keep pixel art crisp */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
-.map-node-details {
-    width: 85%;
-    align-content: center;
-    horiz-align: center;
-    background: lightgray;
-    font-family: Joystix Monospace, serif;
-    color: saddlebrown;
-    vertical-align: center;
+.content-body {
+    flex-grow: 1;    /* Make it grow and occupy all available space */
+    overflow: auto;  /* If the content gets too long, scroll within this container */
 }
+
+
+.modal-content {
+    text-align: center;
+    background: #092855;
+    padding: 20px;
+    width: 60%;
+    height: 75%;
+    border-radius: 15px;
+    overflow: auto;
+    display: flex;           /* Add flex display */
+    flex-direction: column;  /* Stack children vertically */
+    justify-content: space-between; /* Separate content-body and the button */
+}
+
 
 .game-rules {
     font-family: Joystix Monospace, serif;
-    color: saddlebrown;
-    font-size: larger;
+    color: #F6FF00;
 }
+
+.game-rules h1 {
+    font-size: 2.5rem; /* Increase the size of the h1 heading */
+    margin-bottom: 1.5rem; /* Increase the space below the heading for better visual separation */
+}
+
+.rule-description p {
+    margin-bottom: 1.5rem; /* Increase space between the paragraphs */
+    font-size: 1.3rem; /* Make the general content text a bit larger */
+}
+
+.game-mechanics-btn {
+    display: block;
+    width: 100%;
+    height: 45px;
+    background-color: #140024;
+    color: lightgray;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: Joystix Monospace, serif;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    margin-top: auto;  /* This is important. It will push the button to the bottom */
+}
+
+
+.game-mechanics-btn:hover {
+    background-color: #f6ff00;
+    color: #140024;
+}
+
+
+
+.mechanic-title {
+    font-family: Joystix Monospace, serif;
+    color: #F6FF00;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.map-node-container {
+    display: flex;
+    align-items: start;
+    margin: 0.5rem 0;
+    background-color: #3983e4;
+    padding: 0.5rem;
+    border: 2px solid white;
+    border-radius: 15px;
+}
+
+.map-node-icon {
+    width: 15%;
+    flex-shrink: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #3983e4;
+    border-radius: 15px;
+    aspect-ratio: 1;
+    margin-right: 1rem;
+}
+
+.map-node-properties, .map-node-descriptions {
+    height: 100%;
+}
+
+.map-node-properties {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-basis: 20%;
+}
+
+.property-title, .property-desc {
+    padding: 0.2rem 0.5rem;
+    font-family: Joystix Monospace, serif;
+    color: #f4f4f4;
+    border-top: 1px solid whitesmoke;
+    border-bottom: 1px solid whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;  /* Adjusted to half the parent's height */
+}
+
+.map-node-descriptions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.property {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 33.33%;
+}
+
+
+
+
+
+
+
