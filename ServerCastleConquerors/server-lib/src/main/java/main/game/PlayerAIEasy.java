@@ -41,7 +41,6 @@ public class PlayerAIEasy extends PlayerState {
 	public void setStartParameters(GameInfo game) {
 		this.game = game;
 		FullMapNode aiFortNode = getAiFortNode(game.getFullMap(), game.getGameID());
-        System.out.println("AI FORT NODE: " + aiFortNode.toString());
         HalfMapType aiHalf = determineHalfMap(game.getFullMap(), aiFortNode);
         setAiHalf(aiHalf);
         if (this.getState() == EPlayerGameState.MustAct) {
@@ -88,9 +87,6 @@ public class PlayerAIEasy extends PlayerState {
 	public void makeMove() {
 		if (!isGameFinished()) {
             if (this.getState() == EPlayerGameState.MustAct) {
-            	if (this.getCollectedTreasure()) {
-            		System.out.println("\n\nTREASURE IS COLLECTED\n\n");
-            	}
                 EMove aiNextMove = this.getCollectedTreasure() ? aiSearchForEnemyFort() : aiSearchForTreasure();
                 GameService.processMove(game.getGameID(), new PlayerMove(this.getPlayerUsername(), aiNextMove));
             }
@@ -106,18 +102,14 @@ public class PlayerAIEasy extends PlayerState {
 
         FullMapNode aiCurrentNode = getCurrentNode();
         memory.visitedTiles.add(aiCurrentNode);
-        System.out.println("aiCurrentNode was returned: " + aiCurrentNode.toString());
         FullMapNode targetNode = findNearestUnvisitedGrassTile(aiCurrentNode, memory.visitedTiles);
         
         if (targetNode == null) {
-        	System.out.println("targetNode == null");
             return getRandomMove();
         }
         
-        System.out.println("targetNode was returned: " + targetNode.toString());
         
         List<EMove> movesToTarget = determinePathToTarget(aiCurrentNode, targetNode);
-        System.out.println("list of movesToTarget was initialized: " + movesToTarget.toString());
         memory.plannedMoves.addAll(movesToTarget);
 
         return memory.plannedMoves.poll();
@@ -137,12 +129,10 @@ public class PlayerAIEasy extends PlayerState {
         // Check if the AI is still in its own half.
         if (!isInHalfMap(aiCurrentNode.getX(), aiCurrentNode.getY(), opponentHalfMapType)) {
             FullMapNode nearestNodeInOpponentHalf = findNearestGrassTileInOpponentHalf(aiCurrentNode, opponentHalfMapType);
-            System.out.println("NEAREST NODE IN OPONENTS HALF: " + nearestNodeInOpponentHalf.toString());
             
             // If a valid node in opponent's half is found, determine the path to it.
             if (nearestNodeInOpponentHalf != null) {
                 List<EMove> movesToTarget = determinePathToTarget(aiCurrentNode, nearestNodeInOpponentHalf);
-                System.out.println("MOVES TO TARGET: " + movesToTarget.toString());
                 memory.plannedMoves.addAll(movesToTarget);
                 return memory.plannedMoves.poll();
             }

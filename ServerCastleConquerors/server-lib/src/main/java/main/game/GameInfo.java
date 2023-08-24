@@ -106,9 +106,46 @@ public class GameInfo {
                 );
                 filteredMap.add(maskedNode);
         	}
-        	if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
+        	if (node.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition && node.getFortState() == EFortState.MyFortPresent) {
         		FullMapNode maskedNode;
-        		if (getPlayerWithID(playerID.getUniquePlayerID()).getCollectedTreasure()) { // if (currentPlayer.getCollectedTreasure()) {
+        		if (node.getOwnedByPlayer() == currentPlayerNumber) {
+        			maskedNode = new FullMapNode(
+                            node.getTerrain(),
+                            EPlayerPositionState.BothPlayerPosition,
+                            ETreasureState.NoOrUnknownTreasureState,
+                            EFortState.MyFortPresent,
+                            node.getX(),
+                            node.getY(),
+                            0
+                    );
+        		} else {
+        			if (getPlayerWithID(playerID.getUniquePlayerID()).getRevealedEnemyFort()) {
+        				maskedNode = new FullMapNode(
+                                node.getTerrain(),
+                                EPlayerPositionState.BothPlayerPosition,
+                                ETreasureState.NoOrUnknownTreasureState,
+                                EFortState.EnemyFortPresent,
+                                node.getX(),
+                                node.getY(),
+                                0
+                        );
+        			} else {
+        				maskedNode = new FullMapNode(
+                                node.getTerrain(),
+                                EPlayerPositionState.BothPlayerPosition,
+                                ETreasureState.NoOrUnknownTreasureState,
+                                EFortState.NoOrUnknownFortState,
+                                node.getX(),
+                                node.getY(),
+                                0
+                        );
+        			}
+        		}
+        		filteredMap.add(maskedNode);
+        	}
+        	else if (node.getFortState() == EFortState.MyFortPresent && node.getOwnedByPlayer() != currentPlayerNumber && node.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition) {
+        		FullMapNode maskedNode;
+        		if (getPlayerWithID(playerID.getUniquePlayerID()).getCollectedTreasure()) { 
         			maskedNode = new FullMapNode(
                             node.getTerrain(),
                             EPlayerPositionState.MyPlayerPosition,

@@ -316,7 +316,6 @@ public class GameService {
             
             // Reveal neighbor nodes (radius 1), if your new node is mountain
             if (newNode.getTerrain() == ETerrain.Mountain) {
-            	System.out.println("PLAYER HAS ENTERED A MOUNTAIN");
                 // Loop through each of the 8 neighboring nodes
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
@@ -344,12 +343,10 @@ public class GameService {
                                 neighborNode.getOwnedByPlayer() == game.getPlayerNumberByPlayerID(currentPlayer)) {
                                 // neighborNode.setOwnedByPlayer(game.getPlayerNumberByPlayerID(currentPlayer));
                                 if (neighborNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
-                                	System.out.println("FOUND TREASURE ON: " + neighborX + " " + neighborY);
                                 	currentPlayer.setRevealedTreasureToTrue();
                                 }
                             }
                             if (currentPlayer.getCollectedTreasure() && neighborNode.getFortState() == EFortState.MyFortPresent && neighborNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
-                            	System.out.println("OPPONENTS CASTLE IS REVEALED");
                             	currentPlayer.setRevealedEnemyFortToTrue();
                             }
                         }
@@ -361,9 +358,7 @@ public class GameService {
             if (newNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition && newNode.getFortState() != EFortState.MyFortPresent && newNode.getTreasureState() != ETreasureState.MyTreasureIsPresent) {
             	newNode.setOwnedByPlayer(0);
             	newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
-            } else if (newNode.getFortState() == EFortState.MyFortPresent && newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)){
-            	newNode.setPlayerPositionState(EPlayerPositionState.EnemyPlayerPosition);
-            } else if (newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
+            } else if (newNode.getFortState() == EFortState.MyFortPresent || newNode.getTreasureState() == ETreasureState.MyTreasureIsPresent){
             	if (newNode.getOwnedByPlayer() != game.getPlayerNumberByPlayerID(currentPlayer)) {
 	            	if (newNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition) {
 	            		newNode.setPlayerPositionState(EPlayerPositionState.BothPlayerPosition);
@@ -446,7 +441,7 @@ public class GameService {
         games.values().forEach(game -> {
             // Check if turn time has been exceeded
             if (game.getTurnStartTime() != 0 && System.currentTimeMillis() - game.getTurnStartTime() > MAX_TURN_TIME) {
-                logger.info("Turn time exceeded for game with ID: {}", game.getGameID());
+                logger.info("Turn time exceeded for game with ID: {}", game.getGameID().getUniqueGameID());
                 endGame(game.getGameID(), "exceeded your maximum turn time!", false);
             }
         });
@@ -456,13 +451,11 @@ public class GameService {
     	GameInfo game = games.get(gameID);
         game.getCurrentPlayer().setPlayerGameState(EPlayerGameState.MustWait);
         game.setStateID(UUID.randomUUID().toString());
-        logger.info("Current turn ended for player {} in game {}", game.getCurrentPlayer().getUniquePlayerID(), gameID.getUniqueGameID());
 
         for (PlayerState player : game.getPlayers()) {
             if (player != game.getCurrentPlayer()) {
                 game.setCurrentPlayer(player);
                 game.getCurrentPlayer().setPlayerGameState(EPlayerGameState.MustAct);
-                logger.info("New turn started for player {} in game {}", game.getCurrentPlayer().getUniquePlayerID(), gameID.getUniqueGameID());
                 break;
             }
         }
@@ -484,25 +477,25 @@ public class GameService {
         if (currentPlayer != null) {
             if (currentPlayerWins) {
                 currentPlayer.setPlayerGameState(EPlayerGameState.Won);
-                logger.info("Player {} won the game: {}", currentPlayer.getUniquePlayerID(), gameID);
+                logger.info("Player {} won the game: {}", currentPlayer.getUniquePlayerID(), gameID.getUniqueGameID());
                 
                 // Set second player as loser
                 game.getPlayers().stream()
                     .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
                     .forEach(player -> {
                         player.setPlayerGameState(EPlayerGameState.Lost);
-                        logger.info("Player {} lost the game: {}", player.getUniquePlayerID(), gameID);
+                        logger.info("Player {} lost the game: {}", player.getUniquePlayerID(), gameID.getUniqueGameID());
                     });
             } else {
                 currentPlayer.setPlayerGameState(EPlayerGameState.Lost);
-                logger.info("Player {} lost the game: {}", currentPlayer.getUniquePlayerID(), gameID);
+                logger.info("Player {} lost the game: {}", currentPlayer.getUniquePlayerID(), gameID.getUniqueGameID());
                 
                 // Set second player as winner
                 game.getPlayers().stream()
                     .filter(player -> !player.getUniquePlayerID().equals(currentPlayer.getUniquePlayerID()))
                     .forEach(player -> {
                         player.setPlayerGameState(EPlayerGameState.Won);
-                        logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID);
+                        logger.info("Player {} won the game: {}", player.getUniquePlayerID(), gameID.getUniqueGameID());
                     });
                 
                 if (reason == "exceeded your maximum turn time!") {
