@@ -457,9 +457,11 @@ h2 {
 }
 
 /* Animation for button press */
-#upButton:active, #downButton:active, #leftButton:active, #rightButton:active {
+#upButton:active, #downButton:active, #leftButton:active, #rightButton:active,
+#upButton.active, #downButton.active, #leftButton.active, #rightButton.active {
     transform: scale(0.9);
 }
+
 
 #errorMessage {
     color: red;

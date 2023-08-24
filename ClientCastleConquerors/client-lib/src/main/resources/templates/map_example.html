@@ -44,6 +44,7 @@
     <div id="playerStateDiv">
         <p id="playerTreasureCollected" style="display: none;">You have collected the treasure! 💎</p>
         <p id="playerTreasureNotCollected">You haven't collected the treasure yet.</p>
+        <p id="turnCountdown" style="display: none;">You have <span id="turnTimeRemaining">10</span> seconds remaining for your turn.</p>
     </div>
 </div>
 
@@ -363,8 +364,44 @@
 	        sendMoveRequest(moveDirection);
 	    });
 	});
-	
-	function sendMoveRequest(moveDirection) {
+
+
+    // Keyboard inputs
+    document.addEventListener('keydown', function(event) {
+        let moveDirection;
+
+        switch(event.code) {
+            case 'ArrowLeft':
+                moveDirection = "Left";
+                break;
+            case 'ArrowUp':
+                moveDirection = "Up";
+                break;
+            case 'ArrowRight':
+                moveDirection = "Right";
+                break;
+            case 'ArrowDown':
+                moveDirection = "Down";
+                break;
+            default:
+                return;  // exit the function if it's a key we're not interested in
+        }
+
+        // Apply the active CSS by simulating a button press
+        const button = document.querySelector(`[data-move="${moveDirection}"]`);
+        button.classList.add('active');
+
+        // Remove the active class after a small delay to simulate the button press effect
+        setTimeout(() => {
+            button.classList.remove('active');
+        }, 100);
+
+        sendMoveRequest(moveDirection);
+    });
+
+
+
+    function sendMoveRequest(moveDirection) {
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
@@ -505,6 +542,67 @@
     // Start observing the target nodes for configured mutations
     observer.observe(document.getElementById('stateWon'), config);
     observer.observe(document.getElementById('stateLost'), config);
+
+    let turnTimer;
+
+    function startTurnTimer() {
+        const turnTimeElement = document.getElementById('turnTimeRemaining');
+        const countdownDisplay = document.getElementById('turnCountdown');
+
+        if (turnTimer) {
+            clearInterval(turnTimer);
+        }
+
+        let timeLeft = 10;
+        countdownDisplay.style.display = "block"; // Show the countdown
+        turnTimeElement.textContent = timeLeft;
+
+        turnTimer = setInterval(() => {
+            timeLeft -= 1;
+            turnTimeElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(turnTimer);
+                countdownDisplay.style.display = "none"; // Hide the countdown when time's up
+                // Handle actions for turn timeout, if any
+            }
+        }, 1000);
+    }
+
+    document.querySelectorAll("[data-move]").forEach(button => {
+        button.addEventListener("click", startTurnTimer);
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.code)) {
+            startTurnTimer();
+        }
+    });
+
+    function checkGameState() {
+        const stateMustAct = document.getElementById('stateMustAct');
+
+        if (stateMustAct.style.display === 'block') {
+            startTurnTimer();
+        } else {
+            clearInterval(turnTimer);  // Ensure that the timer isn't running if it's not your turn
+            document.getElementById('turnCountdown').style.display = "none"; // Hide
+        }
+    }
+
+    // This is the callback function that the turnObserver will run
+    // when it notices a change in the `stateMustAct` element.
+    function turnStateMutationCallback(mutationsList, turnObserver) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                checkGameState();
+            }
+        }
+    }
+
+    // Setting up the turn observer
+    const turnObserver = new MutationObserver(turnStateMutationCallback);
+    turnObserver.observe(document.getElementById('stateMustAct'), config);
 
 
 </script>
