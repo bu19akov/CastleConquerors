@@ -7,6 +7,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Sorts;
+
+import statistic.GameStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -94,7 +101,36 @@ public class DatabaseRepository {
             logger.error("Failed to update game stats for {}", playerUsername, e);
         }
     }
+    
+    public static GameStatistics getGameStatisticsByPlayerUsername(String playerUsername) {
+        Document query = new Document("playerUsername", playerUsername);
+        Document document = credentialsCollection.find(query).first();
 
+        if (document != null) {
+            int wonGames = document.getInteger("wonGames");
+            int lostGames = document.getInteger("lostGames");
+            return new GameStatistics(playerUsername, wonGames, lostGames);
+        }
+
+        logger.error("Failed to retrieve game statistics for {}", playerUsername);
+        return null;
+    }
+    
+    public static List<GameStatistics> getTop5PlayersByWonGames() {
+        List<GameStatistics> topPlayers = new ArrayList<>();
+
+        credentialsCollection.find()
+            .sort(Sorts.descending("wonGames"))
+            .limit(5)
+            .projection(Projections.fields(Projections.include("playerUsername", "wonGames"), Projections.excludeId()))
+            .forEach(document -> {
+                String username = document.getString("playerUsername");
+                int wonGames = document.getInteger("wonGames");
+                topPlayers.add(new GameStatistics(username, wonGames, 0)); // Set lostGames to 0 as we're not retrieving it in this query
+            });
+
+        return topPlayers;
+    }
 
     public static void close() {
         mongoClient.close();

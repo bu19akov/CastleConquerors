@@ -1,4 +1,4 @@
-package main;
+package statistic;
 
 public class GameEndRequest {
     private String playerID;

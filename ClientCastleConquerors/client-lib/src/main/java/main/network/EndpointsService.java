@@ -1,4 +1,4 @@
-package main;
+package main.network;
 
 import database.DatabaseRepository;
 import database.Player;

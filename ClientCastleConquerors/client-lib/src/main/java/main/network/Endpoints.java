@@ -1,4 +1,4 @@
-package main;
+package main.network;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,6 +23,7 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.PlayerState;
+import statistic.GameEndRequest;
 
 @Controller
 @RequestMapping("/")

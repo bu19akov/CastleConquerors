@@ -3,6 +3,8 @@ package main;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import main.network.EndpointsService;
+
 class EndpointsServiceTest {
     EndpointsService endpointsService = new EndpointsService();
 
