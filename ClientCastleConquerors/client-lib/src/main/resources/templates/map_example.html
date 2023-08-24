@@ -382,6 +382,10 @@
 
     // Keyboard inputs
     document.addEventListener('keydown', function(event) {
+        if (gameHasEnded) {
+            return; // Exit early if the game has ended
+        }
+
         let moveDirection;
 
         switch(event.code) {
