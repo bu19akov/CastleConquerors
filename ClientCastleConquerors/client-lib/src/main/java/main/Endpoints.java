@@ -118,6 +118,24 @@ public class Endpoints {
             return "";  // Consider returning an error page or error message
         }
     }
+	
+	@GetMapping("/game/ai/hard")
+    public String startGameWithAIHard(Model model, HttpSession session) throws Exception {
+        if (!isLoggedIn(session)) return "redirect:/login";
+
+        String loggedInUser = getLoggedInUser(session);
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
+        try {
+            String gameId = clientNetwork.connectPlayerToAIGameHard(playerReg);  // Use ClientNetwork
+            System.out.println("GAME ID: " + gameId);
+            return "redirect:/game/" + gameId;
+        } catch (Exception e) {
+            System.out.println("Can not get Game ID");
+            return "";  // Consider returning an error page or error message
+        }
+    }
 
 
 	@GetMapping("/game/{gameID}") 
@@ -209,7 +227,6 @@ public class Endpoints {
 	public ResponseEntity<String> sendMove(@PathVariable String gameID,
 	                                       @RequestParam String move,
 	                                       HttpSession session) {
-		System.out.println("MOVE WAS SENT: " + move.toString());
 	    try {
 	        // Ensure user is logged in
 	        if (!isLoggedIn(session)) {

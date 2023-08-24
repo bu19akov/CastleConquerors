@@ -37,7 +37,6 @@ import java.util.UUID;
 @Service
 public class GameService {
     private static final int MAX_GAMES = 99;
-    private static final long EXPIRATION_TIME = 600_000; // 10 minutes
     private static final int MAX_TURNS = 420;
     private static final int MAX_TURN_TIME = 10_000; // 10 seconds
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
@@ -105,7 +104,15 @@ public class GameService {
                     playerID,
                     false
                 );
-        } else {
+        } else if (playerID.getUniquePlayerID() == "AI_Hard") {
+        	newPlayer = new PlayerAIHard(
+                    playerReg.getPlayerUsername(), 
+                    EPlayerGameState.MustWait,
+                    playerID,
+                    false
+                );
+        }
+        else {
         	newPlayer = new PlayerState(
 	            playerReg.getPlayerUsername(), 
 	            EPlayerGameState.MustWait,
@@ -149,7 +156,14 @@ public class GameService {
     public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
         startGame(gameID);
         GameInfo game = games.get(gameID);
-        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIPlayer(game);
+        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIEasyPlayer(game);
+        aiPlayer.setStartParameters(game); // Separate to new class
+    }
+    
+    public void startGameWithAIHard(UniqueGameIdentifier gameID) {
+        startGame(gameID);
+        GameInfo game = games.get(gameID);
+        PlayerAIHard aiPlayer = (PlayerAIHard) getAIHardPlayer(game);
         aiPlayer.setStartParameters(game); // Separate to new class
     }
     
@@ -167,9 +181,35 @@ public class GameService {
     	return false;
     }
     
+    public boolean doesGameContainsAIHard(UniqueGameIdentifier gameID) {
+    	GameInfo game = games.get(gameID);
+    	PlayerState aiPlayer = new PlayerState();
+    	for (PlayerState player : game.getPlayers()) {
+    		if (player.getPlayerUsername() == "AI_Hard") {
+    			aiPlayer = player;
+    		}
+    	}
+    	if (aiPlayer.getPlayerUsername() == "AI_Hard") {
+    		return true;
+    	}
+    	return false;
+    }
+    
     public void makeAIEasyMove(UniqueGameIdentifier gameID) {
         GameInfo game = games.get(gameID);
-        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIPlayer(game);
+        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIEasyPlayer(game);
+
+        if (aiPlayer == null) {
+            System.out.println("AI player not found");
+            return;
+        }
+        
+        aiPlayer.makeMove();
+    }
+    
+    public void makeAIHardMove(UniqueGameIdentifier gameID) {
+        GameInfo game = games.get(gameID);
+        PlayerAIHard aiPlayer = (PlayerAIHard) getAIHardPlayer(game);
 
         if (aiPlayer == null) {
             System.out.println("AI player not found");
@@ -179,9 +219,18 @@ public class GameService {
         aiPlayer.makeMove();
     }
 
-    private PlayerState getAIPlayer(GameInfo game) {
+    private PlayerState getAIEasyPlayer(GameInfo game) {
         for (PlayerState player : game.getPlayers()) {
             if ("AI_Easy".equals(player.getPlayerUsername())) {
+                return player;
+            }
+        }
+        return null;
+    }
+    
+    private PlayerState getAIHardPlayer(GameInfo game) {
+        for (PlayerState player : game.getPlayers()) {
+            if ("AI_Hard".equals(player.getPlayerUsername())) {
                 return player;
             }
         }
@@ -414,28 +463,6 @@ public class GameService {
         throw new IllegalStateException("Player position not found!");
     }
 
-//  public PriorityQueue<GameInfo> getGamesQueue() {
-//	return this.gamesQueue;
-//}
-//
-//    @Scheduled(fixedRate = 30000) // Check every 30 seconds
-//  public void removeExpiredGames() {
-//  	long now = getCurrentTimeMillis();
-//      while (!gamesQueue.isEmpty()) {
-//          GameInfo oldestGame = gamesQueue.peek();
-//          if (now - oldestGame.getCreationTime() > EXPIRATION_TIME) {
-//              gamesQueue.poll();
-//              endGame(oldestGame.getGameID(), "The time has expired!");
-//          } else {
-//              break;
-//          }
-//      }
-//  }
-//  
-//  protected long getCurrentTimeMillis() {
-//      return System.currentTimeMillis();
-//  }
-//  
     @Scheduled(fixedRate = 1000)
     public void checkTurnTime() {
         games.values().forEach(game -> {

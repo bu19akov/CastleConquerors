@@ -69,6 +69,19 @@ public class ClientNetwork {
             throw new ClientNetworkException("Error while creating Game with AI Easy");
         }
     }
+    
+    public String connectPlayerToAIGameHard(PlayerRegistration playerReg) throws ClientNetworkException {
+        try {
+            Mono<UniqueGameIdentifier> webAccess = baseWebClient.method(HttpMethod.POST).uri("/ai/hard")
+                    .body(BodyInserters.fromValue(playerReg)) // specify the data which is sent to the server
+                    .retrieve().bodyToMono(UniqueGameIdentifier.class); // specify the object returned by the server
+           UniqueGameIdentifier resultReg = webAccess.block();
+           return resultReg.getUniqueGameID();
+        } catch (Exception e) {
+            logger.error("Error while creating Game with AI Hard", e);
+            throw new ClientNetworkException("Error while creating Game with AI Hard");
+        }
+    }
 
     public String sendPlayerRegistration(String gameID, PlayerRegistration playerReg) throws ClientNetworkException {  // Get unique player ID
         Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameID + "/players")

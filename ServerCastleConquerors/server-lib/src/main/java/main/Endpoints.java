@@ -38,6 +38,20 @@ public class Endpoints {
 	
 	   return gameID;
 	}
+    
+    @PostMapping(value = "/ai/hard", 
+            consumes = MediaType.APPLICATION_XML_VALUE, 
+            produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody UniqueGameIdentifier registerPlayerVSHardAI(
+	       @Validated @RequestBody PlayerRegistration playerRegistration) {
+    	UniqueGameIdentifier gameID = gameService.createGame();
+
+		gameService.registerPlayerToGame(gameID, playerRegistration);
+		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Hard"));
+		gameService.startGameWithAIHard(gameID);
+	
+	   return gameID;
+	}
 
     @PostMapping(value = "/{gameID}/players", 
                  consumes = MediaType.APPLICATION_XML_VALUE, 
@@ -67,9 +81,6 @@ public class Endpoints {
 
         GameInfo game = GameService.getGames().get(gameID);
         
-//        if (game.getPlayerWithID(playerID.getUniquePlayerID()).getTurnTimeExceeded()) {
-//        	return new ResponseEnvelope<>("Exception","You exceeded your maximum turn time!");
-//        }
         GameState gameState = new GameState(game.getFilteredMapForPlayer(playerID), 
                                             game.getPlayers(), 
                                             "testID");
@@ -97,7 +108,13 @@ public class Endpoints {
 	    		gameService.makeAIEasyMove(gameID);
 	    	}
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		return new ResponseEnvelope<>("Exception", e.getMessage());
+    	}
+    	try {
+	    	if (gameService.doesGameContainsAIHard(gameID)) {
+	    		gameService.makeAIHardMove(gameID);
+	    	}
+    	} catch (Exception e) {
     		return new ResponseEnvelope<>("Exception", e.getMessage());
     	}
 	    return new ResponseEnvelope<>("Move processed successfully");
