@@ -259,12 +259,6 @@ public class Endpoints {
 	            return new ResponseEntity<>("User not logged in", HttpStatus.FORBIDDEN);
 	        }
 
-	        String loggedInUser = getLoggedInUser(session);
-
-	        if (!loggedInUser.equals(gameEndRequest.getPlayerID())) {
-	            return new ResponseEntity<>("Unauthorized action", HttpStatus.FORBIDDEN);
-	        }
-
 	        // Update the database with the game result
 	        DatabaseRepository.updatePlayerGameStatistics(gameEndRequest.getPlayerID(), gameEndRequest.getMessage());
 

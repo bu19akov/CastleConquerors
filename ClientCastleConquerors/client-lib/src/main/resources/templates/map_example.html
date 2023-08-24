@@ -134,6 +134,7 @@
 
     let playerTreasureFound = false;
 	let opponentTreasureFound = false;
+	let opponentUsername = "";
 	
 	function addRedLine() {
 	    const rows = document.querySelectorAll('table tr');
@@ -161,6 +162,29 @@
 	let playerTreasureCollected = false;
 	let playerHasAlreadyVisitedTreasure = false;
 	let playerEnemyFortRevealed = false;
+	
+	function sendGameData(playerID, message) {
+	    fetch(`/game/${gameID}/end`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({
+	            playerID: playerID,
+	            message: message
+	        })
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            console.log(`Game end data about ${message === 'Won' ? 'win' : 'lose'} for player ${playerID} successfully sent.`);
+	        } else {
+	            throw new Error(`Failed to send game end data about ${message === 'Won' ? 'win' : 'lose'} for player ${playerID}.`);
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error:', error);
+	    });
+	}
 
     function updateGameData() {	 
 		if (gameHasEnded) {
@@ -218,30 +242,19 @@
 		    if (data.state === 'Won' || data.state === 'Lost') {
 			    gameHasEnded = true; // Set the flag to true
 			    
-			    // Sending the POST request when the game has ended
-			    fetch(`/game/${gameID}/end`, {
-			        method: 'POST',
-			        headers: {
-			            'Content-Type': 'application/json'
-			        },
-			        body: JSON.stringify({
-			            playerID: data.playerUsername,
-			            message: data.state
-			        })
-			    })
-			    .then(response => {
-			        if (response.ok) {
-			            console.log('Game end data successfully sent.');
-			        } else {
-			            throw new Error('Failed to send game end data.');
-			        }
-			    })
-			    .catch(error => {
-			        console.error('Error:', error);
-			    });
+			    if (data.state === 'Won') {
+			        // Sending the POST request when the game has ended (my player win)
+			        sendGameData(data.playerUsername, data.state);
+			        // Sending the POST request when the game has ended (opponent player lost)
+			        sendGameData(opponentUsername, 'Lost');
+			    } else if (data.state === 'Lost' && (opponentUsername === 'AI_Easy' || opponentUsername === 'AI_Hard')) {
+			        // Sending the POST request when the game has ended (my player lost)
+			        sendGameData(data.playerUsername, data.state);
+			        // Sending the POST request when the game has ended (AI player win)
+			        sendGameData(opponentUsername, 'Won');
+			    }
 			}
-
-		
+					
 		    // Check if can make to alter buttons
 		    if("MustAct" == data.state){
 		        document.getElementById("buttonDiv").style.display = 'flex';
@@ -371,6 +384,7 @@
 				return response.json();
 			}).then(data => {
 				document.getElementById('opponentUsername').textContent = data.playerUsername;
+				opponentUsername = data.playerUsername;
 				document.getElementById('opponentUsername').style.display = 'block';
 				if (data && data.collectedTreasure) {
 						document.getElementById('opponentTreasureCollected').style.display = 'block';
