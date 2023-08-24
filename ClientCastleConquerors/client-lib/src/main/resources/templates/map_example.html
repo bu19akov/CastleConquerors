@@ -262,19 +262,33 @@
 		        }
 		
 		        if (tile.fortState === "MyFortPresent") {
-					if (tile.playerPositionState === "MyPlayerPosition") {
+					if (tile.playerPositionState === "BothPlayerPosition") {
+						playerImg.src = '../images/myFortBothPlayers.png';
+				    	td.appendChild(playerImg);
+					} else if (tile.playerPositionState === "MyPlayerPosition") {
 						playerImg.src = '../images/myFortAndMyPlayer.png';
 				    	td.appendChild(playerImg);
 					} else if (tile.playerPositionState === "EnemyPlayerPosition") {
-						playerImg.src = '../images/enemyCapturedMyFort.png';
+						if (opponentTreasureFound) {
+							playerImg.src = '../images/enemyCapturedMyFort.png';
+						} else {
+							playerImg.src = '../images/myFortAndEnemy.png';
+						}
 				    	td.appendChild(playerImg);
-					} else { // Both players need to be handled
+					} else { 
 						playerImg.src = '../images/myFort.png';
 				    	td.appendChild(playerImg);
 					}
 		        } else if (tile.fortState === "EnemyFortPresent") {
-					if (tile.playerPositionState === "MyPlayerPosition") {
-						playerImg.src = '../images/enemyFortCapturedByMe.png';
+					if (tile.playerPositionState === "BothPlayerPosition") {
+						playerImg.src = '../images/enemyFortBothPlayers.png';
+				    	td.appendChild(playerImg);
+					} else if (tile.playerPositionState === "MyPlayerPosition") {
+						if (playerTreasureCollected) {
+							playerImg.src = '../images/enemyFortCapturedByMe.png';
+						} else {
+							playerImg.src = '../images/enemyFortWithPlayer.png';
+						}
 				    	td.appendChild(playerImg);
 					} else if (playerEnemyFortRevealed) {
 						playerImg.src = '../images/enemyFort.png';
