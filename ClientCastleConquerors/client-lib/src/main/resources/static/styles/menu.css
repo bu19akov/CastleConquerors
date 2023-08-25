@@ -416,3 +416,92 @@ body {
     background-color: #E5E900; /* Slightly darker yellow on hover for interaction feel */
     cursor: pointer;
 }
+
+
+.leaderboard-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    align-items: center;
+    justify-content: center;
+
+    /* To keep pixel art crisp */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+
+
+.leaderboard-content {
+    text-align: center;
+    background: #245196;
+    padding: 20px;
+    width: 55%;
+    height: 75%;
+    border-radius: 15px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.leaderboard-icon img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+.top-players-list {
+    font-family: Joystix Monospace, serif;
+    color: #f6ff00;
+    font-size: 1.3vw;
+    list-style-type: decimal;
+    padding-left: 1em;
+    margin-bottom: 20px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid black;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 80%;
+    align-self: center;
+}
+
+.current-player-stats {
+    font-family: Joystix Monospace, serif;
+    font-size: 0.8vw;
+    color: #cccccc;
+}
+
+.bot-stats-container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 0 auto;
+    font-family: Joystix Monospace, serif;
+    font-size: 0.7vw;
+    color: #cccccc;
+}
+
+.bot-stats {
+    width: 50%;  /*  adjust as needed */
+    text-align: center;
+}
+
+.bot-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+
+
+

@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="styles/menu.css">
     <link rel="stylesheet" href="styles/clouds.css">
+    <link rel="stylesheet" href="../static/styles/menu.css">
+    <link rel="stylesheet" href="../static/styles/clouds.css">
 
 
 </head>
@@ -44,7 +46,7 @@
         <div class="button-group">
             <button class="btn play-game" onclick="toggleGameForms()">Play Game</button>
             <button class="btn game-rules-btn" onclick="openModal()">Game rules</button>
-            <button class="btn game-stats">Leaderboards & Stats</button>
+            <button class="btn game-stats" onclick="openLeaderboardModal()">Leaderboards & Stats</button>
             <button class="btn sign-out" onclick="signOut()">Sign Out</button>
         </div>
     </div>
@@ -69,6 +71,67 @@
             <button class="btn go-back" onclick="toggleGameForms()">Go Back</button>
         </div>
     </div>
+
+    <!-- Leaderboard modal -->
+    <div id="leaderboardModal" class="leaderboard-modal" onclick="closeLeaderboardModal()">
+        <div class="leaderboard-content">
+            <div class="leaderboard-icon">
+                <img src="images/leaderboard_496x262.png" alt="Leaderboard Icon">
+            </div>
+
+            <ol class="top-players-list">
+                <li>
+                    <span class="player-name" data-player-id="1">[Player 1 Name]</span>
+                    <span class="player-wins" data-player-id="1">[Wins%?]</span>
+                </li>
+                <li>
+                    <span class="player-name" data-player-id="2">[Player 2 Name]</span>
+                    <span class="player-wins" data-player-id="2">[Wins%?]</span>
+                </li>
+                <li>
+                    <span class="player-name" data-player-id="3">[Player 3 Name]</span>
+                    <span class="player-wins" data-player-id="3">[Wins%?]</span>
+                </li>
+                <li>
+                    <span class="player-name" data-player-id="4">[Player 4 Name]</span>
+                    <span class="player-wins" data-player-id="4">[Wins%?]</span>
+                </li>
+                <li>
+                    <span class="player-name" data-player-id="5">[Player 5 Name]</span>
+                    <span class="player-wins" data-player-id="5">[Wins%?]</span>
+                </li>
+            </ol>
+            <hr>
+            <div class="current-player-stats">
+                <div class="player-current-name">[username]</div>
+                <div><span class="player-current-wins">[lets say 13]</span> wins</div>
+                <div><span class="player-current-losses">[lets say 2 hehe]</span> losses</div>
+                <div>Your win rate: <span class="player-current-winrate">[lets say 9328%]</span>%</div>
+            </div>
+            <hr>
+            <div class="bot-stats-container">
+
+                <!-- EASY_AI stats -->
+                <div class="bot-stats easy-ai-stats">
+                    <div class="bot-name">EASY_AI</div>
+                    <div><span class="bot-wins">[234]</span> wins</div>
+                    <div><span class="bot-losses">[0 hes a god]</span> losses</div>
+                    <div>Bot's win rate: <span class="bot-winrate">[100%]</span>%</div>
+                </div>
+
+                <!-- HARD_AI stats -->
+                <div class="bot-stats hard-ai-stats">
+                    <div class="bot-name">HARD_AI</div>
+                    <div><span class="bot-wins">[INT_MAX]</span> wins</div>
+                    <div><span class="bot-losses">[-13]</span> losses</div>
+                    <div>Bot's win rate: <span class="bot-winrate">[Lots!]</span>%</div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
 
 
 
@@ -200,6 +263,14 @@
     function closeGameMechanicsModal() {
         document.getElementById('gameMechanicsModal').style.display = 'none';
     }
+
+    function openLeaderboardModal() {
+        document.getElementById('leaderboardModal').style.display = 'flex';
+    }
+    function closeLeaderboardModal() {
+        document.getElementById('leaderboardModal').style.display = 'none';
+    }
+
 
     function connectToGame() {
 	    const gameID = document.getElementById('gameID').value;
