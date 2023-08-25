@@ -170,10 +170,12 @@
 	    if (errorMessageDiv) {
 	        const errorMessage = errorMessageDiv.getAttribute('data-error');
 	        if (errorMessage) {
+	            toggleGameForms();  // This will open the gameSubMenu
 	            showNotification(errorMessage);
 	        }
 	    }
 	});
+
 
     function openModal() {
         document.getElementById('gameRulesModal').style.display = 'flex';
