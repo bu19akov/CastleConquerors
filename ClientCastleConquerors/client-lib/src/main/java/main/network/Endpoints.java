@@ -81,10 +81,18 @@ public class Endpoints {
 	
 	@GetMapping("/menu") 
 	public String getMenuPage(Model model, HttpSession session) {
-		if (!isLoggedIn(session)) return "redirect:/login";
-    	String loggedInUser = getLoggedInUser(session);
-        model.addAttribute("loggedInUser", loggedInUser);
-		return "menu";
+	    if (!isLoggedIn(session)) return "redirect:/login";
+
+	    String loggedInUser = getLoggedInUser(session);
+	    model.addAttribute("loggedInUser", loggedInUser);
+
+	    // Get the error message from the session if it exists
+	    if (session.getAttribute("error") != null) {
+	        model.addAttribute("errorMessage", "Invalid GameID");
+	        session.removeAttribute("error");
+	    }
+
+	    return "menu";
 	}
 	
 	@GetMapping("/game") 
@@ -150,8 +158,11 @@ public class Endpoints {
 
         PlayerRegistration playerReg = new PlayerRegistration(loggedInUser);
         try {
-        	clientNetwork.sendPlayerRegistration(gameID, playerReg);  // TODO Check if client is already registered
+            clientNetwork.sendPlayerRegistration(gameID, playerReg);  
         } catch (ClientNetworkException e) {
+        	System.out.println(e.getMessage());
+            session.setAttribute("error", "Network error when registering player!");
+            return "redirect:/menu";
         }
         try {
             FullMap fullMap = clientNetwork.retrieveMapState(gameID, loggedInUser);
