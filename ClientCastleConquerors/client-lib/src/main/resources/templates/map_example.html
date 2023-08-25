@@ -464,13 +464,19 @@
     });
 
 
-
+    let lastMoveRegistered = true;
     function sendMoveRequest(moveDirection) {
 	    if (!gameID) {
 	        console.error("Game ID not found");
 	        return;
 	    }
-	
+        if (!lastMoveRegistered) {
+            return; 
+            // Exit early if the last move hasn't been registered yet
+            // so you cant spam requests
+        }
+        lastMoveRegistered = false;
+
 	    fetch(`/game/${gameID}/move`, {
 	        method: 'POST',
 	        headers: {
@@ -487,6 +493,7 @@
 		        errorMessageDiv.textContent = 'Check the rules again! ' + result;
 		        errorMessageDiv.style.display = 'block';
 		    }
+            lastMoveRegistered = true;
 		})
 	    .catch(error => {
 		    console.error('Error:', error);
