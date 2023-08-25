@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
 
-    <link rel="stylesheet" href="../static/styles/menu.css">
-    <link rel="stylesheet" href="../static/styles/clouds.css">
     <link rel="stylesheet" href="styles/menu.css">
     <link rel="stylesheet" href="styles/clouds.css">
+
 </head>
 <body>
 
@@ -32,6 +31,9 @@
 <!--basically here is the text that would be here without the .js -->
 <!--but I doubt there's going to be people on this page without logging in-->
 <h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">adventurer</span>?</h2>
+
+<div th:if="${errorMessage}" th:attr="data-error=${errorMessage}" id="errorMessageDiv"></div>
+
 
 
 <div class="login-container">
@@ -164,6 +166,16 @@
 
 
 <script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    const errorMessageDiv = document.getElementById('errorMessageDiv');
+	    if (errorMessageDiv) {
+	        const errorMessage = errorMessageDiv.getAttribute('data-error');
+	        if (errorMessage) {
+	            showNotification(errorMessage);
+	        }
+	    }
+	});
+
     function openModal() {
         document.getElementById('gameRulesModal').style.display = 'flex';
     }
@@ -181,18 +193,32 @@
     }
 
     function connectToGame() {
-        const gameID = document.getElementById('gameID').value;
-        if(gameID) {
-            window.location.href = `/game/${gameID}`;
-        } else {
-            alert("Please enter a valid Game ID.");
-        }
-    }
+	    const gameID = document.getElementById('gameID').value;
+	    const gameIDPattern = /^[A-Za-z0-9]{5}$/;
+	
+	    if (gameIDPattern.test(gameID)) {
+	        window.location.href = `/game/${gameID}`;
+	    } else {
+	        showNotification("Invalid GameID");
+	    }
+	}
 
     function signOut() {
         window.location.href = "logout";
     }
+    
+    function showNotification(message) {
+	    const notification = document.getElementById('notification');
+	    notification.innerText = message;
+	    notification.style.display = 'block';
+	    setTimeout(function() {
+	        notification.style.display = 'none';
+	    }, 2000);  // The notification will be hidden after 2 seconds
+	}
+
 </script>
+
+<div id="notification" style="display: none;"></div>
 
 </body>
 </html>

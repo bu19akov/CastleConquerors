@@ -89,7 +89,7 @@ public class GameService {
         }
     }
 
-    public UniquePlayerIdentifier registerPlayerToGame(UniqueGameIdentifier gameID, PlayerRegistration playerReg) {
+    public UniquePlayerIdentifier registerPlayerToGame(UniqueGameIdentifier gameID, PlayerRegistration playerReg) throws GameNotFoundException {
         checkIfGameExist(gameID, "register a player");
         UniquePlayerIdentifier playerID = UniquePlayerIdentifier.of(playerReg.getPlayerUsername());
         if (games.get(gameID).containsPlayerWithID(playerID.getUniquePlayerID())) {
@@ -134,7 +134,7 @@ public class GameService {
         }
     }
 
-    public static void checkIfGameExist(UniqueGameIdentifier gameID, String message) {
+    public static void checkIfGameExist(UniqueGameIdentifier gameID, String message) throws GameNotFoundException{
         if (!games.containsKey(gameID)) {
             logger.error("Attempted to {} to a non-existent game: {}", message, gameID.getUniqueGameID());
             throw new GameNotFoundException(gameID.getUniqueGameID());
@@ -145,26 +145,19 @@ public class GameService {
         return games;
     }
 
-    public static void startGame(UniqueGameIdentifier gameID) {
+    public void startGame(UniqueGameIdentifier gameID) {
         GameInfo game = games.get(gameID);
         Iterator<PlayerState> playerIterator = game.getPlayers().iterator();
 
         setInitialPlayersForGame(game, playerIterator);
+        if (game.getCurrentPlayer().getPlayerUsername() == "AI_Easy") {
+        	PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIEasyPlayer(game);
+            aiPlayer.setStartParameters(game);
+        } else if (game.getCurrentPlayer().getPlayerUsername() == "AI_Hard") {
+        	PlayerAIHard aiPlayer = (PlayerAIHard) getAIHardPlayer(game);
+            aiPlayer.setStartParameters(game);
+        }
         games.get(gameID).setTurnStartTime(System.currentTimeMillis());
-    }
-    
-    public void startGameWithAIEasy(UniqueGameIdentifier gameID) {
-        startGame(gameID);
-        GameInfo game = games.get(gameID);
-        PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIEasyPlayer(game);
-        aiPlayer.setStartParameters(game); // Separate to new class
-    }
-    
-    public void startGameWithAIHard(UniqueGameIdentifier gameID) {
-        startGame(gameID);
-        GameInfo game = games.get(gameID);
-        PlayerAIHard aiPlayer = (PlayerAIHard) getAIHardPlayer(game);
-        aiPlayer.setStartParameters(game); // Separate to new class
     }
     
     public boolean doesGameContainsAIEasy(UniqueGameIdentifier gameID) {

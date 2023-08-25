@@ -353,9 +353,45 @@ body {
     height: 33.33%;
 }
 
+#notification {
+    font-family: Joystix Monospace, serif;
+    font-size: 14px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #F6FF00; /* Main bright yellow */
+    color: #333333; /* Dark text for contrast against yellow */
+    padding: 15px 30px;
+    border: 3px solid #333333; /* Dark border for contrast and game-like feel */
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Slightly softer shadow for depth */
+    z-index: 9999;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+}
 
+@keyframes popIn {
+    from {
+        transform: translateY(100px) translateX(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) translateX(-50%);
+        opacity: 1;
+    }
+}
 
+#notification {
+    animation: popIn 0.4s forwards;
+}
 
-
-
-
+#notification:hover {
+    background-color: #E5E900; /* Slightly darker yellow on hover for interaction feel */
+    cursor: pointer;
+}
