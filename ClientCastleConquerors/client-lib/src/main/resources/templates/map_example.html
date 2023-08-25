@@ -285,7 +285,12 @@
 				
 				const playerImg = document.createElement('img');
 				playerImg.classList.add('player-icon');
-				if (tile.playerPositionState === "MyPlayerPosition") {
+                //Preparing element for highlighting
+                const highlightImg = document.createElement('img');
+                highlightImg.classList.add('highlight');
+                highlightImg.src = '../images/highlight.png';
+
+				if (tile.playerPositionState === "MyPlayerPosition") {;
 				    playerImg.src = '../images/myPlayer.png';
 				    td.appendChild(playerImg);
 				} else if (tile.playerPositionState === "EnemyPlayerPosition") {
@@ -300,9 +305,11 @@
 					if (tile.playerPositionState === "BothPlayerPosition") {
 						playerImg.src = '../images/myFortBothPlayers.png';
 				    	td.appendChild(playerImg);
+                        td.appendChild(highlightImg);
 					} else if (tile.playerPositionState === "MyPlayerPosition") {
 						playerImg.src = '../images/myFortAndMyPlayer.png';
 				    	td.appendChild(playerImg);
+                        td.appendChild(highlightImg);
 					} else if (tile.playerPositionState === "EnemyPlayerPosition") {
 						if (opponentTreasureFound) {
 							playerImg.src = '../images/enemyCapturedMyFort.png';
@@ -325,6 +332,7 @@
 							playerImg.src = '../images/enemyFortWithPlayer.png';
 						}
 				    	td.appendChild(playerImg);
+                        td.appendChild(highlightImg);
 					} else if (playerEnemyFortRevealed) {
 						playerImg.src = '../images/enemyFort.png';
 				    	td.appendChild(playerImg);
@@ -349,6 +357,7 @@
 							playerImg.src = '../images/playerHasAlreadyVisitedTreasure.png';
 				    		td.appendChild(playerImg);
 						}
+                        td.appendChild(highlightImg);
 					} else if (tile.playerPositionState === "EnemyPlayerPosition") {
 						if (!playerTreasureCollected) {
 							playerImg.src = '../images/myTreasureFoundByEnemyBeforeMe.png';
@@ -365,6 +374,7 @@
 							playerImg.src = '../images/bothPlayersIfPlayerHasAlreadyVisitedTreasure.png';
 				    		td.appendChild(playerImg);
 						}
+                        td.appendChild(highlightImg);
 					}
 		        }
 		
