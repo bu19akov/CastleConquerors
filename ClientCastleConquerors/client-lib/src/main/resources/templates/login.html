@@ -96,6 +96,14 @@
 	    document.getElementById('createAccountFormElem').addEventListener('submit', function(event) {
 	        validateForm('signup', event);
 	    });
+	    
+	    document.getElementById('newPassword').addEventListener('keydown', function (event) {
+		    if (event.key === 'Enter') {
+		        event.preventDefault();
+		        document.getElementById('createAccountFormElem').submit();
+		    }
+		});
+
 	
 	    document.addEventListener("DOMContentLoaded", function () {
 	        initFieldValidation();
