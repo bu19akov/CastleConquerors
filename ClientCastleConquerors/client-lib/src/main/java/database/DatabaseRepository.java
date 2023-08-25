@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 
@@ -119,7 +120,7 @@ public class DatabaseRepository {
     public static List<GameStatistics> getTop5PlayersByWonGames() {
         List<GameStatistics> topPlayers = new ArrayList<>();
 
-        credentialsCollection.find()
+        credentialsCollection.find(Filters.nin("playerUsername", "AI_Easy", "AI_Hard"))
             .sort(Sorts.descending("wonGames"))
             .limit(5)
             .projection(Projections.fields(Projections.include("playerUsername", "wonGames"), Projections.excludeId()))

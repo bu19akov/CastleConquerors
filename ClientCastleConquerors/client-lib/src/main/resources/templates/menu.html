@@ -33,7 +33,8 @@
 
 <!--basically here is the text that would be here without the .js -->
 <!--but I doubt there's going to be people on this page without logging in-->
-<h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">adventurer</span>?</h2>
+<h2 id="welcomeMessage">Are you ready, <span id="loggedInUser" th:data-logged-in-user="${loggedInUser}" th:text="${loggedInUser}">adventurer</span>?</h2>
+
 
 <div th:if="${errorMessage}" th:attr="data-error=${errorMessage}" id="errorMessageDiv"></div>
 
@@ -79,7 +80,7 @@
                 <img src="images/leaderboard_496x262.png" alt="Leaderboard Icon">
             </div>
 
-            <ol class="top-players-list">
+            <ol id="top-players-list" class="top-players-list">
                 <li>
                     <span class="player-name" data-player-id="1">[Player 1 Name]</span>
                     <span class="player-wins" data-player-id="1">[Wins%?]</span>
@@ -112,7 +113,7 @@
             <div class="bot-stats-container">
 
                 <!-- EASY_AI stats -->
-                <div class="bot-stats easy-ai-stats">
+                <div class="bot-stats AI_Easy-stats">
                     <div class="bot-name">EASY_AI</div>
                     <div><span class="bot-wins">[234]</span> wins</div>
                     <div><span class="bot-losses">[0 hes a god]</span> losses</div>
@@ -120,7 +121,7 @@
                 </div>
 
                 <!-- HARD_AI stats -->
-                <div class="bot-stats hard-ai-stats">
+                <div class="bot-stats AI_Hard-stats">
                     <div class="bot-name">HARD_AI</div>
                     <div><span class="bot-wins">[INT_MAX]</span> wins</div>
                     <div><span class="bot-losses">[-13]</span> losses</div>
@@ -229,6 +230,12 @@
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
+		fetchTop5Players();
+		const loggedInUserElement = document.getElementById('loggedInUser');
+	    const loggedInUser = loggedInUserElement.getAttribute('data-logged-in-user');
+	    fetchStats('player', loggedInUser);
+		fetchStats('ai', 'AI_Easy');
+		fetchStats('ai', 'AI_Hard');
 	    const errorMessageDiv = document.getElementById('errorMessageDiv');
 	    if (errorMessageDiv) {
 	        const errorMessage = errorMessageDiv.getAttribute('data-error');
@@ -246,7 +253,81 @@
 	    }
 	});
 
-
+	function fetchTop5Players() {
+		const topPlayersList = document.getElementById('top-players-list');
+    
+	    if (!topPlayersList) {
+	        console.error('Unable to find the element with the ID top-players-list.');
+	        return;  // Exit the function early if the element is not found
+	    }
+	
+	    if (!topPlayersList) {
+	        console.error('Unable to find the element with the ID top-players-list.');
+	        return;  // Exit the function early if the element is not found
+	    }
+	
+	    fetch('stats/top5')
+	    .then(response => response.json())
+	    .then(data => {
+	        // Clear existing items
+	        topPlayersList.innerHTML = '';
+	
+	        data.forEach(player => {
+	            let listItem = document.createElement('li');
+	            let playerName = document.createElement('span');
+	            playerName.className = 'player-name';
+	            playerName.textContent = player.playerUsername;
+	
+	            let playerWins = document.createElement('span');
+	            playerWins.className = 'player-wins';
+	            playerWins.textContent = player.wonGames;
+	
+	            listItem.appendChild(playerName);
+	            listItem.appendChild(playerWins);
+	
+	            topPlayersList.appendChild(listItem);
+	        });
+	    })
+	    .catch(error => console.error('Error fetching top players:', error));
+	}
+	
+	function fetchStats(entityType, entityId) {
+	    fetch(`stats/player/${entityId}`)
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error(`Failed to fetch ${entityId} stats`);
+	            }
+	            return response.json();
+	        })
+	        .then(data => {
+	            if (entityType === 'player') {
+	                const playerNameDiv = document.querySelector('.current-player-stats .player-current-name');
+	                const playerWinsDiv = document.querySelector('.current-player-stats .player-current-wins');
+	                const playerLossesDiv = document.querySelector('.current-player-stats .player-current-losses');
+	                const playerWinRateDiv = document.querySelector('.current-player-stats .player-current-winrate');
+	
+	                playerNameDiv.textContent = data.playerUsername; 
+	                playerWinsDiv.textContent = data.wonGames;
+	                playerLossesDiv.textContent = data.lostGames;
+	
+	                const totalGames = data.wonGames + data.lostGames;
+	                const winRate = totalGames !== 0 ? (data.wonGames / totalGames * 100).toFixed(2) : 0;
+	                playerWinRateDiv.textContent = winRate;
+	
+	            } else if (entityType === 'ai') {
+	                const aiStatsDiv = document.querySelector(`.${entityId}-stats`);
+	                aiStatsDiv.querySelector('.bot-wins').textContent = data.wonGames;
+	                aiStatsDiv.querySelector('.bot-losses').textContent = data.lostGames;
+	
+	                const totalGames = data.wonGames + data.lostGames;
+	                const winRate = totalGames !== 0 ? (data.wonGames / totalGames * 100).toFixed(2) : 0;
+	                aiStatsDiv.querySelector('.bot-winrate').textContent = winRate;
+	            }
+	        })
+	        .catch(error => {
+	            console.error(`Error fetching ${entityId} stats:`, error);
+	        });
+	}
 
     function openModal() {
         document.getElementById('gameRulesModal').style.display = 'flex';

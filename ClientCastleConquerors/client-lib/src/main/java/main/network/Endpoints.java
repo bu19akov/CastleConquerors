@@ -1,5 +1,7 @@
 package main.network;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.PlayerState;
 import statistic.GameEndRequest;
+import statistic.GameStatistics;
 
 @Controller
 @RequestMapping("/")
@@ -279,6 +282,39 @@ public class Endpoints {
 	    }
 	}
 
+	@GetMapping("stats/top5")
+	@ResponseBody
+	public List<GameStatistics> getTop5Players(HttpSession session) {
+	    try {
+	        // Check if the user is logged in
+	        if (!isLoggedIn(session)) {
+	            throw new Exception("User not logged in");
+	        }
+
+	        // Fetch and return top 5 players by won games
+	        return DatabaseRepository.getTop5PlayersByWonGames();
+	    } catch (Exception e) {
+	        // You might want to return a custom error response here
+	        return null;  
+	    }
+	}
+	
+	@GetMapping("stats/player/{playerID}")
+	@ResponseBody
+	public GameStatistics getPlayerStats(@PathVariable String playerID, HttpSession session) {
+	    try {
+	        // Check if the user is logged in
+	        if (!isLoggedIn(session)) {
+	            throw new Exception("User not logged in");
+	        }
+
+	        // Fetch and return statistics for the specific player using the playerID
+	        return DatabaseRepository.getGameStatisticsByPlayerUsername(playerID);
+	    } catch (Exception e) {
+	        // You might want to return a custom error response here
+	        return null;  
+	    }
+	}
 
 
 	private boolean isLoggedIn(HttpSession session) {
