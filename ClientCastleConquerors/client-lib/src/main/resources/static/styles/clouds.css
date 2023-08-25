@@ -92,7 +92,6 @@
     animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
 }
 
-/* Show and position the new clouds when the viewport width is 1165px or narrower */
 /* Initially hide the new clouds */
 .cloud:nth-child(12),
 .cloud:nth-child(13),
