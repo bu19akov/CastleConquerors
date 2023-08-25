@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import messagesbase.*;
 import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
+import messagesbase.messagesfromserver.EPlayerGameState;
 import messagesbase.messagesfromserver.GameState;
 import exceptions.GameNotFoundException;
 import exceptions.GenericExampleException;
@@ -105,19 +106,22 @@ public class Endpoints {
     	} catch (IllegalArgumentException e) {
     		return new ResponseEnvelope<>("IllegalArgumentException", e.getMessage());
     	}
-    	try {
-	    	if (gameService.doesGameContainsAIEasy(gameID)) {
-	    		gameService.makeAIEasyMove(gameID);
+    	if (GameService.getGames().get(gameID).getCurrentPlayer().getState() != EPlayerGameState.Lost && 
+    			GameService.getGames().get(gameID).getCurrentPlayer().getState() != EPlayerGameState.Won) {
+	    	try {
+		    	if (gameService.doesGameContainsAIEasy(gameID)) {
+		    		gameService.makeAIEasyMove(gameID);
+		    	}
+	    	} catch (Exception e) {
+	    		return new ResponseEnvelope<>("Exception", e.getMessage());
 	    	}
-    	} catch (Exception e) {
-    		return new ResponseEnvelope<>("Exception", e.getMessage());
-    	}
-    	try {
-	    	if (gameService.doesGameContainsAIHard(gameID)) {
-	    		gameService.makeAIHardMove(gameID);
+	    	try {
+		    	if (gameService.doesGameContainsAIHard(gameID)) {
+		    		gameService.makeAIHardMove(gameID);
+		    	}
+	    	} catch (Exception e) {
+	    		return new ResponseEnvelope<>("Exception", e.getMessage());
 	    	}
-    	} catch (Exception e) {
-    		return new ResponseEnvelope<>("Exception", e.getMessage());
     	}
 	    return new ResponseEnvelope<>("Move processed successfully");
 	}
