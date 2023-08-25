@@ -10,6 +10,7 @@ import messagesbase.*;
 import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
+import exceptions.GameNotFoundException;
 import exceptions.GenericExampleException;
 import main.game.GameInfo;
 import main.game.GameService;
@@ -32,9 +33,7 @@ public class Endpoints {
 	       @Validated @RequestBody PlayerRegistration playerRegistration) {
     	UniqueGameIdentifier gameID = gameService.createGame();
 
-		gameService.registerPlayerToGame(gameID, playerRegistration);
 		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Easy"));
-		gameService.startGameWithAIEasy(gameID);
 	
 	   return gameID;
 	}
@@ -46,9 +45,7 @@ public class Endpoints {
 	       @Validated @RequestBody PlayerRegistration playerRegistration) {
     	UniqueGameIdentifier gameID = gameService.createGame();
 
-		gameService.registerPlayerToGame(gameID, playerRegistration);
 		gameService.registerPlayerToGame(gameID, new PlayerRegistration("AI_Hard"));
-		gameService.startGameWithAIHard(gameID);
 	
 	   return gameID;
 	}
@@ -62,9 +59,14 @@ public class Endpoints {
     	if (GameService.getGames().containsKey(gameID) && GameService.getGames().get(gameID).containsPlayerWithID(playerRegistration.getPlayerUsername())) {
         	return new ResponseEnvelope<>("IllegalArgumentException", "Player is already registered");
         }
-        UniquePlayerIdentifier newPlayerID = gameService.registerPlayerToGame(gameID, playerRegistration);
+    	UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier();
+    	try {
+    		newPlayerID = gameService.registerPlayerToGame(gameID, playerRegistration);
+    	} catch (GameNotFoundException e) {
+    		return new ResponseEnvelope<>("GameNotFoundException", "Invalid GameID");
+    	}
         if (isGameFull(gameID)) {
-            GameService.startGame(gameID);
+            gameService.startGame(gameID);
         }
 
         return new ResponseEnvelope<>(newPlayerID);

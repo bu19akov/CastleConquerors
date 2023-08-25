@@ -33,6 +33,10 @@
 <!--but I doubt there's going to be people on this page without logging in-->
 <h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">adventurer</span>?</h2>
 
+<div th:if="${errorMessage}">
+    <p th:text="${errorMessage}"></p>
+</div>
+
 
 <div class="login-container">
 
