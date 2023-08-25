@@ -150,10 +150,10 @@ public class GameService {
         Iterator<PlayerState> playerIterator = game.getPlayers().iterator();
 
         setInitialPlayersForGame(game, playerIterator);
-        if (game.getCurrentPlayer().getPlayerUsername() == "AI_Easy") {
+        if (game.containsPlayerWithID("AI_Easy")) {
         	PlayerAIEasy aiPlayer = (PlayerAIEasy) getAIEasyPlayer(game);
             aiPlayer.setStartParameters(game);
-        } else if (game.getCurrentPlayer().getPlayerUsername() == "AI_Hard") {
+        } else if (game.containsPlayerWithID("AI_Hard")) {
         	PlayerAIHard aiPlayer = (PlayerAIHard) getAIHardPlayer(game);
             aiPlayer.setStartParameters(game);
         }
@@ -249,6 +249,7 @@ public class GameService {
     }
     
     public static void processMove(UniqueGameIdentifier gameID, PlayerMove playerMove) throws IllegalArgumentException {
+    	checkIfGameExist(gameID, "send move");
         GameInfo game = games.get(gameID);
         
         if (game.getCurrentPlayer() == null) {
@@ -529,8 +530,9 @@ public class GameService {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.schedule(() -> {
             games.remove(gameID);
+            logger.info("{} was deleted from the game list", gameID.getUniqueGameID());
             scheduler.shutdown(); // shut down the scheduler to free resources
-        }, 1, TimeUnit.SECONDS);
+        }, 2, TimeUnit.SECONDS);
     }
 
 }
