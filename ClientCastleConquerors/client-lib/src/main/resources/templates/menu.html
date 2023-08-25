@@ -34,41 +34,39 @@
 <h2 id="welcomeMessage">Are you ready, <span th:text="${loggedInUser}">adventurer</span>?</h2>
 
 
-<div class="login-container">
+<div class="menu-container">
 
-    <!-- Create Game Button -->
-    <div class="button-group">
-        <button class="login-btn" onclick="window.location.href='game'">Create Game</button>
-    </div>
-
-    <!-- Connect to Existing Game Section -->
-    <div class="input-button-group">
-        <div class="input-group">
-            <input type="text" name="gameID" id="gameID" class="input-field" required maxlength="5">
-            <label for="gameID" class="placeholder">GameID</label>
+    <!-- Main Menu Buttons -->
+    <div id="mainMenu">
+        <div class="button-group">
+            <button class="btn play-game" onclick="toggleGameForms()">Play Game</button>
+            <button class="btn game-rules-btn" onclick="openModal()">Game rules</button>
+            <button class="btn game-stats">Leaderboards & Stats</button>
+            <button class="btn sign-out" onclick="signOut()">Sign Out</button>
         </div>
-        <button class="login-btn" onclick="connectToGame()">Connect to Existing Game</button>
     </div>
 
-    <!-- Play vs easy AI Button -->
-    <div class="button-group">
-        <button class="login-btn" onclick="window.location.href='game/ai/easy'">Play vs. easy AI</button>
-    </div>
-    
-    <!-- Play vs hard AI Button -->
-    <div class="button-group">
-        <button class="login-btn" onclick="window.location.href='game/ai/hard'">Play vs. hard AI</button>
+    <!-- Play Game Submenu -->
+    <div id="gameSubMenu" style="display: none;">
+        <div class="button-group">
+            <button class="btn create-game" onclick="window.location.href='game'">Create Game</button>
+        </div>
+
+        <div class="game-id-group">
+            <div class="game-id-input">
+                <input type="text" name="gameID" id="gameID" class="input-field" required maxlength="5">
+                <label for="gameID" class="placeholder">GameID</label>
+            </div>
+            <button class="btn connect-btn" onclick="connectToGame()">Connect to Existing Game</button>
+        </div>
+
+        <div class="button-group">
+            <button class="btn easy-ai" onclick="window.location.href='game/ai/easy'">Play vs. easy AI</button>
+            <button class="btn hard-ai" onclick="window.location.href='game/ai/hard'">Play vs. hard AI</button>
+            <button class="btn go-back" onclick="toggleGameForms()">Go Back</button>
+        </div>
     </div>
 
-    <!-- Game Rules Button -->
-    <div class="button-group">
-        <button class="login-btn" onclick="openModal()">Game rules</button>
-    </div>
-
-    <!-- Sign Out Button -->
-    <div class="button-group">
-        <button class="login-btn sign-out-btn" onclick="signOut()">Sign Out</button>
-    </div>
 
 
     <!-- Modal for Game Rules -->
@@ -192,6 +190,21 @@
     function signOut() {
         window.location.href = "logout";
     }
+
+    function toggleGameForms() {
+        const mainMenu = document.getElementById('mainMenu');
+        const gameSubMenu = document.getElementById('gameSubMenu');
+
+        if (gameSubMenu.style.display === 'none') {
+            mainMenu.style.display = 'none';
+            gameSubMenu.style.display = 'block';
+        } else {
+            mainMenu.style.display = 'block';
+            gameSubMenu.style.display = 'none';
+        }
+    }
+
+
 </script>
 
 </body>

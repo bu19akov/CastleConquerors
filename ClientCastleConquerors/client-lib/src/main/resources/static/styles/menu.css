@@ -41,8 +41,19 @@ body {
     color: #F6FF00;
 }
 
+#welcomeMessage {
+    position: absolute;
+    top: 26%;  /* Adjust as needed to position it under the game title */
+    font-family: Joystix Monospace, serif;
+    font-size: 2vw;
+    color: #f6ff00;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.1), -2px -2px 0 rgba(0,0,0,0.1), 2px -2px 0 rgba(0,0,0,0.1), -2px 2px 0 rgba(0,0,0,0.1);
+    z-index: 3;
+    text-align: center;  /* center align the text */
+}
+
 /* container for login inputs and buttons */
-.login-container {
+.menu-container {
     width: 40vw;
     display: flex;
     flex-direction: column;
@@ -50,38 +61,132 @@ body {
     z-index: 3;
 }
 
-.input-group {
-    position: relative;
+.button-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    text-align: center;
+}
+
+.button-group .btn {
+    display: block; /* makes each button appear in a new line */
+    margin-bottom: 10px; /* adds spacing between the buttons */
+    height: 40px;
+    line-height: 40px; /* to vertically center the text, especially if the height is large */
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.btn {
+    display: inline-block;
     height: 45px;
-    margin-bottom: 8px;
-    margin-top: 8px;
+    background-color: #092855;
+    color: lightgray;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: Joystix Monospace, serif;
+    flex: 7;
+}
+
+/*general hover effects*/
+.btn:hover {
+    background-color: yellow;
+    color: darkblue;
+}
+
+
+/*main menu button colors/hovers*/
+.game-stats:hover, .game-rules-btn:hover {
+    background-color: goldenrod;
+    color: white;
+}
+
+.sign-out {
+    background-color: darkred;
+}
+
+.sign-out:hover {
+    background-color: white;
+    color: darkblue;
+}
+
+/*play/create game button colors/hovers*/
+.play-game:hover, .create-game:hover {
+    background-color: green;
+    color: white;
+}
+
+.create-game, .play-game {
+    background-color: darkgreen;
+    color: white;
+}
+
+/*secondary menu buttons/hovers*/
+
+.connect-btn:hover {
+    background-color: #140024;
+    color: #f6ff00;
+}
+
+.easy-ai:hover {
+    background-color: goldenrod;
+    color: whitesmoke;
+}
+
+.hard-ai:hover {
+    background-color: indianred;
+    color: white;
+}
+
+.go-back {
+    background-color: #333333;
+}
+
+.go-back:hover {
+    background-color: #cccccc;
+    color: black;
+}
+
+
+.game-id-group {
+    display: flex;
+    gap: 1rem;  /* Reduced gap between the input and the button */
+    align-items: center;
+    padding: 0.5rem;  /* Reduced padding around the contents */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* A semi-transparent border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* A gentler box shadow */
+    border-radius: 5px;  /* Slightly rounded corners */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+    margin-bottom: 10px;
 }
 
 /* input field styles */
 .input-field {
     width: 100%;
     height: 100%;
-    padding: 0.625rem 3.125rem 0.625rem 1.875rem;
+    padding: 0.625rem;
     border: 3px solid #140024;
     box-sizing: border-box;
     background-color: #140024;
     color: #F6FF00;
-    font-size: 2vw;
     font-family: LomoCopyLTStd-Mezzo, serif;
+    font-size: 1.3vw;
+    text-align: center;
 }
 
-
-/* Focus styles for input fields */
-.input-field:focus {
-    border: 3px solid #140024;
+.game-id-input {
+    position: relative;
+    height: 45px;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    flex: 3;            /* Takes 60% of the available width */
+    width: 100%;
 }
 
-
-/* should be a better way to do this will check it out later */
-/* basically the placeholder looks fine, but the dots of the password dont look centered at all without this */
-.input-field[type="password"] {
-    padding-top: 4px;
-    padding-bottom: 8px;
+.connect-btn {
+    flex: 6;
 }
 
 
@@ -106,112 +211,7 @@ body {
     display: none;
 }
 
-/* Styles for the button group */
-.button-group {
-    text-align: center; /* Center align the buttons */
-}
 
-
-
-/* Styles for the button group */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-}
-
-/* Button styles */
-.login-btn, .signup-btn {
-    display: inline-block;
-    width: 45vw;
-    height: 45px;
-    background-color: #092855;
-    color: lightgray;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: Joystix Monospace, serif;
-
-}
-
-/* Hover effects for buttons */
-.login-btn:hover, .signup-btn:hover, .toggle:hover {
-    background-color: yellow;
-    color: darkblue;
-}
-
-
-@media (max-width: 768px) {
-    .login-container {
-        width: 80vw;
-    }
-
-    .game-title {
-        font-size: 2.5rem;
-    }
-}
-
-.input-button-group {
-    display: flex;
-    width: fit-content; /* This will make the width fit its content */
-    gap: 1rem;  /* Reduced gap between the input and the button */
-    align-items: center;
-    padding: 0.5rem;  /* Reduced padding around the contents */
-    border: 1px solid rgba(0, 0, 0, 0.2); /* A semi-transparent border */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* A gentler box shadow */
-    border-radius: 5px;  /* Slightly rounded corners */
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
-}
-
-
-.input-field {
-    font-size: 1.5vw;
-    text-align: center;
-}
-
-
-.input-group {
-    flex: 3;            /* Takes 60% of the available width */
-    width: 100%;
-}
-
-.login-btn {
-    flex: 7;            /* Takes 40% of the available width */
-    width: 100%;        /* Button will take up the entire available space, so it's responsive */
-}
-
-.sign-out-btn {
-    background-color: darkred;
-}
-
-.sign-out-btn:hover {
-    background-color: white;
-    color: darkblue;
-}
-
-#welcomeMessage {
-    position: absolute;
-    top: 26%;  /* Adjust as needed to position it under the game title */
-    font-family: Joystix Monospace, serif;
-    font-size: 2vw;
-    color: #f6ff00;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.1), -2px -2px 0 rgba(0,0,0,0.1), 2px -2px 0 rgba(0,0,0,0.1), -2px 2px 0 rgba(0,0,0,0.1);
-    z-index: 3;
-    text-align: center;  /* center align the text */
-
-}
-
-@media (max-width: 768px) {
-    .game-title {
-        font-size: 2.5rem;
-    }
-
-    #welcomeMessage {
-        font-size: 1.5rem;
-        top: 22%;  /* Adjust accordingly */
-    }
-}
 
 .modal {
     display: none;
@@ -351,6 +351,27 @@ body {
     align-items: center;
     justify-content: center;
     height: 33.33%;
+}
+
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+
+    #welcomeMessage {
+        font-size: 1.5rem;
+        top: 22%;  /* Adjust accordingly */
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        width: 80vw;
+    }
+
+    .game-title {
+        font-size: 2.5rem;
+    }
 }
 
 
