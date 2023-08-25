@@ -36,7 +36,7 @@ import java.util.UUID;
 
 @Service
 public class GameService {
-    private static final int MAX_GAMES = 99;
+    private static final int MAX_GAMES = 99; 
     private static final int MAX_TURNS = 420;
     private static final int MAX_TURN_TIME = 10_000; // 10 seconds
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
