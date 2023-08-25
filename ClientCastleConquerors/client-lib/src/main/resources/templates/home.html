@@ -4,61 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-
-<!--I do this to test it quickly locally, without needing to relaunch the whole project just to see a change -->
+    <title>🏰 Castle Conquerors</title>
 <!--    <link rel="stylesheet" href="../static/styles/homePage.css">-->
 <!--    <link rel="stylesheet" href="../static/styles/clouds.css">-->
     <link rel="stylesheet" href="styles/homePage.css">
     <link rel="stylesheet" href="styles/clouds.css">
-
 </head>
 
 <body>
+<div class="container">
 
-    <!-- Main Container -->
-    <div class="container">
+    <!--Clouds-->
+    <div class="clouds">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+    </div>
 
-        <!-- Clouds Section -->
-        <div class="clouds">
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-            <div class="cloud"></div>
-        </div>
-
-        <!-- Logo Section -->
-        <div class="logo">
-
-<!--            Same here-->
-<!--            <img src="../static/images/castleconq_nobg.png" alt="Logo">-->
-            <img src="images/castleconq_nobg.png" alt="Logo">
-        </div>
-
-        <!-- Prompt Section -->
-        <div class="prompt">
-            <span class="blink-text">PRESS ANYWHERE TO CONTINUE</span>
-        </div>
-
-    </div> <!-- End of Main Container -->
-
-    <!-- Scripts -->
+<!--Logo and text-->
+    <div class="logo"><img src="images/castleconq_nobg.png" alt="Logo"></div>
+<!--    <div class="logo"><img src="../static/images/castleconq_nobg.png" alt="Logo"></div>-->
+    <span class="blink-text">PRESS ANYWHERE TO CONTINUE</span>
+</div>
 
     <script>
         document.body.addEventListener('click', function() {
-
-            // window.location.href = "login.html";
-            window.location.href = "login";
+        window.location.href = "login.html";
         });
     </script>
 
 </body>
-
 </html>

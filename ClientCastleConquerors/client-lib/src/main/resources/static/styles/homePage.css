@@ -15,7 +15,6 @@ body, html {
     overflow: hidden;
 }
 
-/* fade out / transition to the next page */
 body.fade-out {
     opacity: 0;
     transition: opacity 0.5s;
@@ -31,25 +30,34 @@ body.fade-out {
     z-index: 2;
 }
 
+.logo {
+    z-index: 2;
+    position: relative;
+}
+
 .logo img {
     width: 70vh;
     max-width: 100%;
 }
 
-.prompt {
-    height: 30vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .blink-text {
     color: #f6ff00;
     font-size: 3rem;
     font-family: Joystix Monospace, serif;
     padding-bottom: 5%;
-    text-shadow: 0 0 5px #000; 
+    text-shadow: 0 0 5px #000;
     animation: blink-animation 1s infinite alternate;
+    z-index: 2;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 1000px) {
+    .blink-text {
+        font-size: 4vw;
+    }
 }
 
 @keyframes blink-animation {
@@ -61,9 +69,6 @@ body.fade-out {
     }
 }
 
-.logo, .prompt {
-    z-index: 2;
-    position: relative;
-}
+
 
 

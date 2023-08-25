@@ -16,6 +16,8 @@
     animation: moveClouds 25s infinite linear;
 }
 
+
+
 .cloud:nth-child(1) { left: 2%;   top: -5%;   background-image: url('../images/cloud1.png'); }
 .cloud:nth-child(2) { left: 80%;  top: -4%;  background-image: url('../images/cloud2.png'); }
 .cloud:nth-child(3) { left: 30%;  top: 5%;  background-image: url('../images/cloud3.png'); }
@@ -89,3 +91,54 @@
 .cloud:nth-child(11) {
     animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
 }
+
+
+/* Initially hide the new clouds */
+.cloud:nth-child(12),
+.cloud:nth-child(13),
+.cloud:nth-child(14) {
+    display: none;
+}
+
+/* Show and position the new clouds when the viewport width is 1165px or narrower */
+/* Initially hide the new clouds */
+.cloud:nth-child(12),
+.cloud:nth-child(13),
+.cloud:nth-child(14) {
+    display: none;
+}
+
+/* Adjust cloud size and position for screens 1165px or narrower */
+@media screen and (max-width: 775px) {
+    /* Adjusting size for all clouds */
+    .cloud {
+        width: 25vw;
+        height: 25vw;
+    }
+
+    .cloud:nth-child(12) {
+        display: block;
+        left: 5%;
+        bottom: 10vh;
+        background-image: url('../images/cloud1.png');
+        animation: moveClouds 25s infinite linear, levitate1 5s infinite ease-in-out;
+    }
+
+    .cloud:nth-child(13) {
+        display: block;
+        left: 50%;
+        bottom: 8vh;
+        background-image: url('../images/cloud2.png');
+        animation: moveClouds 25s infinite linear, levitate2 4s infinite ease-in-out;
+    }
+
+    .cloud:nth-child(14) {
+        display: block;
+        left: 80%;
+        bottom: 5vh;
+        background-image: url('../images/cloud3.png');
+        animation: moveClouds 25s infinite linear, levitate3 6s infinite ease-in-out;
+    }
+}
+
+
