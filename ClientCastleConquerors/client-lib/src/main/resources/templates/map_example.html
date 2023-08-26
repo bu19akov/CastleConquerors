@@ -135,6 +135,7 @@
     let playerTreasureFound = false;
 	let opponentTreasureFound = false;
 	let opponentUsername = "";
+	let myPlayerUsername = "";
 	
 	function addRedLine() {
 	    const rows = document.querySelectorAll('table tr');
@@ -239,12 +240,13 @@
 		        }
 		    });
 		    
+		    myPlayerUsername = data.playerUsername;
 		    if (data.state === 'Won' || data.state === 'Lost') {
 			    gameHasEnded = true; // Set the flag to true
 			    
 			    if (data.state === 'Won') {
 			        // Sending the POST request when the game has ended (my player win)
-			        sendGameData(data.playerUsername, data.state);
+			        sendGameData(myPlayerUsername, data.state);
 			        // Sending the POST request when the game has ended (opponent player lost)
 			        sendGameData(opponentUsername, 'Lost');
 			    } else if (data.state === 'Lost' && (opponentUsername === 'AI_Easy' || opponentUsername === 'AI_Hard')) {
@@ -422,6 +424,7 @@
 	    button.addEventListener("click", function() {
 	        const moveDirection = button.getAttribute("data-move");
 	        sendMoveRequest(moveDirection);
+	        document.getElementById("buttonDiv").style.display = 'none'
 	    });
 	});
 
@@ -542,6 +545,10 @@
     document.getElementById('confirmLeave').addEventListener('click', function() {
         const popup = document.getElementById('leaveGamePopup');
         popup.style.display = 'none';
+        if (opponentUsername === 'AI_Hard' || opponentUsername === 'AI_Easy') {
+			sendGameData(opponentUsername, 'Won');
+        	sendGameData(myPlayerUsername, 'Lost');
+		}
         window.location.href = '/menu';
     });
 
