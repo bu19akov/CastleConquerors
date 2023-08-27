@@ -96,14 +96,6 @@
 	    document.getElementById('createAccountFormElem').addEventListener('submit', function(event) {
 	        validateForm('signup', event);
 	    });
-	    
-	    document.getElementById('newPassword').addEventListener('keydown', function (event) {
-		    if (event.key === 'Enter') {
-		        event.preventDefault();
-		        document.getElementById('createAccountFormElem').submit();
-		    }
-		});
-
 	
 	    document.addEventListener("DOMContentLoaded", function () {
 	        initFieldValidation();
@@ -123,13 +115,16 @@
 	        }
 	        
 	        function bindEnterToValidate(sourceId, formType) {
-	            document.getElementById(sourceId).addEventListener('keydown', function (event) {
-	                if (event.key === 'Enter') {
-	                    event.preventDefault();
-	                    validateForm(formType);
-	                }
-	            });
-	        }
+			    document.getElementById(sourceId).addEventListener('keydown', function (event) {
+			        if (event.key === 'Enter') {
+			            event.preventDefault();
+			            const hasErrors = validateForm(formType, event);
+			            if (!hasErrors) {
+			                document.getElementById('createAccountFormElem').submit();
+			            }
+			        }
+			    });
+			}
 	    });
 	
 	    function initFieldValidation() {
@@ -247,12 +242,14 @@
 		    let email = document.getElementById('email').value.trim();
 		
 		    let errors = validateFields(username, password, email);
-		    
+		
 		    displayErrors(errors);
 		
 		    if (errors.length) {  // Prevent form submission if there are errors
 		        event.preventDefault();
+		        return true; // there are errors
 		    }
+		    return false; // no errors
 		}
 		
 		function validateFields(username, password, email) {
