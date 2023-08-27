@@ -478,7 +478,6 @@ body {
     text-align: right;
 }
 
-
 /* Optional: If you want to have a fixed width for player names, use the following */
 .player-name {
     overflow: hidden; /* prevents content spillover */
