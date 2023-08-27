@@ -464,7 +464,28 @@ body {
     list-style-type: decimal;
     padding-left: 1em;
     margin-bottom: 20px;
+}	
+
+/* Create a grid container for player's name and their wins */
+.top-players-list li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;  /* rank sizes to its content, name takes up remaining space, wins sizes to its content */
+    align-items: center;
+    gap: 30px; /* spacing between columns, adjust as desired */
 }
+
+.player-rank {
+    text-align: right;
+}
+
+
+/* Optional: If you want to have a fixed width for player names, use the following */
+.player-name {
+    overflow: hidden; /* prevents content spillover */
+    text-overflow: ellipsis; /* shows '...' for overflow content */
+    white-space: nowrap; /* prevents text wrapping */
+}
+
 
 hr {
     border: none;

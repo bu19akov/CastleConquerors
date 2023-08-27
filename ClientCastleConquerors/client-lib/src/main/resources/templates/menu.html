@@ -82,22 +82,27 @@
 
             <ol id="top-players-list" class="top-players-list">
                 <li>
+					<span class="player-rank">1.</span>
                     <span class="player-name" data-player-id="1">[Player 1 Name]</span>
                     <span class="player-wins" data-player-id="1">[Wins%?]</span>
                 </li>
                 <li>
+					<span class="player-rank">1.</span>
                     <span class="player-name" data-player-id="2">[Player 2 Name]</span>
                     <span class="player-wins" data-player-id="2">[Wins%?]</span>
                 </li>
                 <li>
+					<span class="player-rank">1.</span>
                     <span class="player-name" data-player-id="3">[Player 3 Name]</span>
                     <span class="player-wins" data-player-id="3">[Wins%?]</span>
                 </li>
                 <li>
+					<span class="player-rank">1.</span>
                     <span class="player-name" data-player-id="4">[Player 4 Name]</span>
                     <span class="player-wins" data-player-id="4">[Wins%?]</span>
                 </li>
                 <li>
+					<span class="player-rank">1.</span>
                     <span class="player-name" data-player-id="5">[Player 5 Name]</span>
                     <span class="player-wins" data-player-id="5">[Wins%?]</span>
                 </li>
@@ -267,28 +272,35 @@
 	    }
 	
 	    fetch('stats/top5')
-	    .then(response => response.json())
-	    .then(data => {
-	        // Clear existing items
-	        topPlayersList.innerHTML = '';
-	
-	        data.forEach(player => {
-	            let listItem = document.createElement('li');
-	            let playerName = document.createElement('span');
-	            playerName.className = 'player-name';
-	            playerName.textContent = player.playerUsername;
-	
-	            let playerWins = document.createElement('span');
-	            playerWins.className = 'player-wins';
-	            playerWins.textContent = player.wonGames;
-	
-	            listItem.appendChild(playerName);
-	            listItem.appendChild(playerWins);
-	
-	            topPlayersList.appendChild(listItem);
-	        });
-	    })
-	    .catch(error => console.error('Error fetching top players:', error));
+		    .then(response => response.json())
+		    .then(data => {
+		        // Clear existing items
+		        topPlayersList.innerHTML = '';
+		
+		        data.forEach((player, index) => { // added 'index' to keep track of the player's rank
+		            let listItem = document.createElement('li');
+		
+		            // Create rank span and set its content based on the index
+		            let playerRank = document.createElement('span');
+		            playerRank.className = 'player-rank';
+		            playerRank.textContent = (index + 1) + ".";  // 1-based rank (e.g., 1. for the first player)
+		
+		            let playerName = document.createElement('span');
+		            playerName.className = 'player-name';
+		            playerName.textContent = player.playerUsername;
+		
+		            let playerWins = document.createElement('span');
+		            playerWins.className = 'player-wins';
+		            playerWins.textContent = player.wonGames;
+		
+		            listItem.appendChild(playerRank);  // append rank before player's name
+		            listItem.appendChild(playerName);
+		            listItem.appendChild(playerWins);
+		
+		            topPlayersList.appendChild(listItem);
+		        });
+		    })
+		    .catch(error => console.error('Error fetching top players:', error));
 	}
 	
 	function fetchStats(entityType, entityId) {
