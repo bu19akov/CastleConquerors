@@ -22,7 +22,7 @@ body.game-body {
     align-items: center;
     justify-content: center;
     position: relative;
-    z-index: 2; /* so its above the clouds */
+    z-index: 2;
 }
 
 #gameTable {

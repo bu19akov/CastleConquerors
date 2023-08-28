@@ -1,3 +1,4 @@
+/* Font Face declarations */
 @font-face {
     font-family: 'Joystix Monospace';
     src: url('../fonts/joystix_monospace.otf') format('opentype');
@@ -8,6 +9,7 @@
     src: url('../fonts/Stgotic_W00_Regular.ttf') format('truetype');
 }
 
+/* Basic styles */
 body, html {
     height: 100%;
     margin: 0;
@@ -15,11 +17,13 @@ body, html {
     overflow: hidden;
 }
 
+/* Transition for fade-out */
 body.fade-out {
     opacity: 0;
     transition: opacity 0.5s;
 }
 
+/* Main Container */
 .container {
     height: 100%;
     display: flex;
@@ -30,6 +34,7 @@ body.fade-out {
     z-index: 2;
 }
 
+/* Logo Styling */
 .logo {
     z-index: 2;
     position: relative;
@@ -40,7 +45,7 @@ body.fade-out {
     max-width: 100%;
 }
 
-
+/* Blink Text Styling */
 .blink-text {
     color: #f6ff00;
     font-size: 3rem;
@@ -54,12 +59,7 @@ body.fade-out {
     white-space: nowrap;
 }
 
-@media screen and (max-width: 1000px) {
-    .blink-text {
-        font-size: 4vw;
-    }
-}
-
+/* Keyframe for Blink Text Animation */
 @keyframes blink-animation {
     from {
         opacity: 1;
@@ -68,6 +68,15 @@ body.fade-out {
         opacity: 0;
     }
 }
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 1000px) {
+    .blink-text {
+        font-size: 4vw;
+    }
+}
+
+
 
 
 

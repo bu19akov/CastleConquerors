@@ -1,3 +1,4 @@
+/* Font Face declarations */
 @font-face {
     font-family: 'Joystix Monospace';
     src: url('../fonts/joystix_monospace.otf') format('truetype');
@@ -50,7 +51,7 @@ body {
     color: #f6ff00;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.1), -2px -2px 0 rgba(0,0,0,0.1), 2px -2px 0 rgba(0,0,0,0.1), -2px 2px 0 rgba(0,0,0,0.1);
     z-index: 3;
-    text-align: center;  /* center align the text */
+    text-align: center;
 }
 
 /* container for login inputs and buttons */
@@ -125,7 +126,6 @@ body {
 }
 
 /*secondary menu buttons/hovers*/
-
 .connect-btn:hover {
     background-color: #140024;
     color: #f6ff00;
@@ -182,7 +182,7 @@ body {
     height: 45px;
     margin-bottom: 8px;
     margin-top: 8px;
-    flex: 3;            /* Takes 60% of the available width */
+    flex: 3; /* Takes 60% of the available width */
     width: 100%;
 }
 
@@ -279,7 +279,7 @@ body {
     text-align: center;
     border: none;
     border-radius: 5px;
-    margin-top: auto;  /* This is important. It will push the button to the bottom */
+    margin-top: auto;
 }
 
 
@@ -338,7 +338,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 50%;  /* Adjusted to half the parent's height */
+    height: 50%;
 }
 
 .map-node-descriptions {
@@ -361,7 +361,7 @@ body {
 
     #welcomeMessage {
         font-size: 1.5rem;
-        top: 22%;  /* Adjust accordingly */
+        top: 22%;
     }
 }
 
@@ -479,7 +479,6 @@ body {
     text-align: right;
 }
 
-/* Optional: If you want to have a fixed width for player names, use the following */
 .player-name {
     overflow: hidden; /* prevents content spillover */
     text-overflow: ellipsis; /* shows '...' for overflow content */
@@ -513,7 +512,7 @@ hr {
 }
 
 .bot-stats {
-    width: 50%;  /*  adjust as needed */
+    width: 50%;
     text-align: center;
 }
 
@@ -550,8 +549,3 @@ hr {
         font-size: 1rem;
     }
 }
-
-
-
-
-

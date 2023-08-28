@@ -31,18 +31,11 @@
 </div>
 
 <h1 class="game-title">Castle Conquerors</h1>
-
-<!--basically here is the text that would be here without the .js -->
-<!--but I doubt there's going to be people on this page without logging in-->
 <h2 id="welcomeMessage">Are you ready, <span id="loggedInUser" th:data-logged-in-user="${loggedInUser}" th:text="${loggedInUser}">adventurer</span>?</h2>
-
 
 <div th:if="${errorMessage}" th:attr="data-error=${errorMessage}" id="errorMessageDiv"></div>
 
-
-
 <div class="menu-container">
-
     <!-- Main Menu Buttons -->
     <div id="mainMenu">
         <div class="button-group">
@@ -134,12 +127,8 @@
                     <div>Bot's win rate: <span class="bot-winrate">[Lots!]</span>%</div>
                 </div>
             </div>
-
-
         </div>
     </div>
-
-
 
 
     <!-- Modal for Game Rules -->
@@ -162,7 +151,6 @@
             <button class="game-mechanics-btn" onclick="openGameMechanicsModal()">Detailed Game Mechanics</button>
         </div>
     </div>
-
 
 
     <!-- Modal for game mechanics -->
@@ -229,9 +217,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
 <script>
@@ -403,7 +388,6 @@
 	        notification.style.display = 'none';
 	    }, 2000);  // The notification will be hidden after 2 seconds
 	}
-
 
 </script>
 

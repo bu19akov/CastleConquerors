@@ -1,3 +1,4 @@
+/* General container for the clouds */
 .clouds {
     position: absolute;
     top: 0;
@@ -8,6 +9,7 @@
     overflow-x: hidden;
 }
 
+/* Base styles for individual clouds */
 .cloud {
     position: absolute;
     width: 20rem;
@@ -17,8 +19,7 @@
     animation: moveClouds 25s infinite linear;
 }
 
-
-
+/* Position and image for each cloud */
 .cloud:nth-child(1) { left: 2%;   top: -5%;   background-image: url('../images/cloud1.png'); }
 .cloud:nth-child(2) { left: 80%;  top: -4%;  background-image: url('../images/cloud2.png'); }
 .cloud:nth-child(3) { left: 30%;  top: 5%;  background-image: url('../images/cloud3.png'); }
@@ -31,6 +32,7 @@
 .cloud:nth-child(10){ left: 80%;  top: 63%;  background-image: url('../images/cloud1.png'); }
 .cloud:nth-child(11) { left: 40%;   top: 65%;   background-image: url('../images/cloud1.png'); }
 
+/* Levitation animations */
 @keyframes levitate1 {
     0%, 100% {
         transform: translateY(0);
@@ -58,7 +60,7 @@
     }
 }
 
-
+/* Apply levitation to clouds */
 .cloud:nth-child(1) {
     animation: moveClouds 25s infinite linear, levitate1 5s infinite ease-in-out;
 }
@@ -100,14 +102,15 @@
     display: none;
 }
 
-/* Adjust cloud size and position for screens 1165px or narrower */
+/* Mobile responsiveness */
 @media screen and (max-width: 775px) {
-    /* Adjusting size for all clouds */
+    /* Resize cloud for mobile */
     .cloud {
         width: 25vw;
         height: 25vw;
     }
 
+    /* Position and visibility for new clouds */
     .cloud:nth-child(12) {
         display: block;
         left: 5%;
