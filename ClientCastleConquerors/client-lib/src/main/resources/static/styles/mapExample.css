@@ -508,7 +508,7 @@ h2 {
 #endGameMessage {
     font-size: 5rem;
     margin-bottom: 10px;
-    font-family: StgoticW00-Regular, Serif;
+    font-family: StgoticW00-Regular, serif;
 }
 
 #return, #errorMessage {
@@ -516,3 +516,96 @@ h2 {
     font-family: Joystix Monospace, serif;
     padding: 20px;
 }
+
+@media screen and (max-width: 1250px) {
+    #gameTitle {
+        display: none;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;  /* Full viewport height */
+        }
+
+    .game-container {
+        margin-top: auto;
+        margin-bottom: auto;
+        }
+
+    .shadowBox #endGameMessage {
+        font-size: 3rem; /* Replace 1rem with whatever size is appropriate */
+    }
+
+    .shadowBox #errorMessage, #return {
+        font-size: 2rem; /* Again, customize as needed */
+    }
+
+    .shadowBox {
+        width: 75%;
+    }
+    }
+
+/* Your existing styles here */
+
+@media screen and (max-width: 950px) {
+    .player-info,
+    .opponent-info {
+        /* Reset position to 'static' so they fall back into the document flow */
+        position: static;
+
+        /* Other styles to center and stack them */
+        top: auto;
+        left: auto;
+        right: auto;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        text-align: center;  /* Center the text within the player/info boxes */
+    }
+
+    /* Make the turn countdown text larger and bolder */
+    #turnCountdown {
+        font-size: larger;
+        font-weight: bold;
+    }
+
+    /* Center the contents of the player-box and opponent-box */
+    .player-box, .opponent-box {
+        justify-content: center;
+    }
+
+    .player-info {
+        margin-top: 10px;
+    }
+
+    .shadowBox #endGameMessage {
+        font-size: 2rem; /* Replace 1rem with whatever size is appropriate */
+    }
+
+    .shadowBox #errorMessage, #return {
+        font-size: 1.5rem; /* Again, customize as needed */
+    }
+
+    .shadowBox {
+        width: 85%;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .player-box, .opponent-box, .player-info, .opponent-info {
+        display: none;
+    }
+
+    .game-container {
+        margin-top: 10%;
+    }
+
+    #buttonDiv {
+        margin-bottom: 35%;
+    }
+}
+
+

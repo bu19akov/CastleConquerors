@@ -28,6 +28,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow-x: hidden;
 }
 
 /* castle conquerors game title styling */
@@ -519,6 +520,35 @@ hr {
 .bot-name {
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+
+@media screen and (max-width: 1000px) {
+    .game-title {
+        text-align: center;
+        overflow: hidden;
+        font-size: 2rem;
+    }
+
+    .menu-container {
+        width: 85%;
+    }
+
+    #welcomeMessage {
+        display: none;
+    }
+
+    .input-field, .placeholder {
+        font-size: 1rem;
+    }
+
+    .modal-content, .leaderboard-content {
+        width: 95%;
+    }
+
+    .top-players-list, .current-player-stats, .bot-stats-container {
+        font-size: 1rem;
+    }
 }
 
 

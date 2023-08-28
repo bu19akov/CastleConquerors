@@ -43,10 +43,12 @@ body {
 /* container for login inputs and buttons */
 .login-container {
     width: 40vw;
-    display: flex;
-    flex-direction: column;
     gap: 15px;
     z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .input-group {
@@ -66,20 +68,28 @@ body {
     color: #F6FF00;
     font-size: 2vw;
     font-family: LomoCopyLTStd-Mezzo, serif;
+    outline: 1px solid #F6FF00;
+    outline-offset: -3px;
 }
 
 
 /* Focus styles for input fields */
 .input-field:focus {
-    border: 3px solid #140024;  
+    border: 3px solid #140024;
+}
+
+.input-field::placeholder {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
 /* should be a better way to do this will check it out later */
 /* basically the placeholder looks fine, but the dots of the password dont look centered at all without this */
 .input-field[type="password"] {
-    padding-top: 4px; 
-    padding-bottom: 8px; 
+    padding-top: 4px;
+    padding-bottom: 8px;
 }
 
 
@@ -105,17 +115,11 @@ body {
 
 /* Styles for the button group */
 .button-group {
-    text-align: center; /* Center align the buttons */
-}
-
-
-
-/* Styles for the button group */
-.button-group {
     display: flex;
     justify-content: space-between;
     gap: 10px;
     width: 100%;
+    text-align: center; /* Center align the buttons */
 }
 
 /* Button styles */
@@ -151,22 +155,9 @@ body {
     color: white;
 }
 
-
-
-@media (max-width: 768px) {
-    .login-container {
-        width: 80vw;
-    }
-
-    .game-title {
-        font-size: 2.5rem;
-    }
-}
-
 .client-error-message {
     width: 100%;
     height: 100%;
-    /*!*padding: 0.625rem;*! with padding the box doesnt disappear*/
     box-sizing: border-box;
     background-color: red;
     color: white;
@@ -218,5 +209,39 @@ body {
     }
 }
 
+
+
+@media screen and (max-width: 1000px) {
+    .login-container {
+        width: 80%; /* Switched to px */
+        height: 20%;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .game-title {
+        font-size: 4vw; /* Switched to px */
+        top: 15%;
+    }
+
+    .input-field, .placeholder {
+        font-size: 5vw;
+        max-font-size: 36px;  /* Add a maximum size */
+        min-font-size: 18px;  /* And a minimum size */
+    }
+
+    .client-error-message, .server-error-message {
+        font-size: 14px; /* or another readable size */
+        overflow: visible; /* or 'auto' to add scrollbars */
+        display: none;
+    }
+
+}
+
+@media screen and (max-width: 485px) {
+    .game-title {
+        top: 20%    ;
+    }
+}
 
 
